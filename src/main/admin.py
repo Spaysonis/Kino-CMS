@@ -1,3 +1,6 @@
 from django.contrib import admin
 
-# Register your models here.
+from .models import Booking, Schedule
+
+admin.site.register(Schedule)
+admin.site.register(Booking)

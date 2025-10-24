@@ -1,25 +1,17 @@
 from django.db import models
+from src.cms.models.cinema import Movie, Hall
+from src.user.models import BaseUser as User
 
 
+class Schedule(models.Model):
+    movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
+    hall = models.ForeignKey(Hall, on_delete=models.CASCADE)
+    data = models.DateTimeField()
+    price = models.FloatField()
 
 
-class Slider(models.Model):
-    url = models.URLField(max_length=255)
-    text = models.TextField(max_length=255, null=True, blank=True)
-    image = models.ImageField()
-
-
-
-class NewsPromoBanner(models.Model):
-    is_active = models.BooleanField(default=True)
-    slider = models.ManyToManyField(Slider)
-    speed = models.IntegerField()
-
-
-
-class HomepageBanner(models.Model):
-    is_active = models.BooleanField(default=True)
-    slider = models.ManyToManyField(Slider)
-    speed = models.IntegerField()
-
-
+class Booking(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    schedule = models.ForeignKey(Schedule, on_delete=models.CASCADE)
+    row = models.IntegerField()
+    place = models.IntegerField()
