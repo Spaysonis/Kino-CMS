@@ -1,0 +1,249 @@
+{% extends 'cms/statistics.html' %}
+
+{% block content %}
+
+
+
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Banner Admin — mock</title>
+  <style>
+    /* Простая стилизация, чтобы выглядеть похоже на макет */
+    :root{--card-bg:#fff;--muted:#777;--accent:#26a86b}
+    body{font-family:Inter,Segoe UI,Arial,sans-serif;background:#f5f6f8;margin:24px;color:#222}
+    h2{font-size:18px;text-align:center;margin:6px 0 18px}
+    .panel{background:var(--card-bg);border:1px solid #d7d7d7;border-radius:8px;padding:16px;margin-bottom:20px;box-shadow:0 1px 0 rgba(0,0,0,.02)}
+    .panel .meta{font-size:12px;color:var(--muted);margin-bottom:8px}
+    .row{display:flex;gap:12px;align-items:flex-start}
+    .thumb{width:150px;height:70px;border:1px dashed #cfcfcf;border-radius:4px;display:flex;align-items:center;justify-content:center;background:#fafafa;position:relative}
+    .thumb img{max-width:100%;max-height:100%;object-fit:cover}
+    .thumb .remove{position:absolute;top:-8px;right:-8px;background:#fff;border:1px solid #bbb;border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;cursor:pointer}
+    .controls{flex:1}
+    .controls .field{margin:6px 0}
+    label{font-size:13px;color:#333}
+    input[type=text],select{padding:6px 8px;border:1px solid #ccc;border-radius:4px;width:100%;box-sizing:border-box}
+    button{padding:6px 10px;border-radius:4px;border:1px solid #bdbdbd;background:#f0f0f0;cursor:pointer}
+    .btn-primary{background:var(--accent);color:#fff;border-color:rgba(0,0,0,.05)}
+    .small{font-size:12px;padding:4px 8px}
+    .switch{display:inline-flex;align-items:center;gap:8px}
+    .switch input{width:40px;height:20px;appearance:none;background:#e6e6e6;border-radius:20px;position:relative;outline:none;cursor:pointer}
+    .switch input:checked{background:var(--accent)}
+    .switch input::after{content:'';position:absolute;left:3px;top:3px;width:14px;height:14px;background:#fff;border-radius:50%;transition:all .18s}
+    .switch input:checked::after{transform:translateX(20px)}
+    .section-controls{display:flex;gap:8px;align-items:center;margin-top:8px}
+    .bg-option{display:flex;gap:8px;align-items:center}
+    .file-input{display:none}
+    .add-photo{display:flex;flex-direction:column;align-items:center;justify-content:center}
+    .grid{display:flex;gap:8px;flex-wrap:wrap}
+    .banner-slot{width:190px}
+    .muted{color:var(--muted);font-size:13px}
+  </style>
+</head>
+<body>
+  <h2>Управление баннерами (макет)</h2>
+
+  <!-- SECTION: На главный верх -->
+  <div class="panel" data-section="top-main">
+    <div class="meta">Размер: 1000x190</div>
+    <div class="row">
+      <div class="grid" id="top-main-grid">
+        <!-- JS will populate slots -->
+      </div>
+      <div style="margin-left:auto;display:flex;flex-direction:column;gap:8px;align-items:flex-end">
+        <div class="switch"><input type="checkbox" id="top-main-enabled" checked><label for="top-main-enabled">включено</label></div>
+        <button id="add-top-slot" class="small">Добавить фото</button>
+      </div>
+    </div>
+    <div class="section-controls">
+      <label class="muted">Скорость вращения</label>
+      <select id="top-rotation">
+        <option>5s</option>
+        <option>3s</option>
+        <option>7s</option>
+      </select>
+      <button class="btn-primary" data-action="save" data-section="top-main">Сохранить</button>
+    </div>
+  </div>
+
+  <!-- SECTION: Сквозной банер на заднем фоне -->
+  <div class="panel" data-section="bg">
+    <div class="meta">Размер: 2000x3000</div>
+    <div class="row">
+      <div style="flex:1">
+        <div class="bg-option">
+          <input type="radio" name="bg-mode" id="bg-photo" value="photo" checked>
+          <label for="bg-photo">Фото на фон</label>
+        </div>
+        <div style="margin-top:10px;display:flex;gap:8px;align-items:center">
+          <div class="thumb" id="bg-thumb"><span class="muted">Нет фото</span></div>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <input id="bg-file" class="file-input" type="file" accept="image/*">
+            <button id="bg-add">Добавить</button>
+            <button id="bg-remove">Удалить</button>
+          </div>
+        </div>
+        <div style="margin-top:10px">
+          <input type="radio" name="bg-mode" id="bg-solid" value="solid">
+          <label for="bg-solid">Просто фон</label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION: На главной Новости Акции (similar to top) -->
+  <div class="panel" data-section="news">
+    <div class="meta">Размер: 1000x190</div>
+    <div class="row">
+      <div class="grid" id="news-grid"></div>
+      <div style="margin-left:auto;display:flex;flex-direction:column;gap:8px;align-items:flex-end">
+        <div class="switch"><input type="checkbox" id="news-enabled" checked><label for="news-enabled">включено</label></div>
+        <button id="add-news-slot" class="small">Добавить фото</button>
+      </div>
+    </div>
+    <div class="section-controls">
+      <label class="muted">Скорость вращения</label>
+      <select id="news-rotation">
+        <option>5s</option>
+        <option>3s</option>
+        <option>7s</option>
+      </select>
+      <button class="btn-primary" data-action="save" data-section="news">Сохранить</button>
+    </div>
+  </div>
+
+  <template id="slot-template">
+    <div class="banner-slot">
+      <div class="thumb">
+        <span class="muted">Нет фото</span>
+        <div class="remove" title="Удалить">×</div>
+      </div>
+      <div class="controls">
+        <div class="field"><button class="small choose-photo">Добавить</button></div>
+        <div class="field"><label>URL: <input type="text" class="url" placeholder="URL"></label></div>
+        <div class="field"><label>Текст: <input type="text" class="text" placeholder="текст"></label></div>
+      </div>
+      <input type="file" class="file-input" accept="image/*">
+    </div>
+  </template>
+
+  <script>
+    // Configuration: endpoints where data will be POSTed
+    const CONFIG = {
+      saveUrl: '/api/banners/save/', // PUT/POST endpoint for saving section data
+      saveBgUrl: '/api/banners/bg/',
+    };
+
+    // helper: create a slot element
+    function createSlot(){
+      const tpl = document.getElementById('slot-template');
+      const el = tpl.content.firstElementChild.cloneNode(true);
+      const fileInput = el.querySelector('.file-input');
+      const thumb = el.querySelector('.thumb');
+      const chooseBtn = el.querySelector('.choose-photo');
+      const removeBtn = el.querySelector('.remove');
+      const urlInput = el.querySelector('.url');
+      const textInput = el.querySelector('.text');
+
+      chooseBtn.addEventListener('click', e=> fileInput.click());
+      fileInput.addEventListener('change', ev=>{
+        const f = ev.target.files[0];
+        if(!f) return;
+        const reader = new FileReader();
+        reader.onload = ()=>{
+          thumb.innerHTML = '<img src="'+reader.result+'">';
+        };
+        reader.readAsDataURL(f);
+      });
+
+      removeBtn.addEventListener('click', ()=> el.remove());
+
+      return el;
+    }
+
+    // populate initial 5 slots for top and news
+    const topGrid = document.getElementById('top-main-grid');
+    const newsGrid = document.getElementById('news-grid');
+    for(let i=0;i<5;i++){ topGrid.appendChild(createSlot()); newsGrid.appendChild(createSlot()); }
+
+    document.getElementById('add-top-slot').addEventListener('click', ()=> topGrid.appendChild(createSlot()));
+    document.getElementById('add-news-slot').addEventListener('click', ()=> newsGrid.appendChild(createSlot()));
+
+    // Background handlers
+    const bgFile = document.getElementById('bg-file');
+    const bgThumb = document.getElementById('bg-thumb');
+    document.getElementById('bg-add').addEventListener('click', ()=> bgFile.click());
+    bgFile.addEventListener('change', e=>{
+      const f = e.target.files[0]; if(!f) return;
+      const r = new FileReader(); r.onload = ()=> bgThumb.innerHTML = '<img src="'+r.result+'">'; r.readAsDataURL(f);
+    });
+    document.getElementById('bg-remove').addEventListener('click', ()=>{ bgThumb.innerHTML = '<span class="muted">Нет фото</span>'; bgFile.value = ''; });
+
+    // Save handlers — collect form data for a section and POST as FormData (files + metadata)
+    async function collectSectionData(sectionEl){
+      const slots = Array.from(sectionEl.querySelectorAll('.banner-slot'));
+      const data = new FormData();
+      const items = [];
+      slots.forEach((s, idx)=>{
+        const url = s.querySelector('.url').value.trim();
+        const text = s.querySelector('.text').value.trim();
+        const file = s.querySelector('.file-input').files[0] || null;
+        if(file) data.append('file_'+idx, file);
+        items.push({idx, url, text, fileField: file? 'file_'+idx : null});
+      });
+      data.append('items', JSON.stringify(items));
+      // add simple metadata (enabled, rotation)
+      const enabled = sectionEl.querySelector('.switch input')?.checked ?? true;
+      const rotation = sectionEl.querySelector('select')?.value ?? '';
+      data.append('enabled', enabled);
+      data.append('rotation', rotation);
+      return data;
+    }
+
+    // utility to get CSRF token from cookie (Django default)
+    function getCookie(name){
+      const v = document.cookie.split(';').map(c=>c.trim()).filter(c=>c.startsWith(name+'='));
+      if(!v.length) return null; return decodeURIComponent(v[0].split('=')[1]);
+    }
+
+    // attach save button handlers
+    document.querySelectorAll('[data-action="save"]').forEach(btn=>{
+      btn.addEventListener('click', async ()=>{
+        const sectionName = btn.dataset.section;
+        const panel = document.querySelector('.panel[data-section="'+sectionName+'"]');
+        const fd = await collectSectionData(panel);
+        const url = sectionName === 'bg' ? CONFIG.saveBgUrl : CONFIG.saveUrl;
+        try{
+          const resp = await fetch(url, {
+            method: 'POST',
+            body: fd,
+            headers: {
+              'X-CSRFToken': getCookie('csrftoken') || ''
+            }
+          });
+          if(!resp.ok) throw new Error('HTTP '+resp.status);
+          alert('Сохранено');
+        }catch(e){
+          console.error(e); alert('Ошибка при сохранении: '+e.message);
+        }
+      });
+    });
+
+    // OPTIONAL: if you want immediate JSON preview in console before save
+    window.debugExport = async function(section){
+      const panel = document.querySelector('.panel[data-section="'+section+'"]');
+      const fd = await collectSectionData(panel);
+      // Log non-file fields for inspection
+      for(const pair of fd.entries()){
+        console.log(pair[0], pair[1]);
+      }
+    };
+
+  </script>
+</body>
+</html>
+
+
+{% endblock %}
