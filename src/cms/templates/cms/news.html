@@ -1,0 +1,399 @@
+{% extends "cms/statistics.html" %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row justify-content-center">
+        <div class="col-12">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-gradient-primary text-white py-4">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h4 class="card-title mb-0 fw-bold">
+                            <i class="bi bi-newspaper me-3"></i>
+                            Добавление новости
+                        </h4>
+                        <div class="language-switcher">
+                            <div class="btn-group btn-group-sm" role="group">
+                                <input type="radio" class="btn-check" name="language" id="ukrainian" value="uk" checked>
+                                <label class="btn btn-outline-light" for="ukrainian">
+                                    <i class="bi bi-flag-fill me-1"></i>UA
+                                </label>
+                                <input type="radio" class="btn-check" name="language" id="russian" value="ru">
+                                <label class="btn btn-outline-light" for="russian">
+                                    <i class="bi bi-flag me-1"></i>RU
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-body p-4">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+
+                        <!-- Дата публикации -->
+                        <div class="row mb-4">
+                            <div class="col-md-8 offset-md-4">
+                                <label class="form-label fw-semibold text-light mb-2">
+                                    <i class="bi bi-calendar-event me-2"></i>Дата публикации
+                                </label>
+                                <div class="input-group">
+                                    <input type="date" class="form-control border-0 bg-dark text-light" id="publication_date" value="2012-04-22">
+                                    <button type="button" class="btn btn-success" id="publishNowBtn">
+                                        <i class="bi bi-lightning-fill me-1"></i>Сейчас
+                                    </button>
+                                </div>
+                                <div class="form-text text-muted mt-1">
+                                    Или нажмите "Сейчас" для немедленной публикации
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Название новости -->
+                        <div class="mb-4">
+                            <label for="news_title" class="form-label fw-semibold text-light mb-3">
+                                Название новости
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-secondary border-secondary">
+                                    <i class="bi bi-fonts text-white"></i>
+                                </span>
+                                <input type="text" class="form-control border-0 bg-dark text-light" id="news_title" placeholder="Введите название новости">
+                            </div>
+                        </div>
+
+                        <!-- Описание -->
+                        <div class="mb-4">
+                            <label for="news_description" class="form-label fw-semibold text-light mb-3">
+                                Описание
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-secondary border-secondary align-items-start pt-3">
+                                    <i class="bi bi-text-paragraph text-white"></i>
+                                </span>
+                                <textarea class="form-control border-0 bg-dark text-light" id="news_description" placeholder="Введите текст новости..." rows="6"></textarea>
+                            </div>
+                        </div>
+
+                        <!-- Главная картинка -->
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold text-light mb-3">
+                                <i class="bi bi-image me-2"></i>Главная картинка
+                            </label>
+                            <div class="card border-dashed">
+                                <div class="card-body text-center p-4">
+                                    <div class="mb-3">
+                                        <i class="bi bi-cloud-arrow-up display-4 text-muted"></i>
+                                    </div>
+                                    <input type="file" class="form-control d-none" id="main_image" accept="image/*">
+                                    <button type="button" class="btn btn-outline-primary mb-2" onclick="document.getElementById('main_image').click()">
+                                        <i class="bi bi-upload me-2"></i>Загрузить изображение
+                                    </button>
+                                    <div class="form-text text-muted">Рекомендуемый размер: 1000x190 px</div>
+                                    <div id="imagePreview" class="mt-3" style="display: none;">
+                                        <img src="" class="img-fluid rounded shadow-sm mb-2" style="max-height: 150px;">
+                                        <button type="button" class="btn btn-danger btn-sm" onclick="removeMainImage()">
+                                            <i class="bi bi-trash"></i> Удалить
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Галерея картинок -->
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold text-light mb-3">
+                                <i class="bi bi-images me-2"></i>Галерея картинок
+                            </label>
+                            <div class="card border-dashed">
+                                <div class="card-body p-4">
+                                    <div class="row g-3" id="galleryContainer">
+                                        <!-- Галерея будет добавляться здесь -->
+                                    </div>
+                                    <button type="button" class="btn btn-outline-primary mt-3 w-100" onclick="addGalleryImage()">
+                                        <i class="bi bi-plus-circle me-2"></i>Добавить изображение в галерею
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Ссылка на видео -->
+                        <div class="mb-4">
+                            <label for="video_url" class="form-label fw-semibold text-light mb-3">
+                                Ссылка на видео YouTube
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-secondary border-secondary">
+                                    <i class="bi bi-youtube text-white"></i>
+                                </span>
+                                <input type="url" class="form-control border-0 bg-dark text-light" id="video_url" placeholder="https://youtube.com/...">
+                            </div>
+                        </div>
+
+                        <!-- SEO блок -->
+                        <div class="card border-primary shadow-sm mb-4">
+                            <div class="card-header bg-light-primary">
+                                <h5 class="card-title mb-0 text-primary">
+                                    <i class="bi bi-search me-2"></i>SEO настройки
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label for="seo_url" class="form-label fw-semibold text-light mb-2">URL</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-secondary border-secondary">
+                                                <i class="bi bi-link-45deg text-white"></i>
+                                            </span>
+                                            <input type="text" class="form-control border-0 bg-dark text-light" id="seo_url" placeholder="URL">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="seo_title" class="form-label fw-semibold text-light mb-2">Title</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-secondary border-secondary">
+                                                <i class="bi bi-type text-white"></i>
+                                            </span>
+                                            <input type="text" class="form-control border-0 bg-dark text-light" id="seo_title" placeholder="Title">
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <label for="seo_keywords" class="form-label fw-semibold text-light mb-2">Keywords</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-secondary border-secondary">
+                                                <i class="bi bi-tags text-white"></i>
+                                            </span>
+                                            <input type="text" class="form-control border-0 bg-dark text-light" id="seo_keywords" placeholder="Ключевые слова через запятую">
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <label for="seo_description" class="form-label fw-semibold text-light mb-2">Description</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-secondary border-secondary align-items-start pt-3">
+                                                <i class="bi bi-card-text text-white"></i>
+                                            </span>
+                                            <textarea class="form-control border-0 bg-dark text-light" id="seo_description" placeholder="Мета-описание" rows="3"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Кнопка сохранения -->
+                        <div class="mt-5 text-center">
+                            <button type="submit" class="btn btn-success btn-lg px-5 py-3">
+                                <i class="bi bi-check-circle-fill me-2"></i> Сохранить новость
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.bg-gradient-primary {
+    background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%) !important;
+}
+
+.bg-light-primary {
+    background-color: rgba(44, 62, 80, 0.15) !important;
+    border: 1px solid #34495e;
+}
+
+.card {
+    border-radius: 16px;
+    border: none;
+    background: #2c3e50;
+    color: #ecf0f1;
+}
+
+.card-header {
+    border-bottom: 1px solid #34495e;
+}
+
+.card-body {
+    background: #34495e;
+}
+
+.form-control {
+    background: #1a252f !important;
+    border: 1px solid #4a6572 !important;
+    color: #ecf0f1 !important;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus {
+    background: #1a252f !important;
+    border-color: #3498db !important;
+    color: #ecf0f1 !important;
+    box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25) !important;
+}
+
+.form-control::placeholder {
+    color: #7f8c8d !important;
+}
+
+.form-label {
+    color: #bdc3c7 !important;
+}
+
+.text-dark {
+    color: #ecf0f1 !important;
+}
+
+.border-dashed {
+    border: 2px dashed #4a6572 !important;
+    border-radius: 12px !important;
+    background: #2c3e50;
+}
+
+.btn-outline-primary {
+    border-color: #3498db;
+    color: #3498db;
+    background: transparent;
+}
+
+.btn-outline-primary:hover {
+    background: #3498db;
+    border-color: #3498db;
+    color: #fff;
+}
+
+.btn-outline-light {
+    border-color: #bdc3c7;
+    color: #bdc3c7;
+}
+
+.btn-outline-light:hover,
+.btn-check:checked + .btn-outline-light {
+    background: rgba(189, 195, 199, 0.2);
+    border-color: #ecf0f1;
+    color: #ecf0f1;
+}
+
+.btn-success {
+    background: #27ae60;
+    border-color: #27ae60;
+    transition: all 0.3s ease;
+}
+
+.btn-success:hover {
+    background: #219a52;
+    border-color: #219a52;
+    transform: translateY(-2px);
+}
+
+.input-group .form-control {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.input-group .btn {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+.input-group-text {
+    background: #4a6572 !important;
+    border-color: #4a6572 !important;
+    color: #ecf0f1 !important;
+}
+
+.shadow-lg {
+    box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.3) !important;
+}
+
+.text-muted {
+    color: #95a5a6 !important;
+}
+
+.bi {
+    opacity: 0.9;
+}
+</style>
+
+<script>
+// Установить текущую дату при нажатии на кнопку
+document.getElementById('publishNowBtn').addEventListener('click', function() {
+    const now = new Date();
+    const today = now.toISOString().split('T')[0];
+    document.getElementById('publication_date').value = today;
+    showNotification('Дата установлена на сегодня', 'success');
+});
+
+// Функция для показа уведомлений
+function showNotification(message, type = 'info') {
+    const notification = document.createElement('div');
+    notification.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
+    notification.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+    notification.innerHTML = `
+        <i class="bi bi-check-circle-fill me-2"></i>${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    document.body.appendChild(notification);
+    setTimeout(() => notification.remove(), 3000);
+}
+
+// Обработка главной картинки
+document.getElementById('main_image').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            document.getElementById('imagePreview').style.display = 'block';
+            document.querySelector('#imagePreview img').src = e.target.result;
+        }
+        reader.readAsDataURL(file);
+    }
+});
+
+function removeMainImage() {
+    document.getElementById('main_image').value = '';
+    document.getElementById('imagePreview').style.display = 'none';
+}
+
+// Галерея изображений
+let galleryCount = 0;
+
+function addGalleryImage() {
+    galleryCount++;
+    const galleryContainer = document.getElementById('galleryContainer');
+    const galleryItem = document.createElement('div');
+    galleryItem.className = 'col-md-4';
+    galleryItem.innerHTML = `
+        <div class="card h-100 border-dashed">
+            <div class="card-body text-center p-3">
+                <i class="bi bi-image text-muted mb-2" style="font-size: 2rem;"></i>
+                <input type="file" class="form-control form-control-sm mb-2 gallery-image" accept="image/*">
+                <button type="button" class="btn btn-outline-danger btn-sm w-100" onclick="this.closest('.col-md-4').remove()">
+                    <i class="bi bi-trash"></i> Удалить
+                </button>
+            </div>
+        </div>
+    `;
+    galleryContainer.appendChild(galleryItem);
+}
+
+// Автозаполнение SEO полей
+document.getElementById('news_title').addEventListener('input', function() {
+    const title = this.value;
+    if (title) {
+        document.getElementById('seo_url').value = title.toLowerCase().replace(/[^a-z0-9а-яё]/g, '-').replace(/-+/g, '-');
+        document.getElementById('seo_title').value = title;
+        document.getElementById('seo_keywords').value = title.split(' ')[0] || 'Word';
+        document.getElementById('seo_description').value = title;
+    }
+});
+
+// Установить текущую дату при загрузке страницы
+document.addEventListener('DOMContentLoaded', function() {
+    const dateField = document.getElementById('publication_date');
+    if (!dateField.value) {
+        const today = new Date().toISOString().split('T')[0];
+        dateField.value = today;
+    }
+});
+</script>
+{% endblock %}
