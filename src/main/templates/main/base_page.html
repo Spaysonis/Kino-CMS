@@ -111,7 +111,8 @@
     <header class="header">
         <div class="container">
             <div class="header-top d-flex justify-content-between align-items-center mb-3">
-                <a href="{% url 'main_page' %}" class="text-decoration-none">
+
+                <a href="{% url 'base_page' %}" class="text-decoration-none">
                     <div class="logo">Kino-CMS</div>
                 </a>
                 <div class="user-actions d-flex gap-3 align-items-center">
@@ -136,51 +137,12 @@
                     {% endif %}
                 </div>
             </div>
+            {% include "main/banner_news.html" %}
 
-            <!-- Карусель -->
-            <div id="promoCarousel" class="carousel slide" data-bs-ride="carousel">
-                <div class="carousel-inner rounded">
-                    <div class="carousel-item active">
-                        <img src="https://via.placeholder.com/1200x400/1a237e/ffffff?text=Акция+1" class="d-block w-100" alt="Акция 1">
-                        <div class="carousel-caption d-none d-md-block">
-                            <h5>Скидки 50% в честь открытия</h5>
-                            <p>Только эту неделю специальные предложения</p>
-                        </div>
-                    </div>
-                    <div class="carousel-item">
-                        <img src="https://st2.depositphotos.com/1006899/7597/i/450/depositphotos_75976327-stock-photo-great-sales-and-discounts.jpg" class="d-block w-100" alt="Новинки">
-                        <div class="carousel-caption d-none d-md-block">
-                            <h5>Новинки этой недели</h5>
-                            <p>Самые ожидаемые премьеры уже в кинотеатрах</p>
-                        </div>
-                    </div>
-                    <div class="carousel-item">
-                        <img src="https://via.placeholder.com/1200x400/3949ab/ffffff?text=Бронирование+онлайн" class="d-block w-100" alt="Онлайн бронь">
-                        <div class="carousel-caption d-none d-md-block">
-                            <h5>Бронируйте онлайн</h5>
-                            <p>Покупайте билеты без очередей</p>
-                        </div>
-                    </div>
-                </div>
 
-                <button class="carousel-control-prev" type="button" data-bs-target="#promoCarousel" data-bs-slide="prev">
-                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                    <span class="visually-hidden">Предыдущий</span>
-                </button>
-                <button class="carousel-control-next" type="button" data-bs-target="#promoCarousel" data-bs-slide="next">
-                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                    <span class="visually-hidden">Следующий</span>
-                </button>
-            </div>
-
-            <!-- Индикаторы -->
-            <div class="carousel-indicators position-relative mt-2 justify-content-center">
-                <button type="button" data-bs-target="#promoCarousel" data-bs-slide-to="0" class="active bg-dark" aria-current="true" aria-label="Slide 1"></button>
-                <button type="button" data-bs-target="#promoCarousel" data-bs-slide-to="1" class="bg-dark" aria-label="Slide 2"></button>
-                <button type="button" data-bs-target="#promoCarousel" data-bs-slide-to="2" class="bg-dark" aria-label="Slide 3"></button>
-            </div>
         </div>
     </header>
+
 
     <nav class="main-nav">
         <div class="container">
@@ -197,45 +159,14 @@
     <main class="main-content py-4">
         <div class="container">
             {% block content %}
-            <!-- Контент страниц-наследников -->
+
+
             {% endblock %}
         </div>
     </main>
 
-    <section class="contacts py-4">
-        <div class="container text-center">
-            <div class="phone-numbers mb-3">
-                <h4 class="text-primary mb-3">Контактные телефоны</h4>
-                <h5 class="text-dark">(048) 777-77-77</h5>
-                <h5 class="text-dark">(097) 777-77-77</h5>
-            </div>
-            <div class="language-selector badge bg-light text-dark">Русский</div>
-        </div>
-    </section>
 
-    <section class="footer-links py-4">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-4 mb-3">
-                    <h5 class="text-primary border-bottom pb-2">Информация</h5>
-                    <a href="#" class="link-item">Новости</a>
-                    <a href="#" class="link-item">Кафе</a>
-                    <a href="#" class="link-item">Контакты</a>
-                </div>
-                <div class="col-md-4 mb-3">
-                    <h5 class="text-primary border-bottom pb-2">Дополнительно</h5>
-                    <a href="#" class="link-item">Реклама</a>
-                    <a href="#" class="link-item">Мобильные приложения</a>
-                </div>
-                <div class="col-md-4 mb-3">
-                    <h5 class="text-primary border-bottom pb-2">Партнерам</h5>
-                    <a href="#" class="link-item">Для рекламодателей</a>
-                    <a href="#" class="link-item">Аренда залов</a>
-                    <a href="#" class="link-item">Корпоративные мероприятия</a>
-                </div>
-            </div>
-        </div>
-    </section>
+
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>

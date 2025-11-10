@@ -5,6 +5,7 @@ from .forms import SimpleRegistrationForm, ProfileEditForm
 
 
 
+
 def login_view(request):
     if request.method == 'POST':
         username = request.POST['username']
@@ -52,7 +53,7 @@ def edit_profile_view(request):
             print(f"🏠 Адрес: {user.address}, Город: {user.city}")
 
             messages.success(request, 'Профиль успешно обновлен!')
-            return redirect('edit_profile')
+            return redirect('base_page')
         else:
             print("❌ Ошибки формы:", form.errors)
             messages.error(request, 'Исправьте ошибки в форме!')
@@ -63,16 +64,17 @@ def edit_profile_view(request):
     return render(request, 'main/edit_profile.html', {'form': form})
 
 
-def main_page(request):
-    return render(request, 'main/main_page.html', {
-        'active_page':'base_page',
-        'page_title':'Главная страница'
-    })
 
 
 def logout_view(request):
     logout(request)
     return redirect('/')  # Перенаправляет на главную страницу
+
+def main_page(request):
+    return render(request, 'main/main_view.html', {
+        'active_page':'main_page',
+        'page_title':'Главная страница'
+    })
 
 
 
