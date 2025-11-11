@@ -1,0 +1,199 @@
+{% extends "cms/statistics.html" %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row justify-content-center">
+        <div class="col-12">
+            <div class="card shadow-lg border-0">
+                <!-- Заголовок -->
+                <div class="card-header bg-gradient-primary text-white py-4">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h3 class="card-title mb-0 fw-bold">
+                            <i class="bi bi-people-fill me-3"></i>
+                            Пользователи системы
+                        </h3>
+                        <span class="badge bg-light text-dark fs-6">
+                            <i class="bi bi-person-check me-1"></i>
+                            Всего: {{ users.count }}
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Тело таблицы -->
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-dark table-hover table-striped mb-0">
+                            <thead class="bg-secondary">
+                                <tr>
+                                    <th width="60" class="text-center">ID</th>
+                                    <th width="140">Дата регистрации</th>
+                                    <th width="120">Дата рождения</th>
+                                    <th width="120">Логин</th>
+                                    <th width="200">Email</th>
+                                    <th width="140">Телефон</th>
+                                    <th>ФИО</th>
+                                    <th width="120">Псевдоним</th>
+                                    <th width="120">Город</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for user in users %}
+                                <tr class="align-middle">
+                                    <td class="text-center fw-bold text-primary">{{ user.id }}</td>
+
+                                    <td>
+                                        {% if user.date_joined %}
+                                            <small>{{ user.date_joined|date:"d.m.Y H:i" }}</small>
+                                        {% else %}
+                                            <span class="text-muted">Не указана</span>
+                                        {% endif %}
+                                    </td>
+
+                                    <td>
+                                        {% if user.date_of_birth %}
+                                            {{ user.date_of_birth }}
+                                        {% else %}
+                                            <span class="text-muted">—</span>
+                                        {% endif %}
+                                    </td>
+
+                                    <td>
+                                        <span class="fw-semibold">{{ user.username }}</span>
+                                    </td>
+
+                                    <td>
+                                        {% if user.email %}
+                                            <a href="mailto:{{ user.email }}" class="text-info text-decoration-none">
+                                                {{ user.email }}
+                                            </a>
+                                        {% else %}
+                                            <span class="text-muted">—</span>
+                                        {% endif %}
+                                    </td>
+
+                                    <td>
+                                        {% if user.phone_num %}
+                                            <span class="fw-semibold">{{ user.phone_num }}</span>
+                                        {% else %}
+                                            <span class="text-muted">—</span>
+                                        {% endif %}
+                                    </td>
+
+                                    <td>
+                                        {% if user.first_name or user.last_name %}
+                                            {{ user.first_name }} {{ user.last_name }}
+                                        {% else %}
+                                            <span class="text-muted">Не указано</span>
+                                        {% endif %}
+                                    </td>
+
+                                    <td>
+                                        {% if user.nick_name %}
+                                            <span class="badge bg-warning text-dark">{{ user.nick_name }}</span>
+                                        {% else %}
+                                            <span class="text-muted">—</span>
+                                        {% endif %}
+                                    </td>
+
+                                    <td>
+                                        {% if user.city %}
+                                            <span class="fw-semibold">{{ user.city }}</span>
+                                        {% else %}
+                                            <span class="text-muted">—</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="9" class="text-center py-4">
+                                        <div class="text-muted">
+                                            <i class="bi bi-inbox display-4 d-block mb-2"></i>
+                                            <h5>Пользователи не найдены</h5>
+                                            <p>В системе пока нет зарегистрированных пользователей</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Футер -->
+                <div class="card-footer bg-dark border-top-0 py-3">
+                    <div class="row align-items-center">
+                        <div class="col-md-6">
+                            <small class="text-muted">
+                                <i class="bi bi-info-circle me-1"></i>
+                                Отображено {{ users.count }} пользователей
+                            </small>
+                        </div>
+                        <div class="col-md-6 text-end">
+                            <div class="btn-group">
+                                <button class="btn btn-outline-light btn-sm">
+                                    <i class="bi bi-download me-1"></i> Экспорт
+                                </button>
+                                <button class="btn btn-outline-light btn-sm">
+                                    <i class="bi bi-printer me-1"></i> Печать
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.bg-gradient-primary {
+    background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%) !important;
+}
+
+.card {
+    border-radius: 16px;
+    background: #2c3e50;
+}
+
+.table-dark {
+    --bs-table-bg: #34495e;
+    --bs-table-striped-bg: #2c3e50;
+    --bs-table-hover-bg: #3d5166;
+    border-color: #4a6572;
+}
+
+.table-dark th {
+    border-color: #4a6572;
+    font-weight: 600;
+}
+
+.table-dark td {
+    border-color: #4a6572;
+    vertical-align: middle;
+}
+
+.shadow-lg {
+    box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.3) !important;
+}
+
+.badge.bg-light {
+    background: rgba(255, 255, 255, 0.9) !important;
+    color: #2c3e50 !important;
+}
+
+.text-muted {
+    color: #95a5a6 !important;
+}
+
+.btn-outline-light {
+    border-color: #bdc3c7;
+    color: #bdc3c7;
+}
+
+.btn-outline-light:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: #ecf0f1;
+    color: #ecf0f1;
+}
+</style>
+{% endblock %}
