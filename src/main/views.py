@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from .forms import SimpleRegistrationForm, ProfileEditForm
-
+from src.cms.models.cinema import Movie
 
 
 
@@ -71,9 +71,15 @@ def logout_view(request):
     return redirect('/')  # Перенаправляет на главную страницу
 
 def main_page(request):
+
+    movie = Movie.objects.all()
+
+
+
     return render(request, 'main/main_view.html', {
         'active_page':'main_page',
-        'page_title':'Главная страница'
+        'page_title':'Главная страница',
+        'films': movie
     })
 
 

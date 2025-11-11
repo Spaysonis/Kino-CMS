@@ -11,6 +11,7 @@ urlpatterns = [
 
     path('users/', views.get_user_info, name='users'),
     path('news/', views.news, name='news'),
+    path('movie', views.movie_edit, name='movie')
 
 ]
 

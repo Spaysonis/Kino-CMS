@@ -2,20 +2,16 @@
 
 {% block content %}
 <!-- УБРАЛ container py-4 - он уже есть в базовом шаблоне -->
-<div class="row mb-4">
-    <div class="col-12">
-        <h1 class="text-white mb-2">Смотрите сегодня, 24 июля</h1>
-        <p class="text-muted">Сирил МАЛИНСКИЙ БРОД. ОДИН РЕАЛИЗАЦИЯ В АМПАТУ.</p>
-    </div>
-</div>
+
 
 <!-- Фильмы сеткой -->
 <div class="row g-4">
+    {% for film in films %}
     <!-- Фильм 1 -->
     <div class="col-12 col-sm-6 col-md-4 col-lg-3">
         <div class="movie-poster-card">
             <div class="poster-container">
-                <img src="https://upload.wikimedia.org/wikipedia/ru/1/16/%D0%98%D0%BB%D0%BB%D1%8E%D0%B7%D0%B8%D1%8F_%D0%BE%D0%B1%D0%BC%D0%B0%D0%BD%D0%B0_3.jpg" class="poster-image" alt="Иллюзия обмана 2">
+                <img src="{{ film.main_image }}" class="poster-image" alt="{{ film.title }}">
                 <div class="poster-overlay">
                     <button class="btn btn-primary btn-sm">Купить билет</button>
                 </div>
@@ -26,57 +22,14 @@
             </div>
         </div>
     </div>
-
-    <!-- Фильм 2 -->
-    <div class="col-12 col-sm-6 col-md-4 col-lg-3">
-        <div class="movie-poster-card">
-            <div class="poster-container">
-                <img src="https://upload.wikimedia.org/wikipedia/ru/1/16/%D0%98%D0%BB%D0%BB%D1%8E%D0%B7%D0%B8%D1%8F_%D0%BE%D0%B1%D0%BC%D0%B0%D0%BD%D0%B0_3.jpg" class="poster-image" alt="Ледниковый период">
-                <div class="poster-overlay">
-                    <button class="btn btn-primary btn-sm">Купить билет</button>
-                </div>
-            </div>
-            <div class="movie-info mt-2">
-                <h6 class="text-white mb-1">Ледниковый период: Курс на столкновение</h6>
-                <small class="text-muted">1 ч 45 мин</small>
-            </div>
-        </div>
+    {% empty %}
+    <div class="col-12">
+        <p class="text-white text-center">Фильмы не найдены</p>
     </div>
-
-    <!-- Фильм 3 -->
-    <div class="col-12 col-sm-6 col-md-4 col-lg-3">
-        <div class="movie-poster-card">
-            <div class="poster-container">
-                <img src="https://upload.wikimedia.org/wikipedia/ru/1/16/%D0%98%D0%BB%D0%BB%D1%8E%D0%B7%D0%B8%D1%8F_%D0%BE%D0%B1%D0%BC%D0%B0%D0%BD%D0%B0_3.jpg" class="poster-image" alt="Свадебный потром">
-                <div class="poster-overlay">
-                    <button class="btn btn-primary btn-sm">Купить билет</button>
-                </div>
-            </div>
-            <div class="movie-info mt-2">
-                <h6 class="text-white mb-1">Свадебный потром</h6>
-                <small class="text-muted">1 ч 55 мин</small>
-            </div>
-        </div>
-    </div>
-
-    <!-- Фильм 4 -->
-    <div class="col-12 col-sm-6 col-md-4 col-lg-3">
-        <div class="movie-poster-card">
-            <div class="poster-container">
-                <img src="https://upload.wikimedia.org/wikipedia/ru/1/16/%D0%98%D0%BB%D0%BB%D1%8E%D0%B7%D0%B8%D1%8F_%D0%BE%D0%B1%D0%BC%D0%B0%D0%BD%D0%B0_3.jpg" class="poster-image" alt="Стартрек">
-                <div class="poster-overlay">
-                    <button class="btn btn-primary btn-sm">Купить билет</button>
-                </div>
-            </div>
-            <div class="movie-info mt-2">
-                <h6 class="text-white mb-1">Стартрек: За пределами Вселенной</h6>
-                <small class="text-muted">2 ч 05 мин</small>
-            </div>
-        </div>
-    </div>
-
-    <!-- Добавь остальные фильмы по аналогии -->
+{% endfor %}
 </div>
+
+
 
 <style>
 .movie-poster-card {
