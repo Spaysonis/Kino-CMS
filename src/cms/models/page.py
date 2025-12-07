@@ -36,7 +36,7 @@ class Contact(models.Model):
 
 
 
-class Updates:
+class Updates(models.Model):
     CONTENT_TYPE_CHOICES = [
         ('NEWS', 'Новости'),
         ('ACTION', 'Акции'),

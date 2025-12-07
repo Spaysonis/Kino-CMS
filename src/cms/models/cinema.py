@@ -5,15 +5,18 @@ from .gallery import Gallery
 
 
 class Cinema(models.Model):
-    seo_block = models.OneToOneField(SeoBlock, on_delete=models.CASCADE)
+    seo_block = models.OneToOneField(SeoBlock, on_delete=models.CASCADE, blank=True,  # для форм
+    null=True )
     gallery = models.ManyToManyField(Gallery)
 
     title = models.CharField(max_length=100)
     description = models.TextField()
     main_image = models.ImageField()
+    conditions = models.TextField(blank=True, null=True)
     image_top_banner = models.ImageField()
     address = models.CharField(max_length=200)
     coordinates = models.CharField(max_length=255)
+
 
 
 class Hall(models.Model):

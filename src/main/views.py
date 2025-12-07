@@ -41,25 +41,22 @@ def register_view(request):
 def edit_profile_view(request):
     """РЕДАКТИРОВАНИЕ ПРОФИЛЯ"""
     if request.method == 'POST':
-        print("🟢 POST запрос получен!")
-        print("📦 Данные:", request.POST)
+
 
         form = ProfileEditForm(request.POST, instance=request.user)
 
         if form.is_valid():
             user = form.save()
-            print("✅ Данные сохранены!")
-            print(f"📝 Имя: {user.first_name}, Фамилия: {user.last_name}")
-            print(f"🏠 Адрес: {user.address}, Город: {user.city}")
+
 
             messages.success(request, 'Профиль успешно обновлен!')
             return redirect('base_page')
         else:
-            print("❌ Ошибки формы:", form.errors)
+
             messages.error(request, 'Исправьте ошибки в форме!')
     else:
         form = ProfileEditForm(instance=request.user)
-        print("🔵 GET запрос - форма создана")
+
 
     return render(request, 'main/edit_profile.html', {'form': form})
 

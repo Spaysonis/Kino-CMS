@@ -1,11 +1,16 @@
+
 from django.shortcuts import render, redirect, get_object_or_404
 
+
+from src.cms.models.cinema import Cinema
 from src.user.models import BaseUser
-from .forms import MovieForm, SeoBlockForm
+from .forms import MovieForm, SeoBlockForm, NewsForm, UserEditForm, CinemaForm
+from django.views.generic import ListView
 
-
-from .models import Movie
-
+from django.shortcuts import render
+from django_tables2 import SingleTableView
+from src.user.models import BaseUser
+from .tables import UserTable
 
 def admin(request):
     return render(request, 'cms/statistics.html', {
@@ -15,29 +20,67 @@ def admin(request):
 
 
 
-def users(request):
-    return render(request, 'cms/users.html',{
-                'active_page':'users',
-                'page_title':'Список пользователей'}
-    )
+# def users(request):
+#     table = UserTable(BaseUser.objects.all())
+#     RequestConfig(request, paginate={"per_page": 20}).configure(table)  # пагинация по 20
+#     return render(request, "users/users.html", {"table": table})
 
 
-def get_user_info(request):
-    users = BaseUser.objects.all()
+
+def cinema_list(request):
+    cinemas = Cinema.objects.all() # все кинотеатры
     context = {
-        "users": users,
-        "active_page": "users"  # ← добавь это!
+        'cinemas':cinemas
     }
-    return render(request, 'cms/users.html', context)
+    return  render(request, 'cms/cinemas.html', context=context)
+
+
+
+def cinema_create(request, pk=None):
+    if pk:
+        cinema = get_object_or_404(Cinema, pk=pk)
+    else:
+        cinema = None
+
+
+    if request.method == 'POST':
+        form = CinemaForm(request.POST, request.FILES, instance=cinema)
+        print(form.errors)
+        if form.is_valid():
+            form.save()
+            print('=')
+        return redirect('cinema_list')
+
+    else:
+        form = CinemaForm(instance=cinema)
+        return render(request, 'cms/cinema_create.html', {'form':form})
+
+
+
+
+
+
+
 
 
 
 def news(request):
+    if request.method == 'POST':
+        form = NewsForm(request.POST)
+        print(request.POST)  # ← вот здесь мы смотрим всё, что отправляет браузер
+        if form.is_valid():
+            print(form.cleaned_data['is_active'])  # True или False
+    else:
+        form = NewsForm()
+
     context = {
-        'active_page':'news',
-        'page_title':'Новости'
+        'active_page': 'news',
+        'page_title': 'Новости',
+        'form': form
     }
     return render(request, 'cms/news.html', context)
+
+
 
 def movie_edit(request):
     if request.method == 'POST':
@@ -63,3 +106,36 @@ def movie_edit(request):
     }
 
     return render(request, 'cms/movie.html', context)
+
+
+
+def edit_user(request, pk):
+
+    user = get_object_or_404(BaseUser, pk=pk) # найти в бд(BaseUser)  юзера по такому ключу
+
+    if request.method == "POST":
+        form = UserEditForm(request.POST, instance=user)
+        if form.is_valid():
+            form.save()
+            return redirect('users')
+    else:
+        form = UserEditForm(instance=user)
+
+    return render(request, 'cms/edit_user.html', {'form':form,
+                                                  'user': user})
+
+
+
+
+class UserListView(SingleTableView):
+    model = BaseUser
+    table_class = UserTable
+    template_name = 'cms/users.html'
+    paginate_by = 6
+    SingleTableView.table_pagination = False
+
+
+
+def test(request):
+    return render(request, 'cms/test.html')
+

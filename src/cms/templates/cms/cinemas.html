@@ -1,0 +1,44 @@
+{% extends "cms/statistics.html" %}
+
+{% block content %}
+
+<div class="container">
+    <h1 class="mb-4">Список кинотеатров</h1>
+
+    <div class="row">
+        <!-- Список кинотеатров -->
+        {% for cinema in cinemas %}
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                {% if cinema.main_image %}
+                    <img src="{{ cinema.main_image.url }}" class="card-img-top" alt="Логотип">
+                {% endif %}
+
+                <div class="card-body">
+                    <h5 class="card-title">{{ cinema.title }}</h5>
+                </div>
+                <div class="mt-auto d-flex justify-content-between">
+                    <a href="{% url 'cinema_edit' cinema.id %}" class="btn btn-warning btn-sm">Редактировать</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+
+
+        <!-- Карточка "Добавить" -->
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body text-center d-flex flex-column justify-content-center align-items-center">
+                    <i class="fas fa-plus fa-3x text-muted mb-3"></i>
+                    <h5 class="card-title">Добавить кинотеатр</h5>
+                    <a href="{% url 'cinema_create' %}" class="btn btn-primary mt-auto">
+                        <i class="fas fa-plus mr-2"></i> Добавить
+                    </a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}

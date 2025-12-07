@@ -1,0 +1,167 @@
+{% extends "cms/statistics.html" %}
+
+{% block content %}
+
+
+
+<form action="{% if form.instance.pk %}{% url 'cinema_edit' form.instance.pk %}{% else %}{% url 'cinema_create' %}{% endif %}" method="post" enctype="multipart/form-data">
+
+    {% csrf_token %}
+
+    <div class="p-2">
+            <div class=" col d-flex justify-content-end ">
+                <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                    <label class="btn btn-secondary active">
+                        <input type="radio" name="options" id="option1" checked> RUS
+                    </label>
+                    <label class="btn btn-secondary">
+                        <input type="radio" name="options" id="option2"> ENG
+                    </label>
+                </div>
+
+        </div>
+
+        <div class="row">
+            <div class="col-md-4">
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="inputGroup-sizing-default">Название кинотеатра</span>
+                    </div>
+                    {{ form.title }}
+<!--                    <input type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">-->
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-8">
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">Описание</span>
+                    </div>
+                    {{form.description }}
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-8">
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">Условия</span>
+                    </div>
+                    {{form.conditions}}
+                </div>
+            </div>
+        </div>
+
+
+        <div class="row">
+            <div  class="col-md-2">
+
+              <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">Логотип</span>
+                    </div>
+              </div>
+            </div>
+
+            <div class="card col-md-2" style="width: 20rem;">
+                {% if form.instance.main_image %}
+
+                <img id="previewLogo" src="{{ form.instance.main_image.url }}" class="card-img-top" alt="...">
+                 {% else %}
+                <img id="previewLogo" src="https://www.nomadfoods.com/wp-content/uploads/2018/08/placeholder-1-e1533569576673-960x960.png" class="card-img-top" alt="...">
+                {% endif %}
+            </div>
+
+            <div  class="col-md-2">
+                <button type="button"  id="uploadLogoBtn" class="btn btn-success">Загрузить</button>
+            </div>
+            {{ form.main_image }}
+
+            <div  class="col-md-2">
+               <button type="button" class="btn btn-danger">Удалить</button>
+            </div>
+        </div>
+
+
+        <div class="row">
+            <div  class="col-md-2">
+              <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">Фото верхнего баннера</span>
+                    </div>
+              </div>
+            </div>
+            <div class="card col-md-2" style="width: 20rem;">
+                {% if form.instance.image_top_banner %}
+
+                <img id="previewBanner" src="{{ form.instance.image_top_banner.url }}" class="card-img-top" alt="...">
+                {% else %}
+                <img id='previewBanner' src="https://www.nomadfoods.com/wp-content/uploads/2018/08/placeholder-1-e1533569576673-960x960.png" class="card-img-top" alt="...">
+                {% endif %}
+            </div>
+
+            <div  class="col-md-2 d-flex align-items-center">
+                <button type="button" id="uploadBannerBtn" class="btn btn-success">Загрузить</button>
+            </div>
+            {{ form.image_top_banner }}
+
+            <div  class="col-md-2 d-flex align-items-center">
+               <button type="button" class="btn btn-danger">Удалить</button>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-2">
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">Размер: 1000х190</span>
+                    </div>
+              </div>
+
+
+            </div>
+
+        </div>
+
+
+
+    </div>
+<div class="row mt-4">
+    <div class="col-md-12 d-flex justify-content-end">
+        <button type="submit" class="btn btn-primary">
+        {% if form.instance.pk %}Сохранить изменения{% else %}Создать{% endif %}
+</button>
+    </div>
+</div>
+
+</form>
+
+
+<script>
+    const fileLogo = document.getElementById('id_main_image');
+    const fileBanner = document.getElementById('id_image_top_banner');
+
+    const previewLogo = document.getElementById('previewLogo');
+    const previewBanner = document.getElementById('previewBanner');
+
+    document.getElementById('uploadLogoBtn').onclick = () => fileLogo.click();
+    document.getElementById('uploadBannerBtn').onclick = () => fileBanner.click();
+
+    fileLogo.addEventListener('change', () => {
+        const file = fileLogo.files[0];
+        if (file) previewLogo.src = URL.createObjectURL(file);
+    });
+
+    fileBanner.addEventListener('change', () => {
+        const file = fileBanner.files[0];
+        if (file) previewBanner.src = URL.createObjectURL(file);
+    });
+
+
+</script>
+
+
+{% endblock%}

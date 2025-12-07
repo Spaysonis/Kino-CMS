@@ -56,5 +56,8 @@ class ProfileEditForm(forms.ModelForm):
             }),
             'language': forms.Select(attrs={
                 'class': 'form-control'
+            }),'card_num': forms.Select(attrs={
+                'class': 'form-control',
+                'placeholder': 'Введите номер карты'
             }),
         }
