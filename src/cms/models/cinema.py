@@ -7,7 +7,7 @@ from .gallery import Gallery
 class Cinema(models.Model):
     seo_block = models.OneToOneField(SeoBlock, on_delete=models.CASCADE, blank=True,  # для форм
     null=True )
-    gallery = models.ManyToManyField(Gallery)
+    gallery = models.ManyToManyField(Gallery, blank=True)
 
     title = models.CharField(max_length=100)
     description = models.TextField()

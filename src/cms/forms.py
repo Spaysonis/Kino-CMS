@@ -69,7 +69,7 @@ class CinemaForm(forms.ModelForm):
                 'class':'d-none',
 
 
-            })
+            }),
         }
 
 

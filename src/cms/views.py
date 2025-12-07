@@ -1,15 +1,20 @@
-
+from .models import Hall
+from src.cms.tables import HallTabel
+from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 
 
 from src.cms.models.cinema import Cinema
-from src.user.models import BaseUser
+
 from .forms import MovieForm, SeoBlockForm, NewsForm, UserEditForm, CinemaForm
+from .models import Gallery
+
 from django.views.generic import ListView
 
 from django.shortcuts import render
 from django_tables2 import SingleTableView
 from src.user.models import BaseUser
+
 from .tables import UserTable
 
 def admin(request):
@@ -27,6 +32,14 @@ def admin(request):
 
 
 
+def upload_gallery_image(request):
+    if request.method == 'POST' and request.FILES.get('image'):
+        img = Gallery.objects.create(image=request.FILES['image'])
+        return JsonResponse({'id':img.id, 'url':img.image.url})
+    return JsonResponse({'error':'error!'}, status=400)
+
+
+
 def cinema_list(request):
     cinemas = Cinema.objects.all() # все кинотеатры
     context = {
@@ -37,6 +50,7 @@ def cinema_list(request):
 
 
 def cinema_create(request, pk=None):
+
     if pk:
         cinema = get_object_or_404(Cinema, pk=pk)
     else:
@@ -48,15 +62,30 @@ def cinema_create(request, pk=None):
         print(form.errors)
         if form.is_valid():
             form.save()
+
             print('=')
         return redirect('cinema_list')
 
     else:
         form = CinemaForm(instance=cinema)
-        return render(request, 'cms/cinema_create.html', {'form':form})
+
+    table = HallTabel(Hall.objects.all())
+    context = {
+        'form':form,
+        'cinema':cinema,
+        'image_num': [1,2,3,4,5],
+        'hall_table': table,
+    }
+    return render(request, 'cms/cinema_create.html', context)
 
 
+def cinema_delete(request, pk):
+    cinema = get_object_or_404(Cinema, pk=pk)
 
+    if request.method == 'POST':
+        cinema.delete()
+        return redirect('cinema_list')
+    return render(request, 'cms/cinemas.html')
 
 
 

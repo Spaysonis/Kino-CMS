@@ -1,4 +1,5 @@
 {% extends "cms/statistics.html" %}
+{% load django_tables2 %}
 
 {% block content %}
 
@@ -113,42 +114,85 @@
             </div>
         </div>
 
+
+<!--Болки галерея картинок &#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;-->
         <div class="row">
             <div class="col-md-2">
                 <div class="input-group mb-3">
                     <div class="input-group-prepend">
-                        <span class="input-group-text">Размер: 1000х190</span>
+                        <span class="input-group-text">Галерея картинок:</span>
                     </div>
-              </div>
+                </div>
+            </div>
+        </div>
 
-
+        <div class="row">
+            <div class="col-md-2 ">
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text ">Размер: 1000х190</span>
+                    </div>
+                </div>
             </div>
 
+            <div class="col-md-10">
+                <div class="row">
+                    {% for i in image_num %}
+                    <div class="col-md-2">
+
+                        <div  class="d-flex align-items-center ">
+                            <button type="button" class="btn btn-danger w-100 ">Удалить</button>
+                        </div>
+                        <img id='previewBanner' src="https://www.nomadfoods.com/wp-content/uploads/2018/08/placeholder-1-e1533569576673-960x960.png" class="card-img-top" alt="...">
+                        <div  class="d-flex align-items-center ">
+                            <button type="button" id="uploadBannerBtn" class="btn btn-success  w-100">Загрузить</button>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+<!--Закрыл блоки галерея картинок &#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;-->
+
+
+        <div class="text-center mt-5">
+            <h1>Список залов</h1>
+        </div>
+
+        <div class="card-body ml-5">
+        {% render_table hall_table %}
         </div>
 
 
-
+        <div class="row mt-4">
+            <div class="col-md-12 d-flex justify-content-center mt-5">
+                <button type="submit" class="btn btn-primary">
+                    {% if form.instance.pk %}Сохранить изменения{% else %}Создать{% endif %}
+                </button>
+            </div>
+        </div>
     </div>
-<div class="row mt-4">
-    <div class="col-md-12 d-flex justify-content-end">
-        <button type="submit" class="btn btn-primary">
-        {% if form.instance.pk %}Сохранить изменения{% else %}Создать{% endif %}
-</button>
-    </div>
-</div>
-
 </form>
 
 
+
 <script>
+
+
+
+
     const fileLogo = document.getElementById('id_main_image');
     const fileBanner = document.getElementById('id_image_top_banner');
+
+
 
     const previewLogo = document.getElementById('previewLogo');
     const previewBanner = document.getElementById('previewBanner');
 
     document.getElementById('uploadLogoBtn').onclick = () => fileLogo.click();
     document.getElementById('uploadBannerBtn').onclick = () => fileBanner.click();
+
 
     fileLogo.addEventListener('change', () => {
         const file = fileLogo.files[0];
@@ -159,6 +203,10 @@
         const file = fileBanner.files[0];
         if (file) previewBanner.src = URL.createObjectURL(file);
     });
+
+
+
+
 
 
 </script>

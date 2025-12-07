@@ -17,9 +17,20 @@
                 <div class="card-body">
                     <h5 class="card-title">{{ cinema.title }}</h5>
                 </div>
-                <div class="mt-auto d-flex justify-content-between">
+
+
+                <div class="mt-auto d-flex justify-content-between ml-3 mb-2">
                     <a href="{% url 'cinema_edit' cinema.id %}" class="btn btn-warning btn-sm">Редактировать</a>
+
+                    <form action="{% url 'cinema_delete' cinema.id %}" method="post" style="display:inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger btn-sm mr-3">Удалить</button>
+                    </form>
                 </div>
+
+
+
+
             </div>
         </div>
         {% endfor %}

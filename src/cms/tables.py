@@ -1,5 +1,21 @@
 import django_tables2 as tables
 from src.user.models import BaseUser
+from src.cms.models.cinema import Hall
+
+
+
+class HallTabel(tables.Table):
+    title = tables.Column(verbose_name='Название')
+    date_create = tables.Column(verbose_name='Дата создания')
+
+    class Meta:
+        orderable = False
+
+        model = Hall
+        template_name = "django_tables2/bootstrap4.html"
+        fields = ('title', 'date_create')
+        attrs = {"class": "table table-bordered table-primary"}
+
 
 
 

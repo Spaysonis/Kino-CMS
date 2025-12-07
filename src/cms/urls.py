@@ -17,6 +17,10 @@ urlpatterns = [
     path('cinemas/', views.cinema_list, name='cinema_list'),
     path('cinemas/add', views.cinema_create, name='cinema_create'),
     path('cinemas/<int:pk>/edit/', views.cinema_create, name='cinema_edit'),
+    path('cinema/<int:pk>/delete/', views.cinema_delete, name='cinema_delete'),
+
+    path('cinema/upload_gallery/', views.upload_gallery_image, name='upload_gallery_image') ,
+
 
 
     path('users/<int:pk>/edit/', views.edit_user, name='edit_user'),
