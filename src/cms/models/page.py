@@ -1,3 +1,5 @@
+from django.contrib.contenttypes.models import ContentType
+from django.contrib.contenttypes.fields import GenericForeignKey
 from django.db import models
 from .gallery import Gallery
 from phonenumber_field.modelfields import PhoneNumberField
@@ -8,6 +10,12 @@ class SeoBlock(models.Model):
     title = models.CharField(max_length=200)
     key_words = models.CharField(max_length=200)
     description = models.TextField()
+
+
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE, null=True)
+    object_id = models.PositiveIntegerField(null=True, blank=True)
+    content_obj = GenericForeignKey()
+
 
 
 class Page(models.Model):

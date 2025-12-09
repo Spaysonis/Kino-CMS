@@ -1,5 +1,5 @@
 
-
+from django.contrib.contenttypes.forms import generic_inlineformset_factory
 from django import forms
 from .models import Movie, SeoBlock, Updates
 
@@ -31,6 +31,41 @@ class UserEditForm(forms.ModelForm):
                                                      'type':'date'}),
 
         }
+
+
+
+
+class SeoBlockForm(forms.ModelForm):
+
+    class Meta:
+        model = SeoBlock
+        fields = "__all__"
+
+        widgets = {
+            'url':forms.URLInput(attrs={
+                'class':'form-control',
+
+            }),
+            'title':forms.TextInput(attrs={
+                'class':'form-control'
+            }),
+            'key_words':forms.TextInput(attrs={
+                'class':'form-control'
+            }),
+
+            'description':forms.Textarea(attrs={
+                'class':'form-control',
+                'aria-label': 'With textarea',
+                'rows': 2,
+            })
+        }
+
+SeoBlockFormSet = generic_inlineformset_factory(
+    SeoBlock,
+    form=SeoBlockForm,
+    extra=1,
+    can_delete=False
+)
 
 
 class CinemaForm(forms.ModelForm):
@@ -70,6 +105,8 @@ class CinemaForm(forms.ModelForm):
 
 
             }),
+
+
         }
 
 

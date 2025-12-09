@@ -41,6 +41,7 @@
                         <span class="input-group-text">Описание</span>
                     </div>
                     {{form.description }}
+
                 </div>
             </div>
         </div>
@@ -165,6 +166,48 @@
         </div>
 
 
+
+        <div class="row mt-4">
+            <div class="col-md-12 d-flex justify-content-center mt-5">
+
+                <button type="submit" class="btn btn-primary">
+                    Создать зал
+                </button>
+            </div>
+        </div>
+
+
+        <div class="row mt-5">
+            <div class="col-md-12">
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">SEO Блок:</span>
+                    </div>
+                    <div class="d-flex flex-column align-items-center w-100">
+                        {% for f in seo_form_set %}
+                        <div class="mb-2 w-50 text-center">
+                            <label class="form-label d-block">{{ f.url.label }}</label>
+                            {{ f.url }}
+                        </div>
+                        <div class="mb-2 w-50 text-center">
+                            <label class="form-label d-block">{{ f.title.label }}</label>
+                            {{ f.title }}
+                        </div>
+                        <div class="mb-2 w-50 text-center">
+                            <label class="form-label d-block">{{ f.key_words.label }}</label>
+                            {{ f.key_words }}
+                        </div>
+                        <div class="mb-2 w-50 text-center">
+                            <label class="form-label d-block">{{ f.description.label }}</label>
+                            {{ f.description}}
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
         <div class="row mt-4">
             <div class="col-md-12 d-flex justify-content-center mt-5">
                 <button type="submit" class="btn btn-primary">
@@ -172,7 +215,18 @@
                 </button>
             </div>
         </div>
+
     </div>
+
+
+
+
+
+
+
+
+
+
 </form>
 
 

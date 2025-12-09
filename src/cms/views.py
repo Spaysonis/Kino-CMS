@@ -17,6 +17,9 @@ from src.user.models import BaseUser
 
 from .tables import UserTable
 
+
+
+from src.cms.forms import SeoBlockFormSet
 def admin(request):
     return render(request, 'cms/statistics.html', {
         'active_page': 'statistics',
@@ -59,15 +62,21 @@ def cinema_create(request, pk=None):
 
     if request.method == 'POST':
         form = CinemaForm(request.POST, request.FILES, instance=cinema)
+        seo_formset = SeoBlockFormSet(request.POST, instance=cinema)
         print(form.errors)
-        if form.is_valid():
-            form.save()
+        print(seo_formset.errors)
+        if form.is_valid() and seo_formset.is_valid():
+            cinema = form.save()
+
+            seo_formset.instance = cinema
+            seo_formset.save()
 
             print('=')
-        return redirect('cinema_list')
+            return redirect('cinema_list')
 
     else:
         form = CinemaForm(instance=cinema)
+        seo_formset = SeoBlockFormSet(instance=cinema)
 
     table = HallTabel(Hall.objects.all())
     context = {
@@ -75,6 +84,8 @@ def cinema_create(request, pk=None):
         'cinema':cinema,
         'image_num': [1,2,3,4,5],
         'hall_table': table,
+        'seo_form_set':seo_formset
+
     }
     return render(request, 'cms/cinema_create.html', context)
 

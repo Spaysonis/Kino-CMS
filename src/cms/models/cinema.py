@@ -1,12 +1,11 @@
 from django.db import models
 from .page import SeoBlock
 from .gallery import Gallery
-
+from django.contrib.contenttypes.fields import GenericRelation
 
 
 class Cinema(models.Model):
-    seo_block = models.OneToOneField(SeoBlock, on_delete=models.CASCADE, blank=True,  # для форм
-    null=True )
+    seo_block = GenericRelation(SeoBlock)
     gallery = models.ManyToManyField(Gallery, blank=True)
 
     title = models.CharField(max_length=100)
