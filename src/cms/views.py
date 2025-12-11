@@ -19,7 +19,6 @@ from .tables import UserTable
 
 
 
-from src.cms.forms import SeoBlockFormSet
 def admin(request):
     return render(request, 'cms/statistics.html', {
         'active_page': 'statistics',
@@ -52,40 +51,52 @@ def cinema_list(request):
 
 
 
-def cinema_create(request, pk=None):
-
-    if pk:
-        cinema = get_object_or_404(Cinema, pk=pk)
-    else:
-        cinema = None
+def cinema_create(request):
 
 
     if request.method == 'POST':
-        form = CinemaForm(request.POST, request.FILES, instance=cinema)
-        seo_formset = SeoBlockFormSet(request.POST, instance=cinema)
-        print(form.errors)
-        print(seo_formset.errors)
-        if form.is_valid() and seo_formset.is_valid():
-            cinema = form.save()
+        cinema_form = CinemaForm(request.POST, request.FILES)
+        seo_form = SeoBlockForm(request.POST)
+        # seo_formset = SeoBlockFormSet(request.POST, instance=cinema)
 
-            seo_formset.instance = cinema
-            seo_formset.save()
+
+        print('cinema' , cinema_form.errors)
+        print('Cinema form valid:', cinema_form.is_valid())
+        print('SEO form valid:', seo_form.is_valid())
+
+        print("POST данные:", request.POST)  # Что приходит?
+        print("Cinema title from POST:", request.POST.get('title'))
+        print('*'* 8)
+        print("SEO title from POST:", request.POST.get('title'))
+
+
+        if cinema_form.is_valid() and seo_form.is_valid():
+            print("Cinema title to save:", cinema_form.cleaned_data['title'])
+            print("SEO title to save:", seo_form.cleaned_data['title'])
+
+            seo = seo_form.save()
+            cinema = cinema_form.save(commit=False)
+
+            cinema.seo_block = seo
+            cinema.save()
+
+
 
             print('=')
             return redirect('cinema_list')
 
     else:
-        form = CinemaForm(instance=cinema)
-        seo_formset = SeoBlockFormSet(instance=cinema)
+        cinema_form = CinemaForm()
+        seo_form = SeoBlockForm()
 
-    table = HallTabel(Hall.objects.all())
+    hall_table = HallTabel(Hall.objects.none())
+
     context = {
-        'form':form,
-        'cinema':cinema,
-        'image_num': [1,2,3,4,5],
-        'hall_table': table,
-        'seo_form_set':seo_formset
+        'cinema_form':cinema_form,
+        'hall_table':hall_table,
+        'seo_form':seo_form,
 
+        'image_num': [1,2,3,4,5],
     }
     return render(request, 'cms/cinema_create.html', context)
 

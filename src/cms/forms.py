@@ -44,28 +44,35 @@ class SeoBlockForm(forms.ModelForm):
         widgets = {
             'url':forms.URLInput(attrs={
                 'class':'form-control',
+                'placeholder':'Url'
 
             }),
             'title':forms.TextInput(attrs={
-                'class':'form-control'
+                'class':'form-control',
+                'placeholder':'Title'
             }),
             'key_words':forms.TextInput(attrs={
-                'class':'form-control'
+                'class':'form-control',
+                'placeholder': 'Words'
             }),
 
             'description':forms.Textarea(attrs={
                 'class':'form-control',
                 'aria-label': 'With textarea',
                 'rows': 2,
+                'placeholder': 'Description'
+
             })
         }
 
-SeoBlockFormSet = generic_inlineformset_factory(
-    SeoBlock,
-    form=SeoBlockForm,
-    extra=1,
-    can_delete=False
-)
+
+        labels = {
+            'url':'URL:',
+            'title':'Title:',
+            'key_words':'Word:',
+            'description':'Description:'
+        }
+
 
 
 class CinemaForm(forms.ModelForm):
@@ -149,30 +156,6 @@ class MovieForm(forms.ModelForm):
         }
 
 
-class SeoBlockForm(forms.ModelForm):
-    class Meta:
-        model = SeoBlock
-        fields = ['url', 'title', 'key_words', 'description']
-
-        widgets = {
-            'url': forms.URLInput(attrs={
-                'class': 'form-control border-0 bg-dark text-light',
-                'placeholder': 'SEO URL'
-            }),
-            'title': forms.TextInput(attrs={
-                'class': 'form-control border-0 bg-dark text-light',
-                'placeholder': 'SEO Title'
-            }),
-            'key_words': forms.TextInput(attrs={
-                'class': 'form-control border-0 bg-dark text-light',
-                'placeholder': 'Ключевые слова через запятую'
-            }),
-            'description': forms.Textarea(attrs={
-                'class': 'form-control border-0 bg-dark text-light',
-                'placeholder': 'Мета-описание',
-                'rows': 3
-            }),
-        }
 
 
 

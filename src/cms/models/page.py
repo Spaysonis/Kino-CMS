@@ -12,9 +12,7 @@ class SeoBlock(models.Model):
     description = models.TextField()
 
 
-    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE, null=True)
-    object_id = models.PositiveIntegerField(null=True, blank=True)
-    content_obj = GenericForeignKey()
+
 
 
 

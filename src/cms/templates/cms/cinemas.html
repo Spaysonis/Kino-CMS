@@ -2,13 +2,15 @@
 
 {% block content %}
 
-<div class="container">
-    <h1 class="mb-4">Список кинотеатров</h1>
+{% if cinemas %}
 
-    <div class="row">
-        <!-- Список кинотеатров -->
-        {% for cinema in cinemas %}
+    {% for cinema in cinemas %}
         <div class="col-md-4 mb-4">
+
+            {{ cinema.title}}
+            {{ cinema.title}}
+            {{ cinema.title}}
+            {{ cinema.title}}
             <div class="card h-100">
                 {% if cinema.main_image %}
                     <img src="{{ cinema.main_image.url }}" class="card-img-top" alt="Логотип">
@@ -16,8 +18,8 @@
 
                 <div class="card-body">
                     <h5 class="card-title">{{ cinema.title }}</h5>
+                    <h5 class="card-title">{{ cinema.description }}</h5>
                 </div>
-
 
                 <div class="mt-auto d-flex justify-content-between ml-3 mb-2">
                     <a href="{% url 'cinema_edit' cinema.id %}" class="btn btn-warning btn-sm">Редактировать</a>
@@ -27,16 +29,15 @@
                         <button type="submit" class="btn btn-danger btn-sm mr-3">Удалить</button>
                     </form>
                 </div>
-
-
-
-
             </div>
         </div>
-        {% endfor %}
+    {% endfor %}
+
+{% endif %}
 
 
-        <!-- Карточка "Добавить" -->
+
+
         <div class="col-md-4 mb-4">
             <div class="card h-100">
                 <div class="card-body text-center d-flex flex-column justify-content-center align-items-center">
@@ -48,8 +49,5 @@
                 </div>
             </div>
         </div>
-
-    </div>
-</div>
 
 {% endblock %}
