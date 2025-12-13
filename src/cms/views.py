@@ -53,26 +53,30 @@ def cinema_list(request):
 
 def cinema_create(request):
 
+    """
+    Это промежуточная вьюха которая при коткрытии стрн создает киношку и
+    :param request:
+    :return:
+    """
 
     if request.method == 'POST':
-        cinema_form = CinemaForm(request.POST, request.FILES)
-        seo_form = SeoBlockForm(request.POST)
+        cinema_form = CinemaForm(request.POST, request.FILES, prefix='cinema_form')
+        seo_form = SeoBlockForm(request.POST, prefix='seo_form')
         # seo_formset = SeoBlockFormSet(request.POST, instance=cinema)
 
-
-        print('cinema' , cinema_form.errors)
-        print('Cinema form valid:', cinema_form.is_valid())
-        print('SEO form valid:', seo_form.is_valid())
-
-        print("POST данные:", request.POST)  # Что приходит?
-        print("Cinema title from POST:", request.POST.get('title'))
-        print('*'* 8)
-        print("SEO title from POST:", request.POST.get('title'))
+        #
+        # print('cinema' , cinema_form.errors)
+        # print('Cinema  valid:', cinema_form.is_valid())
+        # print('SEO  valid:', seo_form.is_valid())
+        # print("POST данные:", request.POST)
+        # print("Cinema title ", request.POST.get('title'))
+        # print('*'* 8)
+        # print("SEO title ", request.POST.get('title'))
 
 
         if cinema_form.is_valid() and seo_form.is_valid():
-            print("Cinema title to save:", cinema_form.cleaned_data['title'])
-            print("SEO title to save:", seo_form.cleaned_data['title'])
+            # print("Cinema title to save:", cinema_form.cleaned_data['title'])
+            # print("SEO title to save:", seo_form.cleaned_data['title'])
 
             seo = seo_form.save()
             cinema = cinema_form.save(commit=False)
@@ -80,14 +84,12 @@ def cinema_create(request):
             cinema.seo_block = seo
             cinema.save()
 
-
-
             print('=')
             return redirect('cinema_list')
 
     else:
-        cinema_form = CinemaForm()
-        seo_form = SeoBlockForm()
+        cinema_form = CinemaForm(prefix='cinema_form')
+        seo_form = SeoBlockForm(prefix='seo_form')
 
     hall_table = HallTabel(Hall.objects.none())
 
@@ -99,6 +101,34 @@ def cinema_create(request):
         'image_num': [1,2,3,4,5],
     }
     return render(request, 'cms/cinema_create.html', context)
+
+
+def cinema_update(request, pk):
+
+    cinema = get_object_or_404(Cinema, pk=pk)
+
+    if request.method == 'POST':
+        cinema_form = CinemaForm(request.POST, request.FILES, instance=cinema, prefix='cinema_form')
+        seo_form = SeoBlockForm(request.POST,  instance=cinema.seo_block, prefix='seo_form')
+
+        if cinema_form.is_valid() and seo_form.is_valid():
+            cinema_form.save()
+            seo_form.save()
+            return redirect('cinema_list')
+
+    else:
+        cinema_form = CinemaForm(instance=cinema, prefix='cinema_form')
+        seo_form = SeoBlockForm(instance=cinema.seo_block, prefix='seo_form')
+
+    hall_table = HallTabel(Hall.objects.filter(cinema=cinema))
+    context = {
+        'cinema_form': cinema_form,
+        'seo_form': seo_form,
+        'hall_table': hall_table,
+        'image_num': [1, 2, 3, 4, 5],
+    }
+    return render(request, 'cms/cinema_update.html', context=context)
+
 
 
 def cinema_delete(request, pk):

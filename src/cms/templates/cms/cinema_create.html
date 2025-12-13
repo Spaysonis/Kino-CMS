@@ -5,7 +5,7 @@
 
 
 
-<form action="{% if form.instance.pk %}{% url 'cinema_edit' form.instance.pk %}{% else %}{% url 'cinema_create' %}{% endif %}" method="post" enctype="multipart/form-data">
+<form action="{% url 'cinema_create' %}" method="post" enctype="multipart/form-data">
 
     {% csrf_token %}
 
@@ -69,51 +69,47 @@
             </div>
 
             <div class="card col-md-2" style="width: 20rem;">
-                {% if cinema_form.instance.main_image %}
-
-                <img id="previewLogo" src="{{ form.instance.main_image.url }}" class="card-img-top" alt="...">
-                 {% else %}
-                <img id="previewLogo" src="https://www.nomadfoods.com/wp-content/uploads/2018/08/placeholder-1-e1533569576673-960x960.png" class="card-img-top" alt="...">
-                {% endif %}
+                <img id="mainImagePreview" src="https://www.nomadfoods.com/wp-content/uploads/2018/08/placeholder-1-e1533569576673-960x960.png"  class="card-img-top"  alt="">
             </div>
+
 
             <div  class="col-md-2">
                 <button type="button"  id="uploadLogoBtn" class="btn btn-success">Загрузить</button>
             </div>
+
+            <div  class="col-md-2">
+               <button type="button" id="deleteLogoBtn" class="btn btn-danger">Удалить</button>
+            </div>
             {{ cinema_form.main_image }}
-
-            <div  class="col-md-2">
-               <button type="button" class="btn btn-danger">Удалить</button>
-            </div>
         </div>
 
 
-        <div class="row">
-            <div  class="col-md-2">
-              <div class="input-group mb-3">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text">Фото верхнего баннера</span>
-                    </div>
-              </div>
-            </div>
-            <div class="card col-md-2" style="width: 20rem;">
-                {% if cinema_form.instance.image_top_banner %}
-
-                <img id="previewBanner" src="{{ form.instance.image_top_banner.url }}" class="card-img-top" alt="...">
-                {% else %}
-                <img id='previewBanner' src="https://www.nomadfoods.com/wp-content/uploads/2018/08/placeholder-1-e1533569576673-960x960.png" class="card-img-top" alt="...">
-                {% endif %}
-            </div>
-
-            <div  class="col-md-2 d-flex align-items-center">
-                <button type="button" id="uploadBannerBtn" class="btn btn-success">Загрузить</button>
-            </div>
-            {{ cinema_form.image_top_banner }}
-
-            <div  class="col-md-2 d-flex align-items-center">
-               <button type="button" class="btn btn-danger">Удалить</button>
+       <div class="row">
+    <div class="col-md-2">
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text">Фото верхнего баннера</span>
             </div>
         </div>
+    </div>
+
+    <div class="card col-md-2" style="width: 20rem;">
+        <img id="previewBanner" src="https://www.nomadfoods.com/wp-content/uploads/2018/08/placeholder-1-e1533569576673-960x960.png" class="card-img-top" alt="">
+    </div>
+
+    <div class="col-md-2 d-flex align-items-center">
+        <button type="button" id="uploadBannerBtn" class="btn btn-success">Загрузить</button>
+    </div>
+
+    {{ cinema_form.image_top_banner }} <!-- Django вставит скрытый FileInput -->
+
+    <div class="col-md-2 d-flex align-items-center">
+        <button type="button" id="deleteBannerBtn" class="btn btn-danger">Удалить</button>
+    </div>
+</div>
+
+
+
 
 
 <!--Болки галерея картинок &#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;-->
@@ -247,40 +243,42 @@
 
 </form>
 
-
-
 <script>
+document.addEventListener("DOMContentLoaded", function() {
+    // ===== ЛОГОТИП =====
+    const fileInputLogo = document.getElementById("id_cinema_form-main_image");
+    const previewLogo = document.getElementById("mainImagePreview");
+    const uploadLogoBtn = document.getElementById("uploadLogoBtn");
+    const deleteLogoBtn = document.getElementById("deleteLogoBtn");
 
+    uploadLogoBtn.onclick = () => fileInputLogo.click();
+    fileInputLogo.onchange = () => {
+        const file = fileInputLogo.files[0];
+        if (!file) return;
+        previewLogo.src = URL.createObjectURL(file);
+    };
+    deleteLogoBtn.onclick = () => {
+        fileInputLogo.value = "";
+        previewLogo.src = "https://www.nomadfoods.com/wp-content/uploads/2018/08/placeholder-1-e1533569576673-960x960.png";
+    };
 
+    // ===== БАННЕР =====
+    const fileInputBanner = document.getElementById("id_cinema_form-image_top_banner");
+    const previewBanner = document.getElementById("previewBanner");
+    const uploadBannerBtn = document.getElementById("uploadBannerBtn");
+    const deleteBannerBtn = document.getElementById("deleteBannerBtn");
 
-
-    const fileLogo = document.getElementById('id_main_image');
-    const fileBanner = document.getElementById('id_image_top_banner');
-
-
-
-    const previewLogo = document.getElementById('previewLogo');
-    const previewBanner = document.getElementById('previewBanner');
-
-    document.getElementById('uploadLogoBtn').onclick = () => fileLogo.click();
-    document.getElementById('uploadBannerBtn').onclick = () => fileBanner.click();
-
-
-    fileLogo.addEventListener('change', () => {
-        const file = fileLogo.files[0];
-        if (file) previewLogo.src = URL.createObjectURL(file);
-    });
-
-    fileBanner.addEventListener('change', () => {
-        const file = fileBanner.files[0];
-        if (file) previewBanner.src = URL.createObjectURL(file);
-    });
-
-
-
-
-
-
+    uploadBannerBtn.onclick = () => fileInputBanner.click();
+    fileInputBanner.onchange = () => {
+        const file = fileInputBanner.files[0];
+        if (!file) return;
+        previewBanner.src = URL.createObjectURL(file);
+    };
+    deleteBannerBtn.onclick = () => {
+        fileInputBanner.value = "";
+        previewBanner.src = "https://www.nomadfoods.com/wp-content/uploads/2018/08/placeholder-1-e1533569576673-960x960.png";
+    };
+});
 </script>
 
 

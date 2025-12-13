@@ -2,7 +2,7 @@
 
 from django.conf import settings
 from django.conf.urls.static import static
-from django.urls import path
+from django.urls import path, include
 
 from . import views
 
@@ -14,10 +14,17 @@ urlpatterns = [
     path('users/', views.UserListView.as_view(), name='users'),
     path('news/', views.news, name='news'),
     path('movie/', views.movie_edit, name='movie'),
+
     path('cinemas/', views.cinema_list, name='cinema_list'),
     path('cinemas/add', views.cinema_create, name='cinema_create'),
-    path('cinemas/<int:pk>/edit/', views.cinema_create, name='cinema_edit'),
+    path('cinemas/<int:pk>/update/', views.cinema_update, name='cinema_update'),
     path('cinema/<int:pk>/delete/', views.cinema_delete, name='cinema_delete'),
+
+    path('ajax/', include('src.cms.urls_ajax')),
+
+
+
+
 
     path('cinema/upload_gallery/', views.upload_gallery_image, name='upload_gallery_image') ,
 

@@ -5,7 +5,7 @@
 
 
 
-<form action="{% if form.instance.pk %}{% url 'cinema_edit' form.instance.pk %}{% else %}{% url 'cinema_create' %}{% endif %}" method="post" enctype="multipart/form-data">
+<form action="{% url 'cinema_update' cinema_form.instance.pk %}" method="post" enctype="multipart/form-data">
 
     {% csrf_token %}
 
@@ -28,7 +28,7 @@
                     <div class="input-group-prepend">
                         <span class="input-group-text" id="inputGroup-sizing-default">Название кинотеатра</span>
                     </div>
-                    {{ form.title }}
+                    {{ cinema_form.title }}
 <!--                    <input type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">-->
                 </div>
             </div>
@@ -40,7 +40,7 @@
                     <div class="input-group-prepend">
                         <span class="input-group-text">Описание</span>
                     </div>
-                    {{form.description }}
+                    {{cinema_form.description }}
 
                 </div>
             </div>
@@ -52,7 +52,7 @@
                     <div class="input-group-prepend">
                         <span class="input-group-text">Условия</span>
                     </div>
-                    {{form.conditions}}
+                    {{cinema_form.conditions}}
                 </div>
             </div>
         </div>
@@ -68,22 +68,16 @@
               </div>
             </div>
 
+
             <div class="card col-md-2" style="width: 20rem;">
-                {% if form.instance.main_image %}
 
-                <img id="previewLogo" src="{{ form.instance.main_image.url }}" class="card-img-top" alt="...">
-                 {% else %}
-                <img id="previewLogo" src="https://www.nomadfoods.com/wp-content/uploads/2018/08/placeholder-1-e1533569576673-960x960.png" class="card-img-top" alt="...">
-                {% endif %}
+                <img id="mainImagePreview" src="{{ cinema_form.instance.main_image.urls }}" class="card-img-top" alt="...">
             </div>
-
             <div  class="col-md-2">
-                <button type="button"  id="uploadLogoBtn" class="btn btn-success">Загрузить</button>
+                <button type="button"  id="uploadMainImage" class="btn btn-success">Загрузить</button>
             </div>
-            {{ form.main_image }}
-
             <div  class="col-md-2">
-               <button type="button" class="btn btn-danger">Удалить</button>
+               <button type="button" id="deleteMainImage" class="btn btn-danger">Удалить</button>
             </div>
         </div>
 
@@ -97,9 +91,9 @@
               </div>
             </div>
             <div class="card col-md-2" style="width: 20rem;">
-                {% if form.instance.image_top_banner %}
+                {% if cinema_form.instance.image_top_banner %}
 
-                <img id="previewBanner" src="{{ form.instance.image_top_banner.url }}" class="card-img-top" alt="...">
+                <img id="previewBanner" src="{{ cinema_form.instance.image_top_banner.url }}" class="card-img-top" alt="...">
                 {% else %}
                 <img id='previewBanner' src="https://www.nomadfoods.com/wp-content/uploads/2018/08/placeholder-1-e1533569576673-960x960.png" class="card-img-top" alt="...">
                 {% endif %}
@@ -108,7 +102,7 @@
             <div  class="col-md-2 d-flex align-items-center">
                 <button type="button" id="uploadBannerBtn" class="btn btn-success">Загрузить</button>
             </div>
-            {{ form.image_top_banner }}
+            {{ cinema_form.image_top_banner }}
 
             <div  class="col-md-2 d-flex align-items-center">
                <button type="button" class="btn btn-danger">Удалить</button>
@@ -185,26 +179,41 @@
                     </div>
                     <div class="d-flex flex-column align-items-center w-100">
 
+                        <div class="mb-2 w-50 text-center">
+                            {{ seo_form.url.placeholder }}
+                            <div class="mb-2 w-100 d-flex align-items-center justify-content-center">
+                                <span class="me-2 mr-2 text-muted">{{ seo_form.url.label }}</span>
 
-                        {{ seo_form_set.management_form }}
-                        {% for f in seo_form_set %}
-                        <div class="mb-2 w-50 text-center">
-                            <label class="form-label d-block">{{ f.url.label }}</label>
-                            {{ f.url }}
+
+                                {{ seo_form.url }}
+                            </div>
                         </div>
+
                         <div class="mb-2 w-50 text-center">
-                            <label class="form-label d-block">{{ f.title.label }}</label>
-                            {{ f.title }}
+                            {{ seo_form.title.placeholder }}
+                            <div class="mb-2 w-100 d-flex align-items-center justify-content-center">
+                                <span class="me-2 mr-2 text-muted">{{seo_form.title.label}}</span>
+                                {{ seo_form.title }}
+                            </div>
                         </div>
+
+
                         <div class="mb-2 w-50 text-center">
-                            <label class="form-label d-block">{{ f.key_words.label }}</label>
-                            {{ f.key_words }}
+                            {{ seo_form.key_words.placeholder }}
+                            <div class="mb-2 w-100 d-flex align-items-center justify-content-center">
+                                <span class="me-2 mr-2 text-muted">{{seo_form.key_words.label}}</span>
+                                {{ seo_form.key_words }}
+                            </div>
                         </div>
-                        <div class="mb-2 w-50 text-center">
-                            <label class="form-label d-block">{{ f.description.label }}</label>
-                            {{ f.description}}
+
+
+                         <div class="mb-2 w-50 text-center">
+                            {{ seo_form.description.placeholder }}
+                            <div class="mb-2 w-100 d-flex align-items-center justify-content-center">
+                                <span class="me-2 mr-2 text-muted">{{seo_form.description.label}}</span>
+                                {{ seo_form.description }}
+                            </div>
                         </div>
-                        {% endfor %}
                     </div>
                 </div>
             </div>
@@ -214,7 +223,7 @@
         <div class="row mt-4">
             <div class="col-md-12 d-flex justify-content-center mt-5">
                 <button type="submit" class="btn btn-primary">
-                    {% if form.instance.pk %}Сохранить изменения{% else %}Создать{% endif %}
+                    {% if cinema_form.instance.pk %}Сохранить изменения{% else %}Создать{% endif %}
                 </button>
             </div>
         </div>
@@ -233,40 +242,52 @@
 </form>
 
 
-
 <script>
+const cinemaId = "{{ cinema_form.instance.pk }}";
+const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
 
+const img = document.getElementById('mainImagePreview');
+const fileInput = document.createElement('input');
+fileInput.type = 'file';
+fileInput.accept = 'image/*';
 
+document.getElementById('uploadMainImage').onclick = () => {
+    fileInput.click();
+};
 
+fileInput.onchange = async () => {
+    const file = fileInput.files[0];
+    if (!file) return;
 
-    const fileLogo = document.getElementById('id_main_image');
-    const fileBanner = document.getElementById('id_image_top_banner');
+    img.src = URL.createObjectURL(file);
 
+    const formData = new FormData();
+    formData.append('file', file);
 
+    await fetch(`/cinema/${cinemaId}/upload-image/main_image/`, {
+        method: 'POST',
+        headers: { 'X-CSRFToken': csrfToken },
+        body: formData
+    });
+};
 
-    const previewLogo = document.getElementById('previewLogo');
-    const previewBanner = document.getElementById('previewBanner');
-
-    document.getElementById('uploadLogoBtn').onclick = () => fileLogo.click();
-    document.getElementById('uploadBannerBtn').onclick = () => fileBanner.click();
-
-
-    fileLogo.addEventListener('change', () => {
-        const file = fileLogo.files[0];
-        if (file) previewLogo.src = URL.createObjectURL(file);
+document.getElementById('deleteMainImage').onclick = async () => {
+    await fetch(`/cinema/${cinemaId}/delete-image/main_image/`, {
+        method: 'POST',
+        headers: { 'X-CSRFToken': csrfToken }
     });
 
-    fileBanner.addEventListener('change', () => {
-        const file = fileBanner.files[0];
-        if (file) previewBanner.src = URL.createObjectURL(file);
-    });
-
-
-
-
-
+    img.src = 'https://www.nomadfoods.com/wp-content/uploads/2018/08/placeholder-1-e1533569576673-960x960.png';
+};
 
 </script>
+
+
+
+
+
+
+
 
 
 {% endblock%}
