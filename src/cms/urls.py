@@ -20,12 +20,6 @@ urlpatterns = [
     path('cinemas/<int:pk>/update/', views.cinema_update, name='cinema_update'),
     path('cinema/<int:pk>/delete/', views.cinema_delete, name='cinema_delete'),
 
-    path('ajax/', include('src.cms.urls_ajax')),
-
-
-
-
-
     path('cinema/upload_gallery/', views.upload_gallery_image, name='upload_gallery_image') ,
 
 

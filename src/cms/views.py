@@ -1,12 +1,14 @@
+
+
 from .models import Hall
 from src.cms.tables import HallTabel
 from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 
-
+from django.template.loader import render_to_string
 from src.cms.models.cinema import Cinema
 
-from .forms import MovieForm, SeoBlockForm, NewsForm, UserEditForm, CinemaForm
+from .forms import MovieForm, SeoBlockForm, NewsForm, UserEditForm, CinemaForm, GalleryFormSet
 from .models import Gallery
 
 from django.views.generic import ListView
@@ -53,15 +55,11 @@ def cinema_list(request):
 
 def cinema_create(request):
 
-    """
-    Это промежуточная вьюха которая при коткрытии стрн создает киношку и
-    :param request:
-    :return:
-    """
-
     if request.method == 'POST':
         cinema_form = CinemaForm(request.POST, request.FILES, prefix='cinema_form')
         seo_form = SeoBlockForm(request.POST, prefix='seo_form')
+        formset_gallery = GalleryFormSet(request.POST, request.FILES, queryset=Gallery.objects.none(), prefix='gallery')
+
         # seo_formset = SeoBlockFormSet(request.POST, instance=cinema)
 
         #
@@ -74,15 +72,22 @@ def cinema_create(request):
         # print("SEO title ", request.POST.get('title'))
 
 
-        if cinema_form.is_valid() and seo_form.is_valid():
+        if cinema_form.is_valid() and seo_form.is_valid() and formset_gallery.is_valid():
             # print("Cinema title to save:", cinema_form.cleaned_data['title'])
             # print("SEO title to save:", seo_form.cleaned_data['title'])
 
+
+
+
             seo = seo_form.save()
             cinema = cinema_form.save(commit=False)
-
             cinema.seo_block = seo
             cinema.save()
+
+            for image in formset_gallery:
+                if image.cleaned_data:
+                    gallery = image.save()
+                    cinema.gallery.add(gallery)
 
             print('=')
             return redirect('cinema_list')
@@ -90,6 +95,7 @@ def cinema_create(request):
     else:
         cinema_form = CinemaForm(prefix='cinema_form')
         seo_form = SeoBlockForm(prefix='seo_form')
+        formset_gallery = GalleryFormSet(queryset=Gallery.objects.none(), prefix='gallery')
 
     hall_table = HallTabel(Hall.objects.none())
 
@@ -97,8 +103,9 @@ def cinema_create(request):
         'cinema_form':cinema_form,
         'hall_table':hall_table,
         'seo_form':seo_form,
+        'formset_gallery': formset_gallery,
 
-        'image_num': [1,2,3,4,5],
+
     }
     return render(request, 'cms/cinema_create.html', context)
 
@@ -106,26 +113,31 @@ def cinema_create(request):
 def cinema_update(request, pk):
 
     cinema = get_object_or_404(Cinema, pk=pk)
+    gallery_qs = Gallery.objects.filter(cinema=cinema)
 
     if request.method == 'POST':
         cinema_form = CinemaForm(request.POST, request.FILES, instance=cinema, prefix='cinema_form')
         seo_form = SeoBlockForm(request.POST,  instance=cinema.seo_block, prefix='seo_form')
+        gallery_form_set = GalleryFormSet(request.POST, request.FILES, queryset=gallery_qs)
 
-        if cinema_form.is_valid() and seo_form.is_valid():
+
+        if cinema_form.is_valid() and seo_form.is_valid() and gallery_form_set.is_valid():
             cinema_form.save()
             seo_form.save()
+            gallery_form_set.save()
             return redirect('cinema_list')
 
     else:
         cinema_form = CinemaForm(instance=cinema, prefix='cinema_form')
         seo_form = SeoBlockForm(instance=cinema.seo_block, prefix='seo_form')
+        gallery_form_set = GalleryFormSet(queryset=gallery_qs)
 
     hall_table = HallTabel(Hall.objects.filter(cinema=cinema))
     context = {
         'cinema_form': cinema_form,
         'seo_form': seo_form,
         'hall_table': hall_table,
-        'image_num': [1, 2, 3, 4, 5],
+        'gallery_form_set':gallery_form_set
     }
     return render(request, 'cms/cinema_update.html', context=context)
 
@@ -138,6 +150,9 @@ def cinema_delete(request, pk):
         cinema.delete()
         return redirect('cinema_list')
     return render(request, 'cms/cinemas.html')
+
+
+
 
 
 

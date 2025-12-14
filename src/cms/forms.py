@@ -1,7 +1,7 @@
 
-from django.contrib.contenttypes.forms import generic_inlineformset_factory
+from django.forms import modelformset_factory
 from django import forms
-from .models import Movie, SeoBlock, Updates
+from .models import Movie, SeoBlock, Updates, Gallery
 
 from src.cms.models.cinema import Cinema
 
@@ -115,6 +115,22 @@ class CinemaForm(forms.ModelForm):
 
 
         }
+
+
+
+class GalleryFrom(forms.ModelForm):
+    class Meta:
+        model = Gallery
+        fields = ('image',)
+        widgets = {
+            'image': forms.FileInput(attrs={'class': 'd-none'}),
+        }
+
+GalleryFormSet = modelformset_factory(
+    Gallery,
+    form= GalleryFrom,
+    extra=1
+)
 
 
 
