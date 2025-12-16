@@ -36,11 +36,11 @@ def admin(request):
 
 
 
-def upload_gallery_image(request):
-    if request.method == 'POST' and request.FILES.get('image'):
-        img = Gallery.objects.create(image=request.FILES['image'])
-        return JsonResponse({'id':img.id, 'url':img.image.url})
-    return JsonResponse({'error':'error!'}, status=400)
+# def upload_gallery_image(request):
+#     if request.method == 'POST' and request.FILES.get('image'):
+#         img = Gallery.objects.create(image=request.FILES['image'])
+#         return JsonResponse({'id':img.id, 'url':img.image.url})
+#     return JsonResponse({'error':'error!'}, status=400)
 
 
 
@@ -60,6 +60,8 @@ def cinema_create(request):
         seo_form = SeoBlockForm(request.POST, prefix='seo_form')
         formset_gallery = GalleryFormSet(request.POST, request.FILES, queryset=Gallery.objects.none(), prefix='gallery')
 
+        action = request.POST.get('action') # Состояние черновика
+
         # seo_formset = SeoBlockFormSet(request.POST, instance=cinema)
 
         #
@@ -75,22 +77,19 @@ def cinema_create(request):
         if cinema_form.is_valid() and seo_form.is_valid() and formset_gallery.is_valid():
             # print("Cinema title to save:", cinema_form.cleaned_data['title'])
             # print("SEO title to save:", seo_form.cleaned_data['title'])
-
-
-
-
             seo = seo_form.save()
             cinema = cinema_form.save(commit=False)
             cinema.seo_block = seo
+            cinema.is_draft = True
             cinema.save()
-
             for image in formset_gallery:
                 if image.cleaned_data:
                     gallery = image.save()
                     cinema.gallery.add(gallery)
+            if action == 'add_hall':
+                return redirect('hall_create', cinema_id=cinema.id)
+            return redirect('cinema_edit', name='cinema_edit')
 
-            print('=')
-            return redirect('cinema_list')
 
     else:
         cinema_form = CinemaForm(prefix='cinema_form')
@@ -108,6 +107,50 @@ def cinema_create(request):
 
     }
     return render(request, 'cms/cinema_create.html', context)
+
+
+def cinema_edit(request, cinema_id):
+    cinema = get_object_or_404(Cinema, id=cinema_id) # я получаю синема и его ид на вход
+    if request.method == 'POST':
+        cinema_form = CinemaForm(
+            request.POST,
+            request.FILES,
+            instance=cinema,
+            prefix='cinema_form'
+
+        )
+
+        action = request.POST.get('action')
+
+        seo_form = SeoBlockForm(
+            request.POST,
+            instance=cinema.seo_block,
+            prefix='seo_form'
+        )
+        if cinema_form.is_valid() and seo_form.is_valid():
+            seo_form.save()
+            cinema_form.save()
+            return redirect('cinema_list')
+
+        cinema_form = CinemaForm(
+            instance=cinema,
+            prefix='cinema_form'
+        )
+
+        seo_form = SeoBlockForm(
+            instance=cinema.seo_block,
+            prefix='seo_form'
+        )
+
+        context = {
+            'cinema_form':cinema_form,
+            'seo_form':seo_form,
+            'cinemas':cinema
+
+        }
+        return render(request,'cms/cinema_create.html', context=context)
+
+
 
 
 def cinema_update(request, pk):

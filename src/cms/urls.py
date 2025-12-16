@@ -18,9 +18,13 @@ urlpatterns = [
     path('cinemas/', views.cinema_list, name='cinema_list'),
     path('cinemas/add', views.cinema_create, name='cinema_create'),
     path('cinemas/<int:pk>/update/', views.cinema_update, name='cinema_update'),
+    path('cinemas/edit/', views.cinema_edit, name='cinema_edit'),
     path('cinema/<int:pk>/delete/', views.cinema_delete, name='cinema_delete'),
 
-    path('cinema/upload_gallery/', views.upload_gallery_image, name='upload_gallery_image') ,
+
+
+    # path('cinema/upload_gallery/', views.upload_gallery_image, name='upload_gallery_image') ,
+    # path('cinema/add_hall/', views.cinema_create_hall, name='create_hall'),
 
 
 

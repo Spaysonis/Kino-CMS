@@ -15,6 +15,7 @@ class Cinema(models.Model):
     image_top_banner = models.ImageField()
     address = models.CharField(max_length=200)
     coordinates = models.CharField(max_length=255)
+    is_draft = models.BooleanField(default=True)
 
 
 

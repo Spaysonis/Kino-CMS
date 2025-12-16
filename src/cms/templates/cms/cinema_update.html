@@ -142,29 +142,29 @@
 
             <div class="col-md-10">
     <div class="row">
-        {{ gallery_form_set.management_form }} <!-- обязательно для formset -->
+        {{ gallery_form_set.management_form }}
 
         {% for form in gallery_form_set %}
         <div class="col-md-2 gallery-item mb-3">
 
-            <!-- Кнопка удалить -->
+
             <div class="d-flex align-items-center mb-2">
                 <button type="button" class="btn btn-danger w-100 remove-image">Удалить</button>
             </div>
 
-            <!-- Превью изображения -->
+
             {% if form.instance.image %}
                 <img class="card-img-top preview mb-2" src="{{ form.instance.image.url }}" alt="...">
             {% else %}
                 <img class="card-img-top preview mb-2" src="https://www.nomadfoods.com/wp-content/uploads/2018/08/placeholder-1-e1533569576673-960x960.png" alt="...">
             {% endif %}
 
-            <!-- Кнопка загрузить -->
+
             <div class="d-flex align-items-center mb-2">
                 <button type="button" class="btn btn-success w-100 upload-btn">Загрузить</button>
             </div>
 
-            <!-- Скрытый input файла из формы -->
+
             {{ form.image }}
 
         </div>
