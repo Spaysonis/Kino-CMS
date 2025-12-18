@@ -3,7 +3,8 @@ from django.forms import modelformset_factory
 from django import forms
 from .models import Movie, SeoBlock, Updates, Gallery
 
-from src.cms.models.cinema import Cinema
+from src.cms.models.cinema import Cinema, Hall
+
 
 from ..user.models import BaseUser
 
@@ -131,6 +132,40 @@ GalleryFormSet = modelformset_factory(
     form= GalleryFrom,
     extra=1
 )
+
+
+class HallForm(forms.ModelForm):
+
+    class Meta:
+        model = Hall
+        fields =   ['number', 'description', 'scheme_image', 'top_banner_image']
+
+        widgets = {
+            'number': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Номер зала'
+            }),
+            'description': forms.Textarea(attrs={
+                'class': 'form-control',
+                'aria-label': 'With textarea',
+                'placeholder': 'Текст',
+                'rows': 4,
+            }),
+
+
+            'scheme_image': forms.FileInput(attrs={
+                'class': 'd-none',
+
+            }),
+            'top_banner_image': forms.FileInput(attrs={
+                'class': 'd-none',
+
+            }),
+
+        }
+
+
+
 
 
 

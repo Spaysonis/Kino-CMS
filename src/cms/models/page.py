@@ -6,7 +6,7 @@ from phonenumber_field.modelfields import PhoneNumberField
 
 
 class SeoBlock(models.Model):
-    url = models.URLField(max_length=255)
+    url = models.URLField(max_length=255, blank=True, null=True)
     title = models.CharField(max_length=200)
     key_words = models.CharField(max_length=200)
     description = models.TextField()

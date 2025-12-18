@@ -15,19 +15,23 @@ class Cinema(models.Model):
     image_top_banner = models.ImageField()
     address = models.CharField(max_length=200)
     coordinates = models.CharField(max_length=255)
-    is_draft = models.BooleanField(default=True)
+
 
 
 
 class Hall(models.Model):
-    cinema = models.ForeignKey(Cinema, on_delete=models.CASCADE)
-    gallery = models.ManyToManyField(Gallery)
-    seo_block = models.OneToOneField(SeoBlock, on_delete=models.CASCADE)
+    cinema = models.ForeignKey(Cinema, on_delete=models.CASCADE,blank=True, null=True)
+    gallery = models.ManyToManyField(Gallery, null=True)
+    seo_block = models.OneToOneField(SeoBlock, on_delete=models.CASCADE, blank=True, null=True)
 
     number = models.CharField(max_length=100)
     description = models.TextField()
-    scheme_image = models.ImageField()
-    top_banner_image = models.ImageField()
+    scheme_image = models.ImageField(blank=True, null=True)
+    top_banner_image = models.ImageField(blank=True, null=True)
+    date_create = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name='Дата создания'
+    )
 
 
 class Movie(models.Model):

@@ -1,23 +1,16 @@
-
+from django.db.transaction import commit
 
 from .models import Hall
-from src.cms.tables import HallTabel
-from django.http import JsonResponse
+from src.cms.models.page import SeoBlock
+
 from django.shortcuts import render, redirect, get_object_or_404
-
-from django.template.loader import render_to_string
 from src.cms.models.cinema import Cinema
-
-from .forms import MovieForm, SeoBlockForm, NewsForm, UserEditForm, CinemaForm, GalleryFormSet
+from .forms import MovieForm, SeoBlockForm, NewsForm, UserEditForm, CinemaForm, GalleryFormSet, HallForm
 from .models import Gallery
-
-from django.views.generic import ListView
-
 from django.shortcuts import render
 from django_tables2 import SingleTableView
 from src.user.models import BaseUser
-
-from .tables import UserTable
+from .tables import UserTable, HallTable
 
 
 
@@ -60,95 +53,115 @@ def cinema_create(request):
         seo_form = SeoBlockForm(request.POST, prefix='seo_form')
         formset_gallery = GalleryFormSet(request.POST, request.FILES, queryset=Gallery.objects.none(), prefix='gallery')
 
-        action = request.POST.get('action') # Состояние черновика
-
-        # seo_formset = SeoBlockFormSet(request.POST, instance=cinema)
-
-        #
-        # print('cinema' , cinema_form.errors)
-        # print('Cinema  valid:', cinema_form.is_valid())
-        # print('SEO  valid:', seo_form.is_valid())
-        # print("POST данные:", request.POST)
-        # print("Cinema title ", request.POST.get('title'))
-        # print('*'* 8)
-        # print("SEO title ", request.POST.get('title'))
 
 
         if cinema_form.is_valid() and seo_form.is_valid() and formset_gallery.is_valid():
-            # print("Cinema title to save:", cinema_form.cleaned_data['title'])
-            # print("SEO title to save:", seo_form.cleaned_data['title'])
             seo = seo_form.save()
             cinema = cinema_form.save(commit=False)
             cinema.seo_block = seo
-            cinema.is_draft = True
             cinema.save()
             for image in formset_gallery:
                 if image.cleaned_data:
                     gallery = image.save()
                     cinema.gallery.add(gallery)
-            if action == 'add_hall':
-                return redirect('hall_create', cinema_id=cinema.id)
-            return redirect('cinema_edit', name='cinema_edit')
 
+            hall_seo = SeoBlock.objects.create(
+                url='',
+                title=f'Seo-{cinema.title}',
+                key_words='test',
+                description = 'test'
+
+            )
+
+            Hall.objects.create(
+                cinema=cinema,
+                seo_block=hall_seo,
+
+                number = f'Номер зала 1',
+                description='Зал по умолчанию',
+
+
+            )
+            print('все создано успешно')
+            return redirect('cinema_list')
 
     else:
         cinema_form = CinemaForm(prefix='cinema_form')
         seo_form = SeoBlockForm(prefix='seo_form')
         formset_gallery = GalleryFormSet(queryset=Gallery.objects.none(), prefix='gallery')
 
-    hall_table = HallTabel(Hall.objects.none())
+
+    # hall_table = HallTable(Hall.objects.none())
 
     context = {
         'cinema_form':cinema_form,
-        'hall_table':hall_table,
+        # 'hall_table': hall_table,
         'seo_form':seo_form,
         'formset_gallery': formset_gallery,
+
+
 
 
     }
     return render(request, 'cms/cinema_create.html', context)
 
 
-def cinema_edit(request, cinema_id):
-    cinema = get_object_or_404(Cinema, id=cinema_id) # я получаю синема и его ид на вход
-    if request.method == 'POST':
-        cinema_form = CinemaForm(
-            request.POST,
-            request.FILES,
-            instance=cinema,
-            prefix='cinema_form'
 
-        )
+def hall_create(request,pk):
+    cinema = get_object_or_404(Cinema, pk=pk)
 
-        action = request.POST.get('action')
+    if request.method=='POST':
+        print("POST данные:", request.POST)
+        print("FILES данные:", request.FILES)  # Добавьте это!
 
-        seo_form = SeoBlockForm(
-            request.POST,
-            instance=cinema.seo_block,
-            prefix='seo_form'
-        )
-        if cinema_form.is_valid() and seo_form.is_valid():
-            seo_form.save()
-            cinema_form.save()
+        print(request.POST)
+
+        hall_form = HallForm(request.POST,  request.FILES , prefix='hall_form')
+
+        formset_gallery = GalleryFormSet(request.POST, request.FILES,
+                                         queryset=Gallery.objects.none(),
+                                         prefix='gallery')
+
+        seo_form = SeoBlockForm(request.POST, prefix='seo_form')
+
+        print('error hal', hall_form.errors)
+        print('error seo', seo_form.errors)
+        print('error gallery', formset_gallery.errors)
+
+        if hall_form.is_valid()  and seo_form.is_valid() and formset_gallery.is_valid():
+            print('not error')
+            hall = hall_form.save(commit=False) # 1 тут я сохрнил киношку в памяти (озу)
+            hall.cinema = cinema # тут я обратился к киношке (могу обраться ведь у нее уже есть ид)
+            # и в поле синема я положил зал(ведь форма уже пройдена)
+            seo = seo_form.save() # тут я сохраняю данные из сеоблока ( ведь форма уже пройдена )
+            hall.seo_block = seo  # тут я сохрняю в поле сеобок зала данные
+            hall.save() # сохраняю зал в память без галеереии
+
+            gallery_objects = formset_gallery.save()  # сохраняю картинки если есть в память
+            hall.gallery.set(gallery_objects) # тут у зала появляються связи с картинками, знает пути
+
+
+            print('end not error')
             return redirect('cinema_list')
 
-        cinema_form = CinemaForm(
-            instance=cinema,
-            prefix='cinema_form'
-        )
 
-        seo_form = SeoBlockForm(
-            instance=cinema.seo_block,
-            prefix='seo_form'
-        )
 
-        context = {
-            'cinema_form':cinema_form,
-            'seo_form':seo_form,
-            'cinemas':cinema
+    else:
+        hall_form = HallForm(prefix='hall_form')
+        seo_form = SeoBlockForm(prefix='seo_form')
+        formset_gallery = GalleryFormSet(queryset=Gallery.objects.none(), prefix='gallery')
 
-        }
-        return render(request,'cms/cinema_create.html', context=context)
+    context = {
+        'hall_form':hall_form,
+        'cinema':cinema,
+        'seo_form':seo_form,
+        'gallery_form_set':formset_gallery
+    }
+
+    return render(request,'cms/hall_create.html',context=context)
+
+
+
 
 
 
@@ -175,12 +188,13 @@ def cinema_update(request, pk):
         seo_form = SeoBlockForm(instance=cinema.seo_block, prefix='seo_form')
         gallery_form_set = GalleryFormSet(queryset=gallery_qs)
 
-    hall_table = HallTabel(Hall.objects.filter(cinema=cinema))
+    hall_table = HallTable(Hall.objects.filter(cinema=cinema))
     context = {
         'cinema_form': cinema_form,
         'seo_form': seo_form,
         'hall_table': hall_table,
-        'gallery_form_set':gallery_form_set
+        'gallery_form_set':gallery_form_set,
+        'cinema':cinema
     }
     return render(request, 'cms/cinema_update.html', context=context)
 

@@ -4,16 +4,19 @@ from src.cms.models.cinema import Hall
 
 
 
-class HallTabel(tables.Table):
-    title = tables.Column(verbose_name='Название')
-    date_create = tables.Column(verbose_name='Дата создания')
+class HallTable(tables.Table):
+    number = tables.Column(verbose_name='Название')
+    date_create = tables.DateTimeColumn(
+        verbose_name='Дата создания',
+        format='d.m.Y'
+    )
 
     class Meta:
         orderable = False
 
         model = Hall
         template_name = "django_tables2/bootstrap4.html"
-        fields = ('title', 'date_create')
+        fields = ('number', 'date_create')
         attrs = {"class": "table table-bordered table-primary"}
 
 
