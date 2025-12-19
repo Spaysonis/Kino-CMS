@@ -2,7 +2,8 @@ import django_tables2 as tables
 from src.user.models import BaseUser
 from src.cms.models.cinema import Hall
 
-
+from django.utils.html import mark_safe
+from django.urls import reverse
 
 class HallTable(tables.Table):
     number = tables.Column(verbose_name='Название')
@@ -10,14 +11,32 @@ class HallTable(tables.Table):
         verbose_name='Дата создания',
         format='d.m.Y'
     )
+    actions = tables.Column(empty_values=(), verbose_name='', orderable=False) # пустая колонка
+    # verbose_name=''- чтоб в шапке колонки  ничего не писалось
+    # orderable = False нельзя сортировать по этой колоке
+    # empty_values = () всегда будет колонка в шапке даже если нет данных
 
     class Meta:
+        fields = ('number', 'date_create', 'actions')
         orderable = False
 
         model = Hall
         template_name = "django_tables2/bootstrap4.html"
-        fields = ('number', 'date_create')
+
         attrs = {"class": "table table-bordered table-primary"}
+
+    def render_actions(self,record):
+        update_url = reverse('hall_update', args=[  record.cinema.pk, record.pk])
+        delete_url = reverse('hall_delete', args=[ record.cinema.pk, record.pk])
+
+        return mark_safe(
+            f'''
+                    <div class="d-flex justify-content-between">
+                        <a href="{delete_url}" class="btn btn-sm btn-danger">Удалить</a>
+                        <a href="{update_url}" class="btn btn-sm btn-warning">Редактировать</a>
+                    </div>
+                '''
+        )
 
 
 

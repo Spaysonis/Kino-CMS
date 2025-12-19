@@ -18,8 +18,12 @@ urlpatterns = [
     path('cinemas/', views.cinema_list, name='cinema_list'),
     path('cinemas/add', views.cinema_create, name='cinema_create'),
     path('cinemas/<int:pk>/update/', views.cinema_update, name='cinema_update'),
-    path('cinemas/<int:pk>/hall/', views.hall_create, name='hall_create'),
     path('cinema/<int:pk>/delete/', views.cinema_delete, name='cinema_delete'),
+
+    path('cinemas/<int:pk>/hall_create/', views.hall_create, name='hall_create'),
+    path('cinemas/<int:cinema_pk>/hall/<int:hall_pk>/update/', views.hall_update, name='hall_update'),
+    path('cinemas/<int:cinema_pk>/hall/<int:hall_pk>/delete/', views.hall_delete, name='hall_delete'),
+
 
 
 

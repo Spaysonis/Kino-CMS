@@ -1,4 +1,4 @@
-from django.db.transaction import commit
+from django.urls import reverse
 
 from .models import Hall
 from src.cms.models.page import SeoBlock
@@ -105,67 +105,6 @@ def cinema_create(request):
     }
     return render(request, 'cms/cinema_create.html', context)
 
-
-
-def hall_create(request,pk):
-    cinema = get_object_or_404(Cinema, pk=pk)
-
-    if request.method=='POST':
-        print("POST данные:", request.POST)
-        print("FILES данные:", request.FILES)  # Добавьте это!
-
-        print(request.POST)
-
-        hall_form = HallForm(request.POST,  request.FILES , prefix='hall_form')
-
-        formset_gallery = GalleryFormSet(request.POST, request.FILES,
-                                         queryset=Gallery.objects.none(),
-                                         prefix='gallery')
-
-        seo_form = SeoBlockForm(request.POST, prefix='seo_form')
-
-        print('error hal', hall_form.errors)
-        print('error seo', seo_form.errors)
-        print('error gallery', formset_gallery.errors)
-
-        if hall_form.is_valid()  and seo_form.is_valid() and formset_gallery.is_valid():
-            print('not error')
-            hall = hall_form.save(commit=False) # 1 тут я сохрнил киношку в памяти (озу)
-            hall.cinema = cinema # тут я обратился к киношке (могу обраться ведь у нее уже есть ид)
-            # и в поле синема я положил зал(ведь форма уже пройдена)
-            seo = seo_form.save() # тут я сохраняю данные из сеоблока ( ведь форма уже пройдена )
-            hall.seo_block = seo  # тут я сохрняю в поле сеобок зала данные
-            hall.save() # сохраняю зал в память без галеереии
-
-            gallery_objects = formset_gallery.save()  # сохраняю картинки если есть в память
-            hall.gallery.set(gallery_objects) # тут у зала появляються связи с картинками, знает пути
-
-
-            print('end not error')
-            return redirect('cinema_list')
-
-
-
-    else:
-        hall_form = HallForm(prefix='hall_form')
-        seo_form = SeoBlockForm(prefix='seo_form')
-        formset_gallery = GalleryFormSet(queryset=Gallery.objects.none(), prefix='gallery')
-
-    context = {
-        'hall_form':hall_form,
-        'cinema':cinema,
-        'seo_form':seo_form,
-        'gallery_form_set':formset_gallery
-    }
-
-    return render(request,'cms/hall_create.html',context=context)
-
-
-
-
-
-
-
 def cinema_update(request, pk):
 
     cinema = get_object_or_404(Cinema, pk=pk)
@@ -208,6 +147,100 @@ def cinema_delete(request, pk):
         return redirect('cinema_list')
     return render(request, 'cms/cinemas.html')
 
+
+
+
+
+def hall_create(request,pk):
+    cinema = get_object_or_404(Cinema, pk=pk)
+
+    if request.method=='POST':
+        print("POST данные:", request.POST)
+        print("FILES данные:", request.FILES)  # Добавьте это!
+
+        print(request.POST)
+
+        hall_form = HallForm(request.POST,  request.FILES , prefix='hall_form')
+
+        formset_gallery = GalleryFormSet(request.POST, request.FILES,
+                                         queryset=Gallery.objects.none(),
+                                         prefix='gallery')
+
+        seo_form = SeoBlockForm(request.POST, prefix='seo_form')
+
+        print('error hal', hall_form.errors)
+        print('error seo', seo_form.errors)
+        print('error gallery', formset_gallery.errors)
+
+        if hall_form.is_valid()  and seo_form.is_valid() and formset_gallery.is_valid():
+            print('not error')
+            hall = hall_form.save(commit=False) # 1 тут я сохрнил киношку в памяти (озу)
+            hall.cinema = cinema # тут я обратился к киношке (могу обраться ведь у нее уже есть ид)
+            # и в поле синема я положил зал(ведь форма уже пройдена)
+            seo = seo_form.save() # тут я сохраняю данные из сеоблока ( ведь форма уже пройдена )
+            hall.seo_block = seo  # тут я сохрняю в поле сеобок зала данные
+            hall.save() # сохраняю зал в память без галеереии
+
+            gallery_objects = formset_gallery.save()  # сохраняю картинки если есть в память
+            hall.gallery.set(gallery_objects) # тут у зала появляються связи с картинками, знает пути
+
+            print('end not error')
+            return redirect('cinema_list')
+
+    else:
+        hall_form = HallForm(prefix='hall_form')
+        seo_form = SeoBlockForm(prefix='seo_form')
+        formset_gallery = GalleryFormSet(queryset=Gallery.objects.none(), prefix='gallery')
+
+    context = {
+        'hall_form':hall_form,
+        'cinema':cinema,
+        'seo_form':seo_form,
+        'gallery_form_set':formset_gallery
+    }
+
+    return render(request,'cms/hall_create.html',context=context)
+
+
+
+
+def hall_update(request, cinema_pk, hall_pk):
+    hall = get_object_or_404(Hall, pk=hall_pk, cinema_id=cinema_pk)
+    print('object:',hall.number)
+    print('object_cinema:',hall.cinema.title)
+    print('object_s:',hall.seo_block)
+
+    if request.method == 'POST':
+        print('yes')
+        pass
+
+
+
+
+    hall_form = HallForm(instance=hall, prefix='hall_form')
+    seo_form = SeoBlockForm(instance=hall.seo_block ,prefix='seo_form')
+    gallery_formset = GalleryFormSet(queryset=Gallery.objects.none())
+    print(seo_form)
+
+    context = {
+        'hall_form':hall_form,
+        'seo_from':seo_form,
+        'gallery_formset':gallery_formset,
+        'cinema':hall.cinema
+
+    }
+    return render(request, 'cms/hall_update.html', context)
+
+
+
+
+
+def hall_delete(request, cinema_pk, hall_pk):
+
+    hall = get_object_or_404(Hall, pk=hall_pk, cinema_id=cinema_pk)
+    hall.delete()
+    print('удален ')
+    return redirect('cinema_update', pk=cinema_pk)
 
 
 
