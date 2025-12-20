@@ -113,9 +113,11 @@ def cinema_update(request, pk):
     if request.method == 'POST':
         cinema_form = CinemaForm(request.POST, request.FILES, instance=cinema, prefix='cinema_form')
         seo_form = SeoBlockForm(request.POST,  instance=cinema.seo_block, prefix='seo_form')
-        gallery_form_set = GalleryFormSet(request.POST, request.FILES, queryset=gallery_qs)
+        gallery_form_set = GalleryFormSet(request.POST, request.FILES, queryset=gallery_qs, prefix='gallery')
 
-
+        print( 'cinema', cinema_form.errors)
+        print('seo_form',seo_form.errors)
+        print('gallery_form_set',gallery_form_set.errors)
         if cinema_form.is_valid() and seo_form.is_valid() and gallery_form_set.is_valid():
             cinema_form.save()
             seo_form.save()
@@ -125,14 +127,15 @@ def cinema_update(request, pk):
     else:
         cinema_form = CinemaForm(instance=cinema, prefix='cinema_form')
         seo_form = SeoBlockForm(instance=cinema.seo_block, prefix='seo_form')
-        gallery_form_set = GalleryFormSet(queryset=gallery_qs)
+        gallery_form_set = GalleryFormSet(queryset=gallery_qs, prefix='gallery')
+
 
     hall_table = HallTable(Hall.objects.filter(cinema=cinema))
     context = {
         'cinema_form': cinema_form,
         'seo_form': seo_form,
         'hall_table': hall_table,
-        'gallery_form_set':gallery_form_set,
+        'formset_gallery':gallery_form_set,
         'cinema':cinema
     }
     return render(request, 'cms/cinema_update.html', context=context)
@@ -192,11 +195,13 @@ def hall_create(request,pk):
         seo_form = SeoBlockForm(prefix='seo_form')
         formset_gallery = GalleryFormSet(queryset=Gallery.objects.none(), prefix='gallery')
 
+
+
     context = {
         'hall_form':hall_form,
         'cinema':cinema,
         'seo_form':seo_form,
-        'gallery_form_set':formset_gallery
+        'formset_gallery':formset_gallery
     }
 
     return render(request,'cms/hall_create.html',context=context)
@@ -206,6 +211,8 @@ def hall_create(request,pk):
 
 def hall_update(request, cinema_pk, hall_pk):
     hall = get_object_or_404(Hall, pk=hall_pk, cinema_id=cinema_pk)
+    gallery_qs = Gallery.objects.filter(hall=hall)
+
     print('object:',hall.number)
     print('object_cinema:',hall.cinema.title)
     print('object_s:',hall.seo_block)
@@ -219,12 +226,12 @@ def hall_update(request, cinema_pk, hall_pk):
 
     hall_form = HallForm(instance=hall, prefix='hall_form')
     seo_form = SeoBlockForm(instance=hall.seo_block ,prefix='seo_form')
-    gallery_formset = GalleryFormSet(queryset=Gallery.objects.none())
+    gallery_formset = GalleryFormSet(queryset=gallery_qs)
     print(seo_form)
 
     context = {
         'hall_form':hall_form,
-        'seo_from':seo_form,
+        'seo_form':seo_form,
         'gallery_formset':gallery_formset,
         'cinema':hall.cinema
 

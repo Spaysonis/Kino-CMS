@@ -130,6 +130,7 @@ class GalleryFrom(forms.ModelForm):
 GalleryFormSet = modelformset_factory(
     Gallery,
     form= GalleryFrom,
+    can_delete=True,
     extra=1
 )
 

@@ -123,35 +123,35 @@
             </div>
         </div>
 
-<!-- Контейнер для галереи -->
-<div class="row" id="gallery-container">
-    {{ formset_gallery.management_form }}
+            <!-- Контейнер для галереи -->
+        <div class="row" id="gallery-container">
+            {{ formset_gallery.management_form }}
 
-    {% for form in formset_gallery %}
-    <div class="col-md-2 gallery-item mb-3">
-        <!-- Кнопка удалить -->
-        <button type="button" class="btn btn-danger w-100 mb-2 remove-image">Удалить</button>
+                {% for form in formset_gallery %}
+                <div class="col-md-2 gallery-item mb-3">
+                    <!-- Кнопка удалить -->
+                    <button type="button" class="btn btn-danger w-100 mb-2 remove-image">Удалить</button>
 
-        <!-- Превью -->
-        <img class="card-img-top preview mb-2"
-             src="https://www.nomadfoods.com/wp-content/uploads/2018/08/placeholder-1-e1533569576673-960x960.png"
-             alt="...">
+                    <!-- Превью -->
+                    <img class="card-img-top preview mb-2"
+                         src="https://www.nomadfoods.com/wp-content/uploads/2018/08/placeholder-1-e1533569576673-960x960.png"
+                         alt="...">
 
-        <!-- Загрузить -->
-        <button type="button" class="btn btn-success w-100 mb-2 upload-btn">Загрузить</button>
-        {{ form.image }}
-    </div>
-    {% endfor %}
-</div>
+                    <!-- Загрузить -->
+                    <button type="button" class="btn btn-success w-100 mb-2 upload-btn">Загрузить</button>
+                    {{ form.image }}
+                </div>
+                {% endfor %}
+            </div>
 
-<!-- Кнопка добавить -->
-<div class="row">
-    <div class="col-md-2">
-        <button type="button" class="btn btn-primary w-100" id="add-gallery-item">
-            <i class="fas fa-plus"></i> Добавить
-        </button>
-    </div>
-</div>
+            <!-- Кнопка добавить -->
+            <div class="row">
+                <div class="col-md-2">
+                    <button type="button" class="btn btn-primary w-100" id="add-gallery-item">
+                        <i class="fas fa-plus"></i> Добавить
+                    </button>
+                </div>
+            </div>
 
 
 

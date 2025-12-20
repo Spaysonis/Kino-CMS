@@ -96,10 +96,10 @@
             </div>
             {%endif%}
             <div  class="col-md-2">
-                <button type="button"  id="uploadBannerBtn" class="btn btn-success">Загрузить</button>
+                <button type="button"  id="uploadTopBannerImg" class="btn btn-success">Загрузить</button>
             </div>
             <div  class="col-md-2">
-               <button type="button" id="deleteBannerBtn" class="btn btn-danger">Удалить</button>
+               <button type="button" id="deleteTopBannerImg" class="btn btn-danger">Удалить</button>
             </div>
             {{ hall_form.top_banner_image }}
         </div>
@@ -146,11 +146,9 @@
                 <button type="button" class="btn btn-success w-100 upload-btn">Загрузить</button>
             </div>
 
-            <!-- ВАЖНО: Нужно отображать ВСЕ поля формы -->
-            {{ form.id }}  <!-- Скрытое поле для существующих объектов -->
-            {{ form.image }}
+            {{form.image}}
         </div>
-        {% endfor %}
+            {% endfor %}
     </div>
 </div>
 
@@ -233,67 +231,112 @@
 <script>
 document.addEventListener('DOMContentLoaded', function () {
 
-    // === Схема зала ===
-    const schemeInput = document.getElementById('id_hall_form-scheme_image');
-    const schemePreview = document.getElementById('schemePreview');
-    const schemeUploadBtn = document.getElementById('uploadSchemeBtn');
-    const schemeDeleteBtn = document.getElementById('deleteSchemeBtn');
-    const placeholderScheme = 'https://www.nomadfoods.com/wp-content/uploads/2018/08/placeholder-1-e1533569576673-960x960.png';
+    // -----------------------
+    // Логотип (main_image)
+    // -----------------------
+    const mainImageInput = document.querySelector('input[name="hall_form-scheme_image"]');
+    const mainImagePreview = document.getElementById('schemePreview');
+    const uploadLogoBtn = document.getElementById('uploadSchemeBtn');
+    const deleteLogoBtn = document.getElementById('deleteSchemeBtn');
+    const placeholderLogo = 'https://www.nomadfoods.com/wp-content/uploads/2018/08/placeholder-1-e1533569576673-960x960.png';
 
-    if (schemeInput && schemePreview && schemeUploadBtn) {
-        // Загрузка
-        schemeUploadBtn.addEventListener('click', () => schemeInput.click());
-
-        // Превью
-        schemeInput.addEventListener('change', function () {
-            if (this.files && this.files[0]) {
+    if(mainImageInput){
+        uploadLogoBtn.addEventListener('click', () => mainImageInput.click());
+        mainImageInput.addEventListener('change', function () {
+            if(this.files[0]){
                 const reader = new FileReader();
-                reader.onload = e => schemePreview.src = e.target.result;
+                reader.onload = e => mainImagePreview.src = e.target.result;
                 reader.readAsDataURL(this.files[0]);
             }
         });
-
-        // Удаление
-        if (schemeDeleteBtn) {
-            schemeDeleteBtn.addEventListener('click', function () {
-                schemeInput.value = '';
-                schemePreview.src = placeholderScheme;
-            });
-        }
+        deleteLogoBtn.addEventListener('click', () => {
+            mainImageInput.value = '';
+            mainImagePreview.src = placeholderLogo;
+        });
     }
 
-    // === Верхний баннер ===
-    const bannerInput = document.getElementById('id_hall_form-top_banner_image');
-    const bannerPreview = document.getElementById('bannerPreview');
-    const bannerUploadBtn = document.getElementById('uploadBannerBtn');
-    const bannerDeleteBtn = document.getElementById('deleteBannerBtn');
+    // -----------------------
+    // Верхний баннер (image_top_banner)
+    // -----------------------
+    const topBannerInput = document.querySelector('input[name="hall_form-top_banner_image"]');
+    const topBannerPreview = document.getElementById('bannerPreview');
+    const uploadTopBannerBtn = document.getElementById('uploadTopBannerImg');
+    const deleteTopBannerBtn = document.getElementById('deleteTopBannerImg');
     const placeholderBanner = 'https://www.nomadfoods.com/wp-content/uploads/2018/08/placeholder-1-e1533569576673-960x960.png';
 
-    if (bannerInput && bannerPreview && bannerUploadBtn) {
-        // Загрузка
-        bannerUploadBtn.addEventListener('click', () => bannerInput.click());
-
-        // Превью
-        bannerInput.addEventListener('change', function () {
-            if (this.files && this.files[0]) {
+    if(topBannerInput){
+        uploadTopBannerBtn.addEventListener('click', () => topBannerInput.click());
+        topBannerInput.addEventListener('change', function () {
+            if(this.files[0]){
                 const reader = new FileReader();
-                reader.onload = e => bannerPreview.src = e.target.result;
+                reader.onload = e => topBannerPreview.src = e.target.result;
                 reader.readAsDataURL(this.files[0]);
             }
         });
-
-        // Удаление
-        if (bannerDeleteBtn) {
-            bannerDeleteBtn.addEventListener('click', function () {
-                bannerInput.value = '';
-                bannerPreview.src = placeholderBanner;
-            });
-        }
+        deleteTopBannerBtn.addEventListener('click', () => {
+            topBannerInput.value = '';
+            topBannerPreview.src = placeholderBanner;
+        });
     }
+
+    // -----------------------
+    // Галерея картинок
+    // -----------------------
+    const galleryContainer = document.getElementById('gallery-container');
+    const addGalleryBtn = document.getElementById('add-gallery-item');
+    const totalForms = document.getElementById('id_gallery-TOTAL_FORMS');
+
+    // Добавление новой формы галереи
+    addGalleryBtn.addEventListener('click', function () {
+        let formCount = parseInt(totalForms.value);
+        let lastForm = galleryContainer.querySelector('.gallery-item:last-child');
+        let newForm = lastForm.cloneNode(true);
+
+        // Обновляем индексы для Django
+        newForm.innerHTML = newForm.innerHTML.replace(/gallery-(\d+)/g, `gallery-${formCount}`);
+
+        // Сброс input file
+        newForm.querySelector('input[type="file"]').value = '';
+
+        // Сброс превью
+        newForm.querySelector('.preview').src = 'https://www.nomadfoods.com/wp-content/uploads/2018/08/placeholder-1-e1533569576673-960x960.png';
+
+        galleryContainer.appendChild(newForm);
+        totalForms.value = formCount + 1;
+    });
+
+    // Делегирование событий для галереи
+    galleryContainer.addEventListener('click', function (e) {
+        // Загрузить картинку
+        if(e.target.classList.contains('upload-btn')){
+            const input = e.target.closest('.gallery-item').querySelector('input[type="file"]');
+            input.click();
+        }
+
+        // Удалить форму
+        if(e.target.classList.contains('remove-image')){
+            const forms = galleryContainer.querySelectorAll('.gallery-item');
+            if(forms.length > 1){
+                e.target.closest('.gallery-item').remove();
+                totalForms.value = galleryContainer.querySelectorAll('.gallery-item').length;
+            }
+        }
+    });
+
+    galleryContainer.addEventListener('change', function(e){
+        if(e.target.type === 'file' && e.target.closest('.gallery-item')){
+            const file = e.target.files[0];
+            if(file){
+                const reader = new FileReader();
+                const img = e.target.closest('.gallery-item').querySelector('.preview');
+                reader.onload = e => img.src = e.target.result;
+                reader.readAsDataURL(file);
+            }
+        }
+    });
 
 });
 </script>
-
 
 
 
