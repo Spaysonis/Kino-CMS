@@ -128,9 +128,9 @@
             <div class="col-md-10">
     <div class="row">
         <!-- ManagementForm - это ОБЯЗАТЕЛЬНО -->
-        {{ gallery_form_set.management_form }}
+        {{ gallery_formset.management_form }}
 
-        {% for form in gallery_form_set %}
+        {% for form in gallery_formset %}
         <div class="col-md-2 gallery-item mb-3">
             <div class="d-flex align-items-center mb-2">
                 <button type="button" class="btn btn-danger w-100 remove-image">Удалить</button>

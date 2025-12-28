@@ -85,8 +85,8 @@ WSGI_APPLICATION = 'config.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'kinocms',
-        'USER': 'admin',
+        'NAME': 'kino_cms',
+        'USER': 'kino_admin',
         'PASSWORD': '111111',
         'HOST': '127.0.0.1',
         'PORT': '5432',

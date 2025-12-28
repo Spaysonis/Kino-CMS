@@ -33,7 +33,7 @@ end
 # Unset irrelevant variables.
 deactivate nondestructive
 
-set -gx VIRTUAL_ENV '/home/qwe/Рабочий стол/project/Kino-CMS/venv'
+set -gx VIRTUAL_ENV '/home/filled/Рабочий стол/Kino-CMS/venv'
 
 set -gx _OLD_VIRTUAL_PATH $PATH
 set -gx PATH "$VIRTUAL_ENV/"bin $PATH

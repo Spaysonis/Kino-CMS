@@ -122,50 +122,48 @@
 
 <!--Болки галерея картинок &#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;-->
   <!--Болки галерея картинок &#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;-->
-        <div class="row mb-3">
-            <div class="col-md-2">
-                <div class="input-group mb-3">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text">Галерея картинок:</span>
-                    </div>
+    <div class="row mb-3">
+        <div class="col-md-2">
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">Галерея картинок:</span>
                 </div>
             </div>
         </div>
-
-        <div class="row mb-3">
-            <div class="col-md-2">
-                <div class="input-group mb-3">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text">Размер: 1000х190</span>
-                    </div>
+    </div>
+    <div class="row mb-3">
+        <div class="col-md-2">
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">Размер: 1000х190</span>
                 </div>
             </div>
         </div>
-            <!-- Контейнер для галереи -->
-        <div class="row" id="gallery-container">
+    </div>
+    <!-- Контейнер для галереи -->
+    <div class="row" id="gallery-container">
+        {{ formset_gallery.management_form }}
+        {% for form in formset_gallery %}
 
-            {{ formset_gallery.management_form }}
 
-                {% for form in formset_gallery %}
-                {{ form.id }}
-            {{ form.DELETE }}
-                <div class="col-md-2 gallery-item mb-3">
-                    <!-- Кнопка удалить -->
-                    <button type="button" class="btn btn-danger w-100 mb-2 remove-image">Удалить</button>
 
-                    <!-- Превью -->
-                    {% if form.instance.image %}
-                    <img class="card-img-top preview mb-2" src="{{ form.instance.image.url }}" alt="...">
-                    {% else %}
-                    <img class="card-img-top preview mb-2" src="https://www.nomadfoods.com/wp-content/uploads/2018/08/placeholder-1-e1533569576673-960x960.png" alt="...">
-                    {% endif %}
-                    <!-- Загрузить -->
-                    <button type="button" class="btn btn-success w-100 mb-2 upload-btn">Загрузить</button>
-                    {{ form.image }}
-                </div>
-            {% endfor %}
-            </div>
-
+        <div class="col-md-2 gallery-item mb-3">
+            {{ form.id }}
+            <div style="display: none;">{{form.DELETE}}</div>
+            <!-- Кнопка удалить -->
+            <button type="button" class="btn btn-danger w-100 mb-2 remove-image">Удалить</button>
+            <!-- Превью -->
+            {% if form.instance.pk and form.instance.image%}
+            <img class="card-img-top preview mb-2" src="{{ form.instance.image.url }}" alt="preview">
+            {% else %}
+            <img class="card-img-top preview mb-2" src="https://www.nomadfoods.com/wp-content/uploads/2018/08/placeholder-1-e1533569576673-960x960.png" alt="...">
+            {% endif %}
+            <!-- Загрузить -->
+            <button type="button" class="btn btn-success w-100 mb-2 upload-btn">Загрузить</button>
+            {{ form.image }}
+        </div>
+        {% endfor %}
+    </div>
     <!-- Кнопка добавить -->
     <div class="row">
         <div class="col-md-2">
@@ -174,6 +172,24 @@
             </button>
         </div>
     </div>
+
+    <!-- Скрытый шаблон для новых форм -->
+    <div id="empty-gallery-form" style="display: none;">
+        {% with form=formset_gallery.empty_form %}
+        <div class="col-md-2 gallery-item mb-3">
+            {{ form.id }}
+            <div style="display: none;">{{form.DELETE }}</div>
+            <img src="https://www.nomadfoods.com/wp-content/uploads/2018/08/placeholder-1-e1533569576673-960x960.png" class="card-img-top preview mb-2" alt="placeholder">
+            <button type="button" class="btn btn-success w-100 mb-2 upload-btn">Загрузить</button>
+            {{ form.image }}
+            <button type="button" class="btn btn-danger w-100 mb-2 remove-image">Удалить</button></div>
+
+        {% endwith %}
+
+    </div>
+
+
+
 
 
 
@@ -270,116 +286,53 @@
 
 
 <script>
-document.addEventListener('DOMContentLoaded', function () {
-
-    // -----------------------
-    // Логотип (main_image)
-    // -----------------------
-    const mainImageInput = document.querySelector('input[name="cinema_form-main_image"]');
-    const mainImagePreview = document.getElementById('mainImagePreview');
-    const uploadLogoBtn = document.getElementById('uploadLogoBtn');
-    const deleteLogoBtn = document.getElementById('deleteLogoBtn');
-    const placeholderLogo = 'https://www.nomadfoods.com/wp-content/uploads/2018/08/placeholder-1-e1533569576673-960x960.png';
-
-    if(mainImageInput){
-        uploadLogoBtn.addEventListener('click', () => mainImageInput.click());
-        mainImageInput.addEventListener('change', function () {
-            if(this.files[0]){
-                const reader = new FileReader();
-                reader.onload = e => mainImagePreview.src = e.target.result;
-                reader.readAsDataURL(this.files[0]);
-            }
-        });
-        deleteLogoBtn.addEventListener('click', () => {
-            mainImageInput.value = '';
-            mainImagePreview.src = placeholderLogo;
-        });
-    }
-
-    // -----------------------
-    // Верхний баннер (image_top_banner)
-    // -----------------------
-    const topBannerInput = document.querySelector('input[name="cinema_form-image_top_banner"]');
-    const topBannerPreview = document.getElementById('ImageTopBannerPreview');
-    const uploadTopBannerBtn = document.getElementById('uploadImageTopBannerBtn');
-    const deleteTopBannerBtn = document.getElementById('deleteImageTopBannerBtn');
-    const placeholderBanner = 'https://www.nomadfoods.com/wp-content/uploads/2018/08/placeholder-1-e1533569576673-960x960.png';
-
-    if(topBannerInput){
-        uploadTopBannerBtn.addEventListener('click', () => topBannerInput.click());
-        topBannerInput.addEventListener('change', function () {
-            if(this.files[0]){
-                const reader = new FileReader();
-                reader.onload = e => topBannerPreview.src = e.target.result;
-                reader.readAsDataURL(this.files[0]);
-            }
-        });
-        deleteTopBannerBtn.addEventListener('click', () => {
-            topBannerInput.value = '';
-            topBannerPreview.src = placeholderBanner;
-        });
-    }
-
-    // -----------------------
-    // Галерея картинок
-    // -----------------------
+document.addEventListener('DOMContentLoaded', function (){
     const galleryContainer = document.getElementById('gallery-container');
-    const addGalleryBtn = document.getElementById('add-gallery-item');
-    const totalForms = document.getElementById('id_gallery-TOTAL_FORMS');
+    /// находит элемент по id
 
-    // Добавление новой формы галереи
-    addGalleryBtn.addEventListener('click', function () {
+    galleryContainer.addEventListener('click', function (element){
+        /// УДАЛИТЬ КАРТИКУ
+        if (element.target.classList.contains('remove-image')) {
+            console.log('click cut', element.target)
+            const block = element.target.closest('.gallery-item');
+            console.log('Нашёл блок формы:', block);
+            /// closest - находит ближайший родительский контейнер контейнера remove-image то еть gallery-item
+            ////// <input type="hidden" name="gallery-2-id" id="id_gallery-2-id"
+            const block_id = block.querySelector('input[name$="-id"]')
+            console.log('Нашёл блок id:',  'value',block_id.value);
 
+            const deleteCheckbox = block.querySelector('input[name$="-DELETE"]');
+            console.log('check блок формы:', deleteCheckbox.checked);
+            console.log('check блок формы:', deleteCheckbox.checked);
 
-        let formCount = parseInt(totalForms.value);
-        let lastForm = galleryContainer.querySelector('.gallery-item:last-child');
-        let newForm = lastForm.cloneNode(true);
-
-
-        // Обновляем индексы для Django
-        newForm.innerHTML = newForm.innerHTML.replace(/gallery-(\d+)/g, `gallery-${formCount}`);
-
-        // Сброс input file
-        newForm.querySelector('input[type="file"]').value = '';
-
-        // Сброс превью
-        newForm.querySelector('.preview').src = 'https://www.nomadfoods.com/wp-content/uploads/2018/08/placeholder-1-e1533569576673-960x960.png';
-
-        galleryContainer.appendChild(newForm);
-        totalForms.value = formCount + 1;
-    });
-
-    // Делегирование событий для галереи
-    galleryContainer.addEventListener('click', function (e) {
-        // Загрузить картинку
-        if(e.target.classList.contains('upload-btn')){
-            const input = e.target.closest('.gallery-item').querySelector('input[type="file"]');
-            input.click();
-        }
-
-        // Удалить форму
-        if(e.target.classList.contains('remove-image')){
-            const forms = galleryContainer.querySelectorAll('.gallery-item');
-            if(forms.length > 1){
-                e.target.closest('.gallery-item').remove();
-                totalForms.value = galleryContainer.querySelectorAll('.gallery-item').length;
+            if (block_id.value !=='') {
+                deleteCheckbox.checked = true;
+                block.hidden = true;
+                console.log('check блок формы:', deleteCheckbox.checked);
             }
+        if (element.target.classList.contains('upload-btn')){
+            const input = element.target.closest('.gallery-item').querySelector('input[type="file"]');
+            input.click()
+            ;
+        }
+
+
+
+        /// ЗАГРУЗИТЬ КАРТИНКУ
+
+
+
+
+
+
+
         }
     });
 
-    galleryContainer.addEventListener('change', function(e){
-        if(e.target.type === 'file' && e.target.closest('.gallery-item')){
-            const file = e.target.files[0];
-            if(file){
-                const reader = new FileReader();
-                const img = e.target.closest('.gallery-item').querySelector('.preview');
-                reader.onload = e => img.src = e.target.result;
-                reader.readAsDataURL(file);
-            }
-        }
+
     });
 
-});
+
 </script>
 
 

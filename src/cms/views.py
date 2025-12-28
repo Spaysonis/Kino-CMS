@@ -1,4 +1,4 @@
-from django.urls import reverse
+
 
 from .models import Hall
 from src.cms.models.page import SeoBlock
@@ -111,6 +111,12 @@ def cinema_update(request, pk):
     gallery_qs = Gallery.objects.filter(cinema=cinema)
 
     if request.method == 'POST':
+
+        print("POST:", request.POST)
+        print("FILES:", request.FILES)
+        print("TOTAL_FORMS:", request.POST.get('gallery-TOTAL_FORMS'))
+
+
         cinema_form = CinemaForm(request.POST, request.FILES, instance=cinema, prefix='cinema_form')
         seo_form = SeoBlockForm(request.POST,  instance=cinema.seo_block, prefix='seo_form')
         gallery_form_set = GalleryFormSet(request.POST, request.FILES, queryset=gallery_qs, prefix='gallery')
@@ -119,6 +125,8 @@ def cinema_update(request, pk):
         print('seo_form',seo_form.errors)
         print('gallery_form_set',gallery_form_set.errors)
         if cinema_form.is_valid() and seo_form.is_valid() and gallery_form_set.is_valid():
+            print(gallery_form_set)
+            print(request.POST)
             cinema_form.save()
             seo_form.save()
             gallery_form_set.save()
@@ -158,10 +166,8 @@ def hall_create(request,pk):
     cinema = get_object_or_404(Cinema, pk=pk)
 
     if request.method=='POST':
-        print("POST данные:", request.POST)
-        print("FILES данные:", request.FILES)  # Добавьте это!
 
-        print(request.POST)
+
 
         hall_form = HallForm(request.POST,  request.FILES , prefix='hall_form')
 
@@ -227,7 +233,7 @@ def hall_update(request, cinema_pk, hall_pk):
     hall_form = HallForm(instance=hall, prefix='hall_form')
     seo_form = SeoBlockForm(instance=hall.seo_block ,prefix='seo_form')
     gallery_formset = GalleryFormSet(queryset=gallery_qs)
-    print(seo_form)
+
 
     context = {
         'hall_form':hall_form,
