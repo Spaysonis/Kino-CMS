@@ -290,7 +290,39 @@ document.addEventListener('DOMContentLoaded', function (){
     const galleryContainer = document.getElementById('gallery-container');
     /// находит элемент по id
 
+    galleryContainer.addEventListener('change', function (event){ // слушаю galleryContainer если в нем будет
+        /// change то браузер вызовит функцию и пеередаст в нее событие
+
+        if (event.target.type === 'file') {
+
+            /// создаю реадер
+            const reader = new FileReader();
+
+            /// если в событии тип фаил то запипсываю фаил в костанту
+            const file = event.target.files[0];
+            /// тут получаю место где лежит старая картинка или плейсхолдер
+            const img = event.target.closest('.gallery-item').querySelector('.preview');
+
+
+            // тут я обращаюсь к reader и меняю старое фото на новое
+            reader.onload = function (e) {
+                img.src = e.target.result
+            };
+                // передаю путь к изображени в url формате для вывода
+            reader.readAsDataURL(file)
+        }
+    });
+
+
+
+
     galleryContainer.addEventListener('click', function (element){
+        /// Загрузить картинку
+        if (element.target.classList.contains('upload-btn')) {
+            console.log('Нажата кнопка Загрузить!', element.target);
+            const input = element.target.closest('.gallery-item').querySelector('input[type="file"]');
+            input.click();
+        }
         /// УДАЛИТЬ КАРТИКУ
         if (element.target.classList.contains('remove-image')) {
             console.log('click cut', element.target)
@@ -310,27 +342,8 @@ document.addEventListener('DOMContentLoaded', function (){
                 block.hidden = true;
                 console.log('check блок формы:', deleteCheckbox.checked);
             }
-        if (element.target.classList.contains('upload-btn')){
-            const input = element.target.closest('.gallery-item').querySelector('input[type="file"]');
-            input.click()
-            ;
         }
-
-
-
-        /// ЗАГРУЗИТЬ КАРТИНКУ
-
-
-
-
-
-
-
-        }
-    });
-
-
-    });
+    });});
 
 
 </script>
