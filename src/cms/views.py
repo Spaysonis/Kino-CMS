@@ -112,23 +112,22 @@ def cinema_update(request, pk):
 
     if request.method == 'POST':
 
+
         cinema_form = CinemaForm(request.POST, request.FILES, instance=cinema, prefix='cinema_form')
         seo_form = SeoBlockForm(request.POST,  instance=cinema.seo_block, prefix='seo_form')
         gallery_form_set = GalleryFormSet(request.POST, request.FILES, queryset=gallery_qs, prefix='gallery')
 
 
-        if cinema_form.is_valid() and seo_form.is_valid() and gallery_form_set.is_valid():
-            print("Gallery forms valid")
 
+
+
+        if cinema_form.is_valid() and seo_form.is_valid() and gallery_form_set.is_valid():
+            print("FILES keys:", list(request.FILES.keys()))
             cinema_form.save()
             seo_form.save()
             instances=gallery_form_set.save()
-            for inst in instances:
-                print("Saved Gallery:", inst.pk, inst.image, inst.image.url if inst.image else None)
+            cinema.gallery.add(*instances)
             return redirect('cinema_list')
-        else:
-            print("Gallery errors:", gallery_form_set.errors)
-
 
     else:
         cinema_form = CinemaForm(instance=cinema, prefix='cinema_form')

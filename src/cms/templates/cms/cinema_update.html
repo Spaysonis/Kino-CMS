@@ -57,137 +57,124 @@
             </div>
         </div>
 
-
-        <div class="row">
-            <div  class="col-md-2">
-
-              <div class="input-group mb-3">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text">Логотип</span>
+        <div id="bannerAndLogo-wrapper">
+            <div class="row">
+                <div  class="col-md-2">
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">Логотип</span>
+                        </div>
                     </div>
-              </div>
+                </div>
+
+                <div class="card col-md-2" style="width: 20rem;">
+                    {% if cinema_form.instance.main_image %}
+                    <img id="mainImagePreview" src="{{ cinema_form.instance.main_image.url }}" class="card-img-top" alt="...">
+                    {% else %}
+                    <img id='mainImagePreview' src="https://www.nomadfoods.com/wp-content/uploads/2018/08/placeholder-1-e1533569576673-960x960.png" class="card-img-top" alt="...">
+                    {% endif %}
+                </div>
+                <div  class="col-md-2 d-flex align-items-center">
+                    <button type="button" id="uploadLogoBtn" class="btn btn-success">Загрузить</button>
+                </div>
+                {{ cinema_form.main_image }}
+                <div  class="col-md-2 d-flex align-items-center">
+                    <button type="button" id="deleteLogoBtn" class="btn btn-danger">Удалить</button>
+                </div>
             </div>
-
-
-            <div class="card col-md-2" style="width: 20rem;">
-                {% if cinema_form.instance.main_image %}
-
-                <img id="mainImagePreview" src="{{ cinema_form.instance.main_image.url }}" class="card-img-top" alt="...">
-                {% else %}
-                <img id='mainImagePreview' src="https://www.nomadfoods.com/wp-content/uploads/2018/08/placeholder-1-e1533569576673-960x960.png" class="card-img-top" alt="...">
-                {% endif %}
-            </div>
-
-            <div  class="col-md-2 d-flex align-items-center">
-                <button type="button" id="uploadLogoBtn" class="btn btn-success">Загрузить</button>
-            </div>
-            {{ cinema_form.main_image }}
-
-            <div  class="col-md-2 d-flex align-items-center">
-               <button type="button" id="deleteLogoBtn" class="btn btn-danger">Удалить</button>
-            </div>
-
-
-            </div>
-        </div>
-
-
-        <div class="row">
-            <div  class="col-md-2">
-              <div class="input-group mb-3">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text">Фото верхнего баннера</span>
+            <div class="row">
+                <div  class="col-md-2">
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">Фото верхнего баннера</span>
+                        </div>
                     </div>
-              </div>
-            </div>
-            <div class="card col-md-2" style="width: 20rem;">
-                {% if cinema_form.instance.image_top_banner %}
-
-                <img id="ImageTopBannerPreview" src="{{ cinema_form.instance.image_top_banner.url }}" class="card-img-top" alt="...">
-                {% else %}
-                <img id='ImageTopBannerPreview' src="https://www.nomadfoods.com/wp-content/uploads/2018/08/placeholder-1-e1533569576673-960x960.png" class="card-img-top" alt="...">
-                {% endif %}
-            </div>
-
-            <div  class="col-md-2 d-flex align-items-center">
-                <button type="button" id="uploadImageTopBannerBtn" class="btn btn-success">Загрузить</button>
-            </div>
-            {{ cinema_form.image_top_banner }}
-
-            <div  class="col-md-2 d-flex align-items-center">
-               <button type="button" id="deleteImageTopBannerBtn" class="btn btn-danger">Удалить</button>
+                </div>
+                <div class="card col-md-2" style="width: 20rem;">
+                    {% if cinema_form.instance.image_top_banner %}
+                    <img id="ImageTopBannerPreview" src="{{ cinema_form.instance.image_top_banner.url }}" class="card-img-top" alt="...">
+                    {% else %}
+                    <img id='ImageTopBannerPreview' src="https://www.nomadfoods.com/wp-content/uploads/2018/08/placeholder-1-e1533569576673-960x960.png" class="card-img-top" alt="...">
+                    {% endif %}
+                </div>
+                <div  class="col-md-2 d-flex align-items-center">
+                    <button type="button" id="uploadImageTopBannerBtn" class="btn btn-success">Загрузить</button>
+                </div>
+                {{ cinema_form.image_top_banner }}
+                <div  class="col-md-2 d-flex align-items-center">
+                    <button type="button" id="deleteImageTopBannerBtn" class="btn btn-danger">Удалить</button>
+                </div>
             </div>
         </div>
 
 
 <!--Болки галерея картинок &#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;-->
   <!--Болки галерея картинок &#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;-->
-    <div class="row mb-3">
-        <div class="col-md-2">
-            <div class="input-group mb-3">
-                <div class="input-group-prepend">
-                    <span class="input-group-text">Галерея картинок:</span>
+    <div class="gallery-wrapper" id="gallery-wrapper">
+        <div class="row mb-3">
+            <div class="col-md-2">
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">Галерея картинок:</span>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-    <div class="row mb-3">
-        <div class="col-md-2">
-            <div class="input-group mb-3">
-                <div class="input-group-prepend">
-                    <span class="input-group-text">Размер: 1000х190</span>
+        <div class="row mb-3">
+            <div class="col-md-2">
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">Размер: 1000х190</span>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-    <!-- Контейнер для галереи -->
-    <div class="row" id="gallery-container">
-        {{ formset_gallery.management_form }}
-        {% for form in formset_gallery %}
-
-
-
-        <div class="col-md-2 gallery-item mb-3">
-            {{ form.id }}
-            <div style="display: none;">{{form.DELETE}}</div>
-            <!-- Кнопка удалить -->
-            <button type="button" class="btn btn-danger w-100 mb-2 remove-image">Удалить</button>
-            <!-- Превью -->
-            {% if form.instance.pk and form.instance.image%}
-            <img class="card-img-top preview mb-2" src="{{ form.instance.image.url }}" alt="preview">
-            {% else %}
-            <img class="card-img-top preview mb-2" src="https://www.nomadfoods.com/wp-content/uploads/2018/08/placeholder-1-e1533569576673-960x960.png" alt="...">
-            {% endif %}
-            <!-- Загрузить -->
-            <button type="button" class="btn btn-success w-100 mb-2 upload-btn">Загрузить</button>
-            {{ form.image }}
+        <!-- Контейнер для галереи -->
+        <div class="row" id="gallery-container">
+            {{ formset_gallery.management_form }}
+            {% for form in formset_gallery %}
+            <div class="col-md-2 gallery-item mb-3">
+                {{ form.id }}
+                <div style="display: none;">{{form.DELETE}}</div>
+                <!-- Кнопка удалить -->
+                <button type="button" class="btn btn-danger w-100 mb-2 remove-image">Удалить</button>
+                <!-- Превью -->
+                {% if form.instance.pk and form.instance.image%}
+                <img class="card-img-top preview mb-2" src="{{ form.instance.image.url }}" alt="preview">
+                {% else %}
+                <img class="card-img-top preview mb-2" src="https://www.nomadfoods.com/wp-content/uploads/2018/08/placeholder-1-e1533569576673-960x960.png" alt="...">
+                {% endif %}
+                <!-- Загрузить -->
+                <button type="button" class="btn btn-success w-100 mb-2 upload-btn">Загрузить</button>
+                {{ form.image }}
+            </div>
+            {% endfor %}
         </div>
-        {% endfor %}
-    </div>
-    <!-- Кнопка добавить -->
-    <div class="row">
-        <div class="col-md-2">
-            <button type="button" class="btn btn-primary w-100" id="add-gallery-item">
-                <i class="fas fa-plus"></i> Добавить
-            </button>
+        <!-- Кнопка добавить -->
+        <div class="row">
+            <div class="col-md-2">
+                <button type="button" class="btn btn-primary w-100" id="add-gallery-item">
+                    <i class="fas fa-plus"></i> Добавить
+                </button>
+            </div>
+        </div>
+
+        <!-- Скрытый шаблон для новых форм -->
+        <div id="empty-gallery-form" style="display: none;">
+            {% with form=formset_gallery.empty_form %}
+            <div class="col-md-2 gallery-item mb-3">
+                {{ form.id }}
+                <div style="display: none;">{{form.DELETE }}</div>
+                <button type="button" class="btn btn-danger w-100 mb-2 remove-image">Удалить</button>
+                <img src="https://www.nomadfoods.com/wp-content/uploads/2018/08/placeholder-1-e1533569576673-960x960.png" class="card-img-top preview mb-2" alt="placeholder">
+
+
+                {{ form.image }}
+                <button type="button" class="btn btn-success w-100 mb-2 upload-btn">Загрузить</button>
+            </div>
+            {% endwith %}
         </div>
     </div>
-
-    <!-- Скрытый шаблон для новых форм -->
-    <div id="empty-gallery-form" style="display: none;">
-        {% with form=formset_gallery.empty_form %}
-        <div class="col-md-2 gallery-item mb-3">
-            {{ form.id }}
-            <div style="display: none;">{{form.DELETE }}</div>
-            <img src="https://www.nomadfoods.com/wp-content/uploads/2018/08/placeholder-1-e1533569576673-960x960.png" class="card-img-top preview mb-2" alt="placeholder">
-            <button type="button" class="btn btn-success w-100 mb-2 upload-btn">Загрузить</button>
-            {{ form.image }}
-            <button type="button" class="btn btn-danger w-100 mb-2 remove-image">Удалить</button></div>
-
-        {% endwith %}
-
-    </div>
-
 
 
 
@@ -287,10 +274,38 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function (){
-    const galleryContainer = document.getElementById('gallery-container');
-    /// находит элемент по id
+    /// ОТВЕЧАЕТ ЗА ГАЛЕРЕЮ КАРТИНОК
+    const galleryWrapper = document.getElementById('gallery-wrapper');
+    const Form = document.getElementById('empty-gallery-form').querySelector('.gallery-item')
+    const totalForm =  document.getElementById('id_gallery-TOTAL_FORMS')
+    const galleryContainer = document.getElementById('gallery-container')
 
-    galleryContainer.addEventListener('change', function (event){ // слушаю galleryContainer если в нем будет
+    /// ОТВЕЧАЕТ ЗА ЛОГОТИ И БАННЕР
+    const bannerAndLogoWrapper = document.getElementById('bannerAndLogo-wrapper')
+
+    bannerAndLogoWrapper.addEventListener('click', function (event){
+        // загрузка логитпа
+        if(event.target.id === 'uploadLogoBtn') {
+            document.querySelector('input[name="cinema_form-main_image"]').click();
+        }
+
+        // удаление логотипа
+        if (event.target.id === 'deleteLogoBtn') {
+
+        }
+
+        // загрузка баннера
+
+        if (event.target.id === 'uploadImageTopBannerBtn') {
+            document.querySelector('input[name="cinema_form-image_top_banner"]').click();
+        }
+
+    })
+
+
+    /// находит элемент по id
+    /// Смена плейсхолдера на картинку
+    galleryWrapper.addEventListener('change', function (event){ // слушаю galleryWrapper если в нем будет
         /// change то браузер вызовит функцию и пеередаст в нее событие
 
         if (event.target.type === 'file') {
@@ -316,31 +331,57 @@ document.addEventListener('DOMContentLoaded', function (){
 
 
 
-    galleryContainer.addEventListener('click', function (element){
+    galleryWrapper.addEventListener('click', function (element){
+        // добавить иконку
+
+
+        if (element.target.closest('#add-gallery-item')) {
+            let formCount = parseInt(totalForm.value);
+
+            let newForm = Form.cloneNode(true)
+
+
+            newForm.innerHTML = newForm.innerHTML.replace(/__prefix__/g, formCount);
+            totalForm.value = formCount + 1;
+
+            newForm.hidden = false;
+            galleryContainer.appendChild(newForm);
+
+
+        }
+
+
+
         /// Загрузить картинку
         if (element.target.classList.contains('upload-btn')) {
-            console.log('Нажата кнопка Загрузить!', element.target);
+            console.log('Нажата кнопка загрузит', element.target);
             const input = element.target.closest('.gallery-item').querySelector('input[type="file"]');
             input.click();
         }
         /// УДАЛИТЬ КАРТИКУ
         if (element.target.classList.contains('remove-image')) {
-            console.log('click cut', element.target)
+            console.log('click ', element.target)
             const block = element.target.closest('.gallery-item');
-            console.log('Нашёл блок формы:', block);
+            console.log('блок формы', block);
             /// closest - находит ближайший родительский контейнер контейнера remove-image то еть gallery-item
             ////// <input type="hidden" name="gallery-2-id" id="id_gallery-2-id"
             const block_id = block.querySelector('input[name$="-id"]')
-            console.log('Нашёл блок id:',  'value',block_id.value);
+            console.log('блок id',  'value',block_id.value);
 
             const deleteCheckbox = block.querySelector('input[name$="-DELETE"]');
-            console.log('check блок формы:', deleteCheckbox.checked);
-            console.log('check блок формы:', deleteCheckbox.checked);
+            console.log('чек блок формы', deleteCheckbox.checked);
+
 
             if (block_id.value !=='') {
                 deleteCheckbox.checked = true;
                 block.hidden = true;
                 console.log('check блок формы:', deleteCheckbox.checked);
+            }
+            else {
+                block.remove()
+                totalForm.value = parseInt(totalForm.value) -1
+
+
             }
         }
     });});
