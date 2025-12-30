@@ -8,7 +8,7 @@ from src.cms.models.cinema import Cinema, Hall
 
 from ..user.models import BaseUser
 
-
+from django.forms.widgets import ClearableFileInput
 class UserEditForm(forms.ModelForm):
 
     class Meta:
