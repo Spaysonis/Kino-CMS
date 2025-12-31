@@ -11,7 +11,12 @@ class HallTable(tables.Table):
         verbose_name='Дата создания',
         format='d.m.Y'
     )
-    actions = tables.Column(empty_values=(), verbose_name='', orderable=False) # пустая колонка
+    actions = tables.Column(empty_values=(), verbose_name='', orderable=False,
+                            attrs={
+                                "td": {"style": "width: 260px;"},
+                                "th": {"style": "width: 260px;"}
+                            }
+                            ) # пустая колонка
     # verbose_name=''- чтоб в шапке колонки  ничего не писалось
     # orderable = False нельзя сортировать по этой колоке
     # empty_values = () всегда будет колонка в шапке даже если нет данных
@@ -25,13 +30,66 @@ class HallTable(tables.Table):
 
         attrs = {"class": "table table-bordered table-primary"}
 
-    def render_actions(self,record):
+    def render_actions(self, record):
         update_url = reverse('hall_update', args=[  record.cinema.pk, record.pk])
-        delete_url = reverse('hall_delete', args=[ record.cinema.pk, record.pk])
+        delete_url = reverse('hall_delete', args=[record.cinema.pk, record.pk])
+
+        if record.is_default:
+            return mark_safe(
+                f'''
+                            <div class="d-flex justify-content-between " >
+                                <span></span>  <!-- пустой элемент для выравнивания -->
+                                <a href="{update_url}" class="btn btn-sm btn-warning" >Редактировать</a>
+                            </div>
+                            '''
+            )
+        return mark_safe(
+            f'''
+                    <div class="d-flex justify-content-between" >
+                        <a href="{delete_url}" class="btn btn-sm btn-danger">Удалить</a>
+                        <a href="{update_url}" class="btn btn-sm btn-warning">Редактировать</a>
+                    </div>
+                '''
+        )
+
+
+
+
+
+class NewsTable(tables.Table):
+    title = tables.Column(verbose_name='Название')
+    date_create = tables.DateTimeColumn(
+        verbose_name='Дата создания',
+        format='d.m.Y'
+    )
+    status = tables.Column(verbose_name='Статус')
+    actions = tables.Column(empty_values=(), verbose_name='', orderable=False,
+                            attrs={
+                                "td": {"style": "width: 260px;"},
+                                "th": {"style": "width: 260px;"}
+                            }
+                            ) # пустая колонка
+    # verbose_name=''- чтоб в шапке колонки  ничего не писалось
+    # orderable = False нельзя сортировать по этой колоке
+    # empty_values = () всегда будет колонка в шапке даже если нет данных
+
+    class Meta:
+        fields = ('title', 'date_create', 'status', 'actions')
+        orderable = False
+
+        model = Hall
+        template_name = "django_tables2/bootstrap4.html"
+
+        attrs = {"class": "table table-bordered table-primary"}
+
+    def render_actions(self, record):
+        update_url = reverse('hall_update', args=[ record.cinema.pk, record.pk])
+        delete_url = reverse('hall_delete', args=[record.cinema.pk, record.pk])
+
 
         return mark_safe(
             f'''
-                    <div class="d-flex justify-content-between">
+                    <div class="d-flex justify-content-between" >
                         <a href="{delete_url}" class="btn btn-sm btn-danger">Удалить</a>
                         <a href="{update_url}" class="btn btn-sm btn-warning">Редактировать</a>
                     </div>

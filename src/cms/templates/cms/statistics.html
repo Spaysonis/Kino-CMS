@@ -3,6 +3,8 @@
 <html lang="en">
 <head>
     {% block extra_css %}
+    <link href="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/css/bootstrap4-toggle.min.css" rel="stylesheet">
+
     <!-- Bootstrap 4 CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
     <!-- FontAwesome -->
@@ -160,12 +162,7 @@
                             <p>Пользователи</p>
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a href="{% url 'news' %}" class="nav-link {% if active_page == 'news' %}active{% endif %}">
-                            <i class="nav-icon fas fa-newspaper"></i>
-                            <p>Новости</p>
-                        </a>
-                    </li>
+
                     <li class="nav-item">
                         <a href="{% url 'movie' %}" class="nav-link {% if active_page == 'movie' %}active{% endif %}">
                             <i class="nav-icon fas fa-film"></i>
@@ -180,9 +177,9 @@
                     </li>
 
                     <li class="nav-item">
-                        <a href="{% url 'test' %}" class="nav-link {% if active_page == 'cinema' %}active{% endif %}">
-                            <i class="nav-icon fas fa-theater-masks"></i>
-                            <p>TEST</p>
+                        <a href="{% url 'news' %}" class="nav-link {% if active_page == 'news' %}active{% endif %}">
+                            <i class="nav-icon fas fa-newspaper"></i>
+                            <p>Новости</p>
                         </a>
                     </li>
                 </ul>
@@ -228,7 +225,7 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
 <!-- AdminLTE App -->
 <script src="{% static 'adminlte/js/adminlte.min.js' %}"></script>
-
+<script src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/js/bootstrap4-toggle.min.js"></script>
 {% block extra_js %}{% endblock %}
 </body>
 </html>

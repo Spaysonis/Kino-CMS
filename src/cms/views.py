@@ -1,7 +1,7 @@
 
 
 from .models import Hall
-from src.cms.models.page import SeoBlock
+from src.cms.models.page import SeoBlock, Updates
 
 from django.shortcuts import render, redirect, get_object_or_404
 from src.cms.models.cinema import Cinema
@@ -10,7 +10,7 @@ from .models import Gallery
 from django.shortcuts import render
 from django_tables2 import SingleTableView
 from src.user.models import BaseUser
-from .tables import UserTable, HallTable
+from .tables import UserTable, HallTable, NewsTable
 
 
 
@@ -79,6 +79,7 @@ def cinema_create(request):
 
                 number = f'Номер зала 1',
                 description='Зал по умолчанию',
+                is_default = True
 
 
             )
@@ -111,19 +112,13 @@ def cinema_update(request, pk):
     gallery_qs = Gallery.objects.filter(cinema=cinema)
 
     if request.method == 'POST':
-
-
         cinema_form = CinemaForm(request.POST, request.FILES, instance=cinema, prefix='cinema_form')
         seo_form = SeoBlockForm(request.POST,  instance=cinema.seo_block, prefix='seo_form')
         gallery_form_set = GalleryFormSet(request.POST, request.FILES, queryset=gallery_qs, prefix='gallery')
 
-
-
-
-
         if cinema_form.is_valid() and seo_form.is_valid() and gallery_form_set.is_valid():
+            print('сработал синема апдейт вместо создать зал')
             print("FILES keys:", list(request.FILES.keys()))
-
 
 
             cinema_form.save()
@@ -159,22 +154,13 @@ def cinema_delete(request, pk):
     return render(request, 'cms/cinemas.html')
 
 
-
-
-
 def hall_create(request,pk):
     cinema = get_object_or_404(Cinema, pk=pk)
-
     if request.method=='POST':
-
-
-
         hall_form = HallForm(request.POST,  request.FILES , prefix='hall_form')
-
         formset_gallery = GalleryFormSet(request.POST, request.FILES,
                                          queryset=Gallery.objects.none(),
                                          prefix='gallery')
-
         seo_form = SeoBlockForm(request.POST, prefix='seo_form')
 
         print('error hal', hall_form.errors)
@@ -235,13 +221,6 @@ def hall_update(request, cinema_pk, hall_pk):
             hall.gallery.add(*instances)
             return redirect('cinema_update', pk=cinema_pk)
 
-
-
-
-
-
-
-
     hall_form = HallForm(instance=hall, prefix='hall_form')
     seo_form = SeoBlockForm(instance=hall.seo_block ,prefix='seo_form')
     gallery_formset = GalleryFormSet(queryset=gallery_qs, prefix='gallery')
@@ -255,9 +234,6 @@ def hall_update(request, cinema_pk, hall_pk):
 
     }
     return render(request, 'cms/hall_update.html', context)
-
-
-
 
 
 def hall_delete(request, cinema_pk, hall_pk):
@@ -276,6 +252,8 @@ def hall_delete(request, cinema_pk, hall_pk):
 
 
 def news(request):
+
+
     if request.method == 'POST':
         form = NewsForm(request.POST)
         print(request.POST)  # ← вот здесь мы смотрим всё, что отправляет браузер
@@ -284,12 +262,33 @@ def news(request):
     else:
         form = NewsForm()
 
+    news_table = NewsTable(Updates.objects.none())
+
     context = {
         'active_page': 'news',
         'page_title': 'Новости',
-        'form': form
+        'form': form,
+        'news_table':news_table
     }
     return render(request, 'cms/news.html', context)
+
+
+def news_create(request):
+
+
+    news_form = NewsForm()
+    seo_form = SeoBlockForm(prefix='seo_form')
+    formset_gallery = GalleryFormSet(queryset=Gallery.objects.none(), prefix='gallery')
+
+    context = {
+        'news_form':news_form,
+        'seo_form':seo_form,
+        'formset_gallery':formset_gallery
+
+    }
+
+    return render(request, 'cms/news_create.html', context)
+
 
 
 
@@ -320,6 +319,9 @@ def movie_edit(request):
 
 
 
+
+
+
 def edit_user(request, pk):
 
     user = get_object_or_404(BaseUser, pk=pk) # найти в бд(BaseUser)  юзера по такому ключу
@@ -347,6 +349,5 @@ class UserListView(SingleTableView):
 
 
 
-def test(request):
-    return render(request, 'cms/test.html')
+
 

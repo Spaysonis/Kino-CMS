@@ -32,6 +32,7 @@ class Hall(models.Model):
         auto_now_add=True,
         verbose_name='Дата создания'
     )
+    is_default = models.BooleanField(default=False) # Для дефолтнго зала Если false - то могу удаялть
 
 
 class Movie(models.Model):

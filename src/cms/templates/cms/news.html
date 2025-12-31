@@ -1,49 +1,19 @@
 {% extends "cms/statistics.html" %}
-{% load static %}
-
-{% block extra_css %}
-    <link rel="stylesheet" href="{% static 'cms/css/news.css' %}">
-{% endblock %}
-
-
+{% load django_tables2 %}
 {% block content %}
 
-
-<form  method="post" action="{% url 'news' %}">
-        {% csrf_token %}
-    <!--Панель ВКЛ и выбор языка-->
-    <div class="container1 d-flex justify-content-between align-items-center">
-
-        <!-- Блок вкл-выкл-->
-        <div class="custom-control custom-switch ">
-            {{ form.is_active }}
-            <label class="custom-control-label" for="news_switch">ВКЛ</label>
-        </div>
-
-    <!-- Правый блок -->
-        <div class="language">
-            <a href="#" class="btn btn-outline-secondary mr-2">
-                <i class="fas fa-language"></i> Русский
-            </a>
-            <a href="#" class="btn btn-outline-secondary">
-                <i class="fas fa-language"></i> Украинский
-            </a>
-        </div>
+<div class="row align-items-center">
+    <div class="col-md-10 text-center">
+        <h1 class="mb-0">Список новостей</h1>
     </div>
 
-        <div class="input-group input-group-sm mb-3 w-20">
-            <div class="input-group-prepend">
-                <span class="input-group-text" id="inputGroup-sizing-sm">Название новости</span>
-            </div>
-            <input type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm">
+    <div class="col-md-2 text-end ">
+        <a href="{% url 'news_create' %}" class="btn btn-primary ">
+            Создать новость
+        </a>
+    </div>
+    <div class="card-body ">
+        {% render_table news_table %}
         </div>
-
-
-
-
-
-
-
-
-</form>
+</div>
 {% endblock %}

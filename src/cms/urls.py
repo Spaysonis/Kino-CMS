@@ -13,6 +13,9 @@ urlpatterns = [
 
     path('users/', views.UserListView.as_view(), name='users'),
     path('news/', views.news, name='news'),
+    path('news/create', views.news_create, name='news_create'),
+
+
     path('movie/', views.movie_edit, name='movie'),
 
     path('cinemas/', views.cinema_list, name='cinema_list'),
@@ -33,7 +36,7 @@ urlpatterns = [
 
 
     path('users/<int:pk>/edit/', views.edit_user, name='edit_user'),
-    path('test', views.test, name='test')
+    # path('test', views.test, name='test')
 
 ]
 

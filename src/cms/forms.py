@@ -1,10 +1,12 @@
 
 from django.forms import modelformset_factory
 from django import forms
+from django.template.defaultfilters import title
+
 from .models import Movie, SeoBlock, Updates, Gallery
 
 from src.cms.models.cinema import Cinema, Hall
-
+from src.cms.models.page import Updates
 
 from ..user.models import BaseUser
 
@@ -127,14 +129,6 @@ class GalleryFrom(forms.ModelForm):
             'image': forms.FileInput(attrs={'class': 'd-none'}),
         }
 
-GalleryFormSet = modelformset_factory(
-    Gallery,
-    form= GalleryFrom,
-    can_delete=True,
-    extra=1
-)
-
-
 class HallForm(forms.ModelForm):
 
     class Meta:
@@ -164,6 +158,62 @@ class HallForm(forms.ModelForm):
             }),
 
         }
+
+
+class NewsForm(forms.ModelForm):
+    class Meta:
+        model = Updates
+        fields = "__all__"
+
+        widgets = {
+            'title':forms.TextInput(attrs={
+                'class':'form-control',
+                'placeholder':'Название новости',
+            }),
+
+            'description': forms.Textarea(attrs={
+                'class': 'form-control',
+                'aria-label': 'With textarea',
+                'placeholder': 'Текст',
+                'rows': 4,
+            }),
+
+            'main_image': forms.FileInput(attrs={
+                'class': 'd-none',
+
+            }),
+
+            'url': forms.URLInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Ссылка на видео Youtube',
+            }),
+            'publication_data': forms.DateInput(
+                attrs={
+                    'class': 'form-control',
+                    'type': 'date',
+
+            }),
+
+            'is_active': forms.CheckboxInput(attrs={
+                'class': 'form-check-input',
+                'id': 'newsStatusToggle'
+            }),
+
+
+
+
+        }
+
+
+
+GalleryFormSet = modelformset_factory(
+    Gallery,
+    form= GalleryFrom,
+    can_delete=True,
+    extra=1
+)
+
+
 
 
 
@@ -212,40 +262,3 @@ class MovieForm(forms.ModelForm):
 
 
 
-class NewsForm(forms.ModelForm):
-
-    class Meta:
-        model = Updates
-        fields = "__all__"
-
-        widgets = {
-            'is_active': forms.CheckboxInput(attrs=
-                                             {'class':'custom-control-input',
-                                              'id':'news_switch'}),
-            # 'title': forms.TextInput(attrs=
-            #                          {'class':'form-control',
-            #                           'style':'width: 200px'
-            # }),
-            #
-            # 'publication_data':forms.DateInput(attrs={
-            #                                    'type':'date',
-            #                                     'class':'form-control',
-            #                                     'style': 'width: 200px'
-            #                                    }),
-            #
-            # 'description':forms.Textarea(attrs={'class': 'form-control',
-            #                                     'rows': 3,
-            #                                     'id': 'text_description',
-            #
-            #
-            #
-            # })
-        }
-
-        labels = {
-            'is_active': 'ВКЛ',
-            'title': 'Название новости',
-            'publication_data':'Дата публикации',
-            'description': 'Описание новости',
-
-        }

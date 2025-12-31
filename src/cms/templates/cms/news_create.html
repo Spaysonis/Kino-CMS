@@ -1,17 +1,26 @@
 {% extends "cms/statistics.html" %}
-{% load django_tables2 %}
-
 {% block content %}
 
 
-<form action="{% url 'cinema_update' cinema_form.instance.pk %}" method="post" enctype="multipart/form-data"
-      xmlns="http://www.w3.org/1999/html">
+
+
+
+
+
+
+<form action="{% url 'cinema_create' %}" method="post" enctype="multipart/form-data">
 
     {% csrf_token %}
 
     <div class="p-2">
-        <div class=" col d-flex justify-content-end ">
-            <div class="btn-group btn-group-toggle" data-toggle="buttons">
+        <div class="col d-flex justify-content-end pr-5">
+            <div  class="mr-5 d-flex align-items-center">
+
+                <label for="newsStatusToggle" class="mr-2 mb-0">Статус новости:</label>
+                {{ news_form.is_active }}
+<!--                <input id="newsStatusToggle" type="checkbox" checked data-toggle="toggle" data-onstyle="success" data-on="ВКЛ" data-off="ВЫКЛ">-->
+            </div>
+            <div class="btn-group btn-group-toggle mr-5" data-toggle="buttons">
                 <label class="btn btn-secondary active">
                     <input type="radio" name="options" id="option1" checked> RUS
                 </label>
@@ -20,18 +29,29 @@
                 </label>
             </div>
         </div>
-
         <div class="row">
-            <div class="col-md-4">
-                <div class="input-group mb-3">
+            <div class="col-md-6">
+                <div class="input-group mb-3 mt-2">
                     <div class="input-group-prepend">
-                        <span class="input-group-text" id="inputGroup-sizing-default">Название кинотеатра</span>
+                        <span class="input-group-text" id="inputGroup-sizing-default">Название новости</span>
                     </div>
-                    {{ cinema_form.title }}
-<!--              <input type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">-->
+                     {{ news_form.title }}
+<!--                <input type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">-->
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <!-- Второе поле -->
+                <div class="input-group mb-3 mt-2">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">Дата публикации</span>
+                    </div>
+                    {{ news_form.publication_data }}
                 </div>
             </div>
         </div>
+
+
 
         <div class="row">
             <div class="col-md-8">
@@ -39,142 +59,117 @@
                     <div class="input-group-prepend">
                         <span class="input-group-text">Описание</span>
                     </div>
-                    {{cinema_form.description }}
-
+                    {{ news_form.description }}
                 </div>
             </div>
         </div>
 
-        <div class="row">
-            <div class="col-md-8">
-                <div class="input-group mb-3">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text">Условия</span>
-                    </div>
-                    {{cinema_form.conditions}}
-                </div>
-            </div>
-        </div>
+
 
         <div id="bannerAndLogo-wrapper">
             <div class="row">
                 <div  class="col-md-2">
-                    <div class="input-group mb-3">
+                  <div class="input-group mb-3">
                         <div class="input-group-prepend">
                             <span class="input-group-text">Логотип</span>
                         </div>
-                    </div>
+                  </div>
                 </div>
+
 
                 <div class="card col-md-2" style="width: 20rem;">
-                    {% if cinema_form.instance.main_image %}
-                    <img id="mainImagePreview" src="{{ cinema_form.instance.main_image.url }}" class="card-img-top" alt="...">
-                    {% else %}
-                    <img id='mainImagePreview' src="https://www.nomadfoods.com/wp-content/uploads/2018/08/placeholder-1-e1533569576673-960x960.png" class="card-img-top" alt="...">
-                    {% endif %}
+                    <img id="mainImagePreview" src="https://www.nomadfoods.com/wp-content/uploads/2018/08/placeholder-1-e1533569576673-960x960.png"  class="card-img-top"  alt="">
                 </div>
-                <div  class="col-md-2 d-flex align-items-center">
-                    <button type="button" id="uploadLogoBtn" class="btn btn-success">Загрузить</button>
-                </div>
-                {{ cinema_form.main_image }}
-                <div  class="col-md-2 d-flex align-items-center">
-                    <button type="button" id="deleteLogoBtn" class="btn btn-danger">Удалить</button>
-                </div>
-            </div>
-
-            <div class="row">
                 <div  class="col-md-2">
-                    <div class="input-group mb-3">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text">Фото верхнего баннера</span>
-                        </div>
-                    </div>
+                    <button type="button"  id="uploadLogoBtn" class="btn btn-success">Загрузить</button>
                 </div>
-                <div class="card col-md-2" style="width: 20rem;">
-                    {% if cinema_form.instance.image_top_banner %}
-                    <img id="ImageTopBannerPreview" src="{{ cinema_form.instance.image_top_banner.url }}" class="card-img-top" alt="...">
-                    {% else %}
-                    <img id='ImageTopBannerPreview' src="https://www.nomadfoods.com/wp-content/uploads/2018/08/placeholder-1-e1533569576673-960x960.png" class="card-img-top" alt="...">
-                    {% endif %}
+                <div  class="col-md-2">
+                   <button type="button" id="deleteLogoBtn" class="btn btn-danger">Удалить</button>
                 </div>
-                <div  class="col-md-2 d-flex align-items-center">
-                    <button type="button" id="uploadImageTopBannerBtn" class="btn btn-success">Загрузить</button>
-                </div>
-                {{ cinema_form.image_top_banner }}
-                <div  class="col-md-2 d-flex align-items-center">
-                    <button type="button" id="deleteImageTopBannerBtn" class="btn btn-danger">Удалить</button>
-                </div>
+                {{ news_form.main_image }}
             </div>
         </div>
+
+
+
 
 
 <!--Болки галерея картинок &#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;-->
-  <!--Болки галерея картинок &#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;-->
-    <div class="gallery-wrapper" id="gallery-wrapper">
-        <div class="row mb-3">
-            <div class="col-md-2">
-                <div class="input-group mb-3">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text">Галерея картинок:</span>
+        <div class="gallery-wrapper" id="gallery-wrapper">
+            <div class="row mb-3">
+                <div class="col-md-2">
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">Галерея картинок:</span>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="row mb-3">
-            <div class="col-md-2">
-                <div class="input-group mb-3">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text">Размер: 1000х190</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- Контейнер для галереи -->
-        <div class="row" id="gallery-container">
-            {{ formset_gallery.management_form }}
-            {% for form in formset_gallery %}
-            <div class="col-md-2 gallery-item mb-3">
-                {{ form.id }}
-                <div style="display: none;">{{form.DELETE}}</div>
-                <!-- Кнопка удалить -->
-                <button type="button" class="btn btn-danger w-100 mb-2 remove-image">Удалить</button>
-                <!-- Превью -->
-                {% if form.instance.pk and form.instance.image%}
-                <img class="card-img-top preview mb-2" src="{{ form.instance.image.url }}" alt="preview">
-                {% else %}
-                <img class="card-img-top preview mb-2" src="https://www.nomadfoods.com/wp-content/uploads/2018/08/placeholder-1-e1533569576673-960x960.png" alt="...">
-                {% endif %}
-                <!-- Загрузить -->
-                <button type="button" class="btn btn-success w-100 mb-2 upload-btn">Загрузить</button>
-                {{ form.image }}
-            </div>
-            {% endfor %}
-        </div>
-        <!-- Кнопка добавить -->
-        <div class="row">
-            <div class="col-md-2">
-                <button type="button" class="btn btn-primary w-100" id="add-gallery-item">
-                    <i class="fas fa-plus"></i> Добавить
-                </button>
-            </div>
-        </div>
 
-        <!-- Скрытый шаблон для новых форм -->
-        <div id="empty-gallery-form" style="display: none;">
+            <div class="row mb-3">
+                <div class="col-md-2">
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">Размер: 1000х190</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Контейнер для галереи -->
+            <div class="row" id="gallery-container">
+                {{ formset_gallery.management_form }}
+                {% for form in formset_gallery %}
+                <div class="col-md-2 gallery-item mb-3">
+                    <!-- Кнопка удалить -->
+                    <button type="button" class="btn btn-danger w-100 mb-2 remove-image">Удалить</button>
+
+                    <!-- Превью -->
+                    <img class="card-img-top preview mb-2"
+                         src="https://www.nomadfoods.com/wp-content/uploads/2018/08/placeholder-1-e1533569576673-960x960.png"
+                         alt="...">
+                    <!-- Загрузить -->
+                    <button type="button" class="btn btn-success w-100 mb-2 upload-btn">Загрузить</button>
+
+                    {{ form.image }}
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Кнопка добавить -->
+            <div class="row">
+                <div class="col-md-2">
+                    <button type="button" class="btn btn-primary w-100" id="add-gallery-item">
+                        <i class="fas fa-plus"></i> Добавить
+                    </button>
+                </div>
+            </div>
+
+            <div id="empty-gallery-form" style="display: none;">
             {% with form=formset_gallery.empty_form %}
             <div class="col-md-2 gallery-item mb-3">
                 {{ form.id }}
                 <div style="display: none;">{{form.DELETE }}</div>
                 <button type="button" class="btn btn-danger w-100 mb-2 remove-image">Удалить</button>
                 <img src="https://www.nomadfoods.com/wp-content/uploads/2018/08/placeholder-1-e1533569576673-960x960.png" class="card-img-top preview mb-2" alt="placeholder">
-
-
                 {{ form.image }}
                 <button type="button" class="btn btn-success w-100 mb-2 upload-btn">Загрузить</button>
             </div>
             {% endwith %}
+            </div>
         </div>
-    </div>
+
+          <div class="row">
+            <div class="col-md-8">
+                <div class="input-group mb-3 mt-2">
+                    <div class="input-group-prepend ">
+                        <span class="input-group-text ">Сслыка на видео</span>
+                    </div>
+                    {{ news_form.url }}
+                </div>
+            </div>
+        </div>
+
 
 
 
@@ -183,22 +178,24 @@
 <!--Закрыл блоки галерея картинок &#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;-->
 
 
-        <div class="text-center mt-5">
-            <h1>Список залов</h1>
-        </div>
+<!--        <div class="text-center mt-5">-->
+<!--            <h1>Список залов</h1>-->
+<!--        </div>-->
 
-        <div class="card-body ">
-        {% render_table hall_table %}
-        </div>
+<!--        <div class="card-body ml-5">-->
 
-        <div class="row mt-4">
-            <div class="col-md-12 d-flex justify-content-center mt-5">
+<!--        </div>-->
 
-                <button type="submit" class="btn btn-primary">
-                    <a href="{% url 'hall_create' cinema.id %}" class="btn btn-primary">Создать зал</a>
-                </button>
-            </div>
-        </div>
+
+
+<!--        <div class="row mt-4">-->
+<!--            <div class="col-md-12 d-flex justify-content-center mt-5">-->
+
+<!--                <button type="submit" name="action" value="add_hall" class="btn btn-primary">-->
+<!--                    Создать зал-->
+<!--                </button>-->
+<!--            </div>-->
+<!--        </div>-->
 
 
         <div class="row mt-5">
@@ -252,19 +249,35 @@
 
         <div class="row mt-4">
             <div class="col-md-12 d-flex justify-content-center mt-5">
-                <a href="{% url 'hall_create' cinema.id %}" class="btn btn-primary">
-                    Создать зал </a>
+                <button type="submit" class="btn btn-primary">
+               Создать
+                </button>
             </div>
         </div>
+
     </div>
 
+
+
+
+
+
+
+
+
+
 </form>
-
-
 <script>
-
 document.addEventListener('DOMContentLoaded', function (){
     /// ОТВЕЧАЕТ ЗА ГАЛЕРЕЮ КАРТИНОК
+
+    const newsStatusToggle = document.getElementById('newsStatusToggle');
+
+    if (newsStatusToggle) {
+        console.log('yes')
+    }
+
+
 
 
     const galleryWrapper = document.getElementById('gallery-wrapper');
@@ -411,29 +424,19 @@ document.addEventListener('DOMContentLoaded', function (){
             console.log('блок формы', block);
             /// closest - находит ближайший родительский контейнер контейнера remove-image то еть gallery-item
             ////// <input type="hidden" name="gallery-2-id" id="id_gallery-2-id"
-            const block_id = block.querySelector('input[name$="-id"]')
-            console.log('блок id',  'value',block_id.value);
 
-            const deleteCheckbox = block.querySelector('input[name$="-DELETE"]');
-            console.log('чек блок формы', deleteCheckbox.checked);
+            block.remove()
+            totalForm.value = parseInt(totalForm.value) -1
+        }})
+    ;
 
-
-            if (block_id.value !=='') {
-                deleteCheckbox.checked = true;
-                block.hidden = true;
-                console.log('check блок формы:', deleteCheckbox.checked);
-            }
-            else {
-                block.remove()
-                totalForm.value = parseInt(totalForm.value) -1
-
-
-            }
-        }
-    });});
+});
 
 
 </script>
+
+
+
 
 
 
