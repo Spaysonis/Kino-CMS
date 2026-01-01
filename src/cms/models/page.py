@@ -48,8 +48,8 @@ class Updates(models.Model):
         ('ACTION', 'Акции'),
     ]
 
-    seo_block = models.OneToOneField(SeoBlock, on_delete=models.CASCADE)
-    gallery = models.ManyToManyField(Gallery)
+    seo_block = models.OneToOneField(SeoBlock, on_delete=models.CASCADE, null=True, blank=True)
+    gallery = models.ManyToManyField(Gallery, blank=True)
     title = models.CharField(max_length=255)
     publication_data = models.DateTimeField()
     description = models.TextField()

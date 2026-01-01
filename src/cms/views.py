@@ -10,7 +10,7 @@ from .models import Gallery
 from django.shortcuts import render
 from django_tables2 import SingleTableView
 from src.user.models import BaseUser
-from .tables import UserTable, HallTable, NewsTable
+from .tables import UserTable, HallTable, UpdatesTable
 
 
 
@@ -251,34 +251,70 @@ def hall_delete(request, cinema_pk, hall_pk):
 
 
 
-def news(request):
+def update_list(request, content_type):
 
+    """НУЖНО ИЗМЕНИТЬ НА UPADATE_LIST И ПЕРЕДАВАТЬ В НЕЕ ТИП КОТОРЫЙ БУДЕТ ОТОБРАДЖАТЬ ТАБЛИЦА
+    КАК ЭТО СДЕЛАТЬ ???
+    """
 
-    if request.method == 'POST':
-        form = NewsForm(request.POST)
-        print(request.POST)  # ← вот здесь мы смотрим всё, что отправляет браузер
-        if form.is_valid():
-            print(form.cleaned_data['is_active'])  # True или False
+    qs = Updates.objects.filter(content_type=content_type)
+    print(content_type)
+    table = UpdatesTable(data=qs, content_type=content_type)
+    print(table)
+
+    if content_type == 'ACTION':
+        template = 'cms/action.html'
+    elif content_type == 'NEWS':
+        template = 'cms/news.html'
     else:
-        form = NewsForm()
+        template = ''
 
-    news_table = NewsTable(Updates.objects.none())
+    return render(request, template, {'table': table})
 
-    context = {
-        'active_page': 'news',
-        'page_title': 'Новости',
-        'form': form,
-        'news_table':news_table
-    }
-    return render(request, 'cms/news.html', context)
+
+
+
+
 
 
 def news_create(request):
+    return create_update(request, content_type='NEWS')
 
 
-    news_form = NewsForm()
-    seo_form = SeoBlockForm(prefix='seo_form')
-    formset_gallery = GalleryFormSet(queryset=Gallery.objects.none(), prefix='gallery')
+
+def create_update(request, content_type):
+
+    if request.method == "POST":
+        news_form = NewsForm(request.POST, request.FILES, prefix='news_form')
+        seo_form = SeoBlockForm(request.POST, prefix='seo_form')
+        formset_gallery = GalleryFormSet(request.POST, request.FILES,
+                                         queryset=Gallery.objects.none(),
+                                         prefix='gallery')
+
+        print('news_form error', news_form.errors)
+        print('seo_form error', seo_form.errors)
+        print('formset_gallery error', formset_gallery.errors)
+
+
+
+        if news_form.is_valid() and seo_form.is_valid() and formset_gallery.is_valid():
+
+            news = news_form.save(commit=False)
+            news.content_type = content_type
+
+
+            seo_block = seo_form.save()
+            news.seo_block = seo_block
+            news.save()
+            gallery_objects = formset_gallery.save()
+            news.gallery.set(gallery_objects)
+            print('save done')
+            return redirect('news_lists')
+
+    else:
+        news_form = NewsForm(prefix='news_form')
+        seo_form = SeoBlockForm(prefix='seo_form')
+        formset_gallery = GalleryFormSet(queryset=Gallery.objects.none(), prefix='gallery')
 
     context = {
         'news_form':news_form,

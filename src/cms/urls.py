@@ -12,8 +12,15 @@ urlpatterns = [
     path("", views.admin, name="statistics"),
 
     path('users/', views.UserListView.as_view(), name='users'),
-    path('news/', views.news, name='news'),
+
+
+
+    path('news_lists/', views.update_list, {'content_type': 'NEWS'}, name='news_lists'),
     path('news/create', views.news_create, name='news_create'),
+
+
+    path('actions_lists/', views.update_list, {'content_type': 'ACTION'}, name='action_list'),
+
 
 
     path('movie/', views.movie_edit, name='movie'),

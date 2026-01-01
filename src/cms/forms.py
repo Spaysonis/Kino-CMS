@@ -163,7 +163,7 @@ class HallForm(forms.ModelForm):
 class NewsForm(forms.ModelForm):
     class Meta:
         model = Updates
-        fields = "__all__"
+        exclude = ('content_type',)
 
         widgets = {
             'title':forms.TextInput(attrs={
@@ -195,7 +195,6 @@ class NewsForm(forms.ModelForm):
             }),
 
             'is_active': forms.CheckboxInput(attrs={
-                'class': 'form-check-input',
                 'id': 'newsStatusToggle'
             }),
 

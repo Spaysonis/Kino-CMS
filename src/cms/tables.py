@@ -1,6 +1,8 @@
 import django_tables2 as tables
 from src.user.models import BaseUser
 from src.cms.models.cinema import Hall
+from src.cms.models.page import Updates
+
 
 from django.utils.html import mark_safe
 from django.urls import reverse
@@ -56,13 +58,13 @@ class HallTable(tables.Table):
 
 
 
-class NewsTable(tables.Table):
+class UpdatesTable(tables.Table):
     title = tables.Column(verbose_name='Название')
-    date_create = tables.DateTimeColumn(
+    publication_data = tables.DateTimeColumn(
         verbose_name='Дата создания',
         format='d.m.Y'
     )
-    status = tables.Column(verbose_name='Статус')
+    is_active = tables.Column(verbose_name='Статус')
     actions = tables.Column(empty_values=(), verbose_name='', orderable=False,
                             attrs={
                                 "td": {"style": "width: 260px;"},
@@ -73,25 +75,31 @@ class NewsTable(tables.Table):
     # orderable = False нельзя сортировать по этой колоке
     # empty_values = () всегда будет колонка в шапке даже если нет данных
 
+    def __init__(self, *args, content_type=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.content_type = content_type
+        print( 'type content', self.content_type)
+
     class Meta:
-        fields = ('title', 'date_create', 'status', 'actions')
+        fields = ('title', 'publication_data', 'is_active', 'actions')
         orderable = False
 
-        model = Hall
+        model = Updates
         template_name = "django_tables2/bootstrap4.html"
 
         attrs = {"class": "table table-bordered table-primary"}
 
     def render_actions(self, record):
-        update_url = reverse('hall_update', args=[ record.cinema.pk, record.pk])
-        delete_url = reverse('hall_delete', args=[record.cinema.pk, record.pk])
+
+        #update_url = reverse('news_update', args=[ record.pk])
+        #delete_url = reverse('news_delete', args=[record.pk])
 
 
         return mark_safe(
             f'''
                     <div class="d-flex justify-content-between" >
-                        <a href="{delete_url}" class="btn btn-sm btn-danger">Удалить</a>
-                        <a href="{update_url}" class="btn btn-sm btn-warning">Редактировать</a>
+                        <a href="" class="btn btn-sm btn-danger">Удалить</a>
+                        <a href="" class="btn btn-sm btn-warning">Редактировать</a>
                     </div>
                 '''
         )
