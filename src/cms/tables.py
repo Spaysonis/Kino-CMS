@@ -91,7 +91,8 @@ class UpdatesTable(tables.Table):
 
     def render_actions(self, record):
 
-        #update_url = reverse('news_update', args=[ record.pk])
+
+        update_url = reverse('news_update', args=[ record.pk])
         #delete_url = reverse('news_delete', args=[record.pk])
 
 
@@ -99,7 +100,7 @@ class UpdatesTable(tables.Table):
             f'''
                     <div class="d-flex justify-content-between" >
                         <a href="" class="btn btn-sm btn-danger">Удалить</a>
-                        <a href="" class="btn btn-sm btn-warning">Редактировать</a>
+                        <a href="{update_url}" class="btn btn-sm btn-warning">Редактировать</a>
                     </div>
                 '''
         )

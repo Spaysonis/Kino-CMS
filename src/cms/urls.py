@@ -15,12 +15,26 @@ urlpatterns = [
 
 
 
-    path('news_lists/', views.update_list, {'content_type': 'NEWS'}, name='news_lists'),
-    path('news/create', views.news_create, name='news_create'),
+    path('news/', views.update_list, {'content_type': 'NEWS'}, name='news'),
+    path('news/create', views.update_form,{'content_type': 'NEWS'}, name='news_create'),
+    path('news/<int:pk>/update', views.update_form,{'content_type': 'NEWS'}, name='news_update'),
 
 
-    path('actions_lists/', views.update_list, {'content_type': 'ACTION'}, name='action_list'),
 
+    path('actions/', views.update_list, {'content_type': 'ACTION'}, name='actions'),
+    path('action/create', views.update_form, {'content_type': 'ACTION'},name='action_create'),
+    path('action/<int:pk>/update', views.update_form, {'content_type': 'ACTION'},name='action_update'),
+
+
+
+
+
+
+
+
+    # можно ли совместить один маршрут для :
+    # path('actions_lists/', views.update_list, {'content_type': 'ACTION'}, name='action_list'),
+    # path('news_lists/', views.update_list, {'content_type': 'NEWS'}, name='news_lists'),
 
 
     path('movie/', views.movie_edit, name='movie'),

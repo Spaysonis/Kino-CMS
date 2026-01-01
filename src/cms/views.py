@@ -5,7 +5,7 @@ from src.cms.models.page import SeoBlock, Updates
 
 from django.shortcuts import render, redirect, get_object_or_404
 from src.cms.models.cinema import Cinema
-from .forms import MovieForm, SeoBlockForm, NewsForm, UserEditForm, CinemaForm, GalleryFormSet, HallForm
+from .forms import MovieForm, SeoBlockForm, UpdatesForm, UserEditForm, CinemaForm, GalleryFormSet, HallForm
 from .models import Gallery
 from django.shortcuts import render
 from django_tables2 import SingleTableView
@@ -260,7 +260,7 @@ def update_list(request, content_type):
     qs = Updates.objects.filter(content_type=content_type)
     print(content_type)
     table = UpdatesTable(data=qs, content_type=content_type)
-    print(table)
+    print('----',table)
 
     if content_type == 'ACTION':
         template = 'cms/action.html'
@@ -275,17 +275,30 @@ def update_list(request, content_type):
 
 
 
+# def news_create(request):
+#     return create_update(request, content_type='NEWS')
+#
+#
+# def news_update(request):
+#     return
+#
 
 
-def news_create(request):
-    return create_update(request, content_type='NEWS')
 
 
+def update_form(request, content_type, pk=None):
 
-def create_update(request, content_type):
+    instance = None
+    gallery_qs = Gallery.objects.none()
+    if pk:
+        instance = get_object_or_404(Updates, pk=pk, content_type=content_type)
+
+        gallery_qs = instance.gallery.all()
+
+        print('INSTANCE ',gallery_qs)
 
     if request.method == "POST":
-        news_form = NewsForm(request.POST, request.FILES, prefix='news_form')
+        news_form = UpdatesForm(request.POST, request.FILES, prefix='news_form')
         seo_form = SeoBlockForm(request.POST, prefix='seo_form')
         formset_gallery = GalleryFormSet(request.POST, request.FILES,
                                          queryset=Gallery.objects.none(),
@@ -312,9 +325,9 @@ def create_update(request, content_type):
             return redirect('news_lists')
 
     else:
-        news_form = NewsForm(prefix='news_form')
-        seo_form = SeoBlockForm(prefix='seo_form')
-        formset_gallery = GalleryFormSet(queryset=Gallery.objects.none(), prefix='gallery')
+        news_form = UpdatesForm(instance=instance , prefix='news_form')
+        seo_form = SeoBlockForm(instance=instance.seo_block ,prefix='seo_form')
+        formset_gallery = GalleryFormSet(queryset=gallery_qs, prefix='gallery')
 
     context = {
         'news_form':news_form,

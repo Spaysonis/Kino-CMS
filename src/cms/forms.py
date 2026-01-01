@@ -160,7 +160,7 @@ class HallForm(forms.ModelForm):
         }
 
 
-class NewsForm(forms.ModelForm):
+class UpdatesForm(forms.ModelForm):
     class Meta:
         model = Updates
         exclude = ('content_type',)
