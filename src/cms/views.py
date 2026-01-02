@@ -53,17 +53,14 @@ def cinema_create(request):
         seo_form = SeoBlockForm(request.POST, prefix='seo_form')
         formset_gallery = GalleryFormSet(request.POST, request.FILES, queryset=Gallery.objects.none(), prefix='gallery')
 
-
-
         if cinema_form.is_valid() and seo_form.is_valid() and formset_gallery.is_valid():
             seo = seo_form.save()
             cinema = cinema_form.save(commit=False)
             cinema.seo_block = seo
             cinema.save()
-            for image in formset_gallery:
-                if image.cleaned_data:
-                    gallery = image.save()
-                    cinema.gallery.add(gallery)
+            gallery_objects = formset_gallery.save()
+            cinema.gallery.set(gallery_objects)
+
 
             hall_seo = SeoBlock.objects.create(
                 url='',
@@ -203,7 +200,8 @@ def hall_create(request,pk):
 
 def hall_update(request, cinema_pk, hall_pk):
     hall = get_object_or_404(Hall, pk=hall_pk, cinema_id=cinema_pk)
-    gallery_qs = Gallery.objects.filter(hall=hall)
+    #gallery_qs = Gallery.objects.filter(hall=hall)
+    gallery_qs = hall.gallery.all()
 
     # print('object:',hall.number)
     # print('object_cinema:',hall.cinema.title)
@@ -260,24 +258,78 @@ def update_list(request, content_type):
     qs = Updates.objects.filter(content_type=content_type)
     print(content_type)
     table = UpdatesTable(data=qs, content_type=content_type)
-    print('----',table)
-
     if content_type == 'ACTION':
-        template = 'cms/action.html'
+        template = 'cms/actions.html'
     elif content_type == 'NEWS':
         template = 'cms/news.html'
     else:
         template = ''
-
     return render(request, template, {'table': table})
 
 
 
 
+def action_create(request):
+    return create_update(request, content_type='ACTIONS')
 
-# def news_create(request):
-#     return create_update(request, content_type='NEWS')
-#
+
+def news_create(request):
+    return create_update(request, content_type='NEWS')
+
+
+def update_form(request, content_type, pk=None):
+
+    instance = None
+
+    if pk:
+        instance = get_object_or_404(Updates, pk=pk, content_type=content_type.lower())
+
+    if request.method == 'POST':
+        pass
+
+    else:
+        update_
+
+
+
+
+
+
+def create_update(request, content_type):
+
+    template = content_type.lower()
+
+    if request.method == 'POST':
+        update_form = UpdatesForm(request.POST, request.FILES, prefix='update_form')
+        seo_form = SeoBlockForm(request.POST, prefix='seo_form')
+        formset_gallery = GalleryFormSet(request.POST,request.FILES,
+                                         queryset=Gallery.objects.none(), prefix='gallery')
+
+        if update_form.is_valid() and seo_form.is_valid() and formset_gallery.is_valid():
+
+            update = update_form.save(commit=False)
+            update.content_type = content_type
+            seo = seo_form.save()
+            update.seo_block = seo
+            update.save()
+            gallery_objects = formset_gallery.save()
+            update.gallery.set(gallery_objects)
+            return redirect(template)
+    else:
+        update_form = UpdatesForm(prefix='update_form')
+        seo_form = SeoBlockForm(prefix='seo_form')
+        formset_gallery = GalleryFormSet(queryset=Gallery.objects.none(), prefix='gallery')
+
+    context = {
+        'update_form':update_form,
+        'seo_form':seo_form,
+        'formset_gallery':formset_gallery
+    }
+    print('template',template)
+    return render(request,f'cms/{template+'_create'}.html', context)
+
+
+
 #
 # def news_update(request):
 #     return
@@ -286,59 +338,69 @@ def update_list(request, content_type):
 
 
 
-def update_form(request, content_type, pk=None):
-
-    instance = None
-    gallery_qs = Gallery.objects.none()
-    if pk:
-        instance = get_object_or_404(Updates, pk=pk, content_type=content_type)
-
-        gallery_qs = instance.gallery.all()
-
-        print('INSTANCE ',gallery_qs)
-
-    if request.method == "POST":
-        news_form = UpdatesForm(request.POST, request.FILES, prefix='news_form')
-        seo_form = SeoBlockForm(request.POST, prefix='seo_form')
-        formset_gallery = GalleryFormSet(request.POST, request.FILES,
-                                         queryset=Gallery.objects.none(),
-                                         prefix='gallery')
-
-        print('news_form error', news_form.errors)
-        print('seo_form error', seo_form.errors)
-        print('formset_gallery error', formset_gallery.errors)
-
-
-
-        if news_form.is_valid() and seo_form.is_valid() and formset_gallery.is_valid():
-
-            news = news_form.save(commit=False)
-            news.content_type = content_type
-
-
-            seo_block = seo_form.save()
-            news.seo_block = seo_block
-            news.save()
-            gallery_objects = formset_gallery.save()
-            news.gallery.set(gallery_objects)
-            print('save done')
-            return redirect('news_lists')
-
-    else:
-        news_form = UpdatesForm(instance=instance , prefix='news_form')
-        seo_form = SeoBlockForm(instance=instance.seo_block ,prefix='seo_form')
-        formset_gallery = GalleryFormSet(queryset=gallery_qs, prefix='gallery')
-
-    context = {
-        'news_form':news_form,
-        'seo_form':seo_form,
-        'formset_gallery':formset_gallery
-
-    }
-
-    return render(request, 'cms/news_create.html', context)
-
-
+# def update_form(request, content_type, pk=None):
+#
+#     publication = None
+#     gallery_qs = Gallery.objects.none()
+#     print('PK:', pk)
+#
+#     if pk:
+#         print('get pk key')
+#         publication = get_object_or_404(Updates, pk=pk, content_type=content_type)
+#         gallery_qs = publication.gallery.all()
+#
+#         print('instance', publication.main_image)
+#         print('gallery qs',gallery_qs)
+#
+#     if request.method == "POST":
+#         print('POST')
+#         publication_form = UpdatesForm(request.POST, request.FILES, instance=publication,prefix='news_form')
+#
+#         seo_form = SeoBlockForm(request.POST, instance=publication.seo_block if publication else None, prefix='seo_form')
+#
+#         formset_gallery = GalleryFormSet(request.POST, request.FILES,
+#                                          queryset=gallery_qs,
+#                                          prefix='gallery')
+#
+#         print('news_form error', publication_form.errors)
+#         print('news_form error', publication_form.errors)
+#         print('seo_form error', seo_form.errors)
+#         print('formset_gallery error', formset_gallery.errors)
+#
+#
+#
+#
+#         if publication_form.is_valid() and seo_form.is_valid() and formset_gallery.is_valid():
+#
+#             update = publication_form.save(commit=False)
+#             update.content_type = content_type
+#
+#
+#             seo_block = seo_form.save()
+#             update.seo_block = seo_block
+#             update.save()
+#             gallery_objects = formset_gallery.save()
+#             update.gallery.set(gallery_objects)
+#             print('save done')
+#             return redirect('news')
+#
+#     else:
+#
+#         publication_form = UpdatesForm(instance=publication , prefix='news_form')
+#         seo_form = SeoBlockForm(instance=publication.seo_block if publication else None ,prefix='seo_form')
+#         formset_gallery = GalleryFormSet(queryset=gallery_qs, prefix='gallery')
+#
+#     context = {
+#         'publication_form':publication_form,
+#         'seo_form':seo_form,
+#         'formset_gallery':formset_gallery,
+#
+#
+#     }
+#     print('pk-------',publication_form.instance.pk)
+#     return render(request, 'cms/news_update.html', context)
+#
+#
 
 
 def movie_edit(request):

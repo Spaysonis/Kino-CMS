@@ -16,14 +16,19 @@ urlpatterns = [
 
 
     path('news/', views.update_list, {'content_type': 'NEWS'}, name='news'),
-    path('news/create', views.update_form,{'content_type': 'NEWS'}, name='news_create'),
-    path('news/<int:pk>/update', views.update_form,{'content_type': 'NEWS'}, name='news_update'),
-
-
-
     path('actions/', views.update_list, {'content_type': 'ACTION'}, name='actions'),
-    path('action/create', views.update_form, {'content_type': 'ACTION'},name='action_create'),
-    path('action/<int:pk>/update', views.update_form, {'content_type': 'ACTION'},name='action_update'),
+
+
+    path('news/create', views.news_create, name='news_create'),
+    path('action/create', views.action_create, name='actions_create'),
+
+
+    path('news/<int:pk>/update', views.news_create,{'content_type': 'NEWS'}, name='news_update'),
+    path('action/<int:pk>/update', views.news_create, {'content_type': 'ACTION'}, name='action_update'),
+
+
+
+    path('action/<int:pk>/update', views.news_create, {'content_type': 'ACTION'},name='action_update'),
 
 
 

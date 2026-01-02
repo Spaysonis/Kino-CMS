@@ -19,8 +19,8 @@
 
             <div class="d-flex align-items-center mr-5">
                 <label for="newsStatusToggle" class="mb-0 mr-2">Статус новости:</label>
-                {{ news_form.is_active }}
-                {{ news_form.is_active.value }}
+                {{ update_form.is_active }}
+                {{ update_form.is_active.value }}
             </div>
 
 
@@ -46,7 +46,7 @@
                     <div class="input-group-prepend">
                         <span class="input-group-text" id="inputGroup-sizing-default">Название новости</span>
                     </div>
-                     {{ news_form.title }}
+                     {{ update_form.title }}
 
 <!--                <input type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">-->
                 </div>
@@ -58,7 +58,7 @@
                     <div class="input-group-prepend">
                         <span class="input-group-text">Дата публикации</span>
                     </div>
-                    {{ news_form.publication_data }}
+                    {{ update_form.publication_data }}
                 </div>
             </div>
         </div>
@@ -71,7 +71,7 @@
                     <div class="input-group-prepend">
                         <span class="input-group-text">Описание</span>
                     </div>
-                    {{ news_form.description }}
+                    {{ update_form.description }}
                 </div>
             </div>
         </div>
@@ -98,7 +98,7 @@
                 <div  class="col-md-2">
                    <button type="button" id="deleteLogoBtn" class="btn btn-danger">Удалить</button>
                 </div>
-                {{ news_form.main_image }}
+                {{ update_form.main_image }}
             </div>
         </div>
 
@@ -160,11 +160,11 @@
             <div id="empty-gallery-form" style="display: none;">
             {% with form=formset_gallery.empty_form %}
             <div class="col-md-2 gallery-item mb-3">
-                {{ form.id }}
-                <div style="display: none;">{{form.DELETE }}</div>
+                {{ formset_gallery.id }}
+                <div style="display: none;">{{formset_gallery.DELETE }}</div>
                 <button type="button" class="btn btn-danger w-100 mb-2 remove-image">Удалить</button>
                 <img src="https://www.nomadfoods.com/wp-content/uploads/2018/08/placeholder-1-e1533569576673-960x960.png" class="card-img-top preview mb-2" alt="placeholder">
-                {{ form.image }}
+                {{ formset_gallery.image }}
                 <button type="button" class="btn btn-success w-100 mb-2 upload-btn">Загрузить</button>
             </div>
             {% endwith %}
@@ -177,7 +177,7 @@
                     <div class="input-group-prepend ">
                         <span class="input-group-text ">Сслыка на видео</span>
                     </div>
-                    {{ news_form.url }}
+                    {{ update_form.url }}
                 </div>
             </div>
         </div>
@@ -323,8 +323,9 @@ document.addEventListener('DOMContentLoaded', function (){
 
 
         if (event.target.id === 'deleteLogoBtn') {
+            console.log('yes')
 
-            const input = document.querySelector('input[name="news_form-main_image"]');
+            const input = document.querySelector('input[name="update_form-main_image"]');
             input.value = ''
 
             const preview = document.getElementById('mainImagePreview');
@@ -337,7 +338,7 @@ document.addEventListener('DOMContentLoaded', function (){
             console.log('find uploadLogoBtn ')
 
 
-            document.querySelector('input[name="news_form-main_image"]').click();
+            document.querySelector('input[name="update_form-main_image"]').click();
 
         }
         });
@@ -360,11 +361,11 @@ document.addEventListener('DOMContentLoaded', function (){
 
             let previewId; /// создаю временную переменную для храниения названия превью
 
-            if (event.target.name === 'news_form-main_image') {
+            if (event.target.name === 'update_form-main_image') {
                 previewId = 'mainImagePreview';
 
             }
-            else if (event.target.name === 'news_form-image_top_banner') {
+            else if (event.target.name === 'update_form-image_top_banner') {
                 previewId = 'ImageTopBannerPreview'
             }
 
