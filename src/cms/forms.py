@@ -1,7 +1,7 @@
 
 from django.forms import modelformset_factory
 from django import forms
-from django.template.defaultfilters import title
+
 
 from .models import Movie, SeoBlock, Updates, Gallery
 
@@ -10,7 +10,7 @@ from src.cms.models.page import Updates
 
 from ..user.models import BaseUser
 
-from django.forms.widgets import ClearableFileInput
+
 class UserEditForm(forms.ModelForm):
 
     class Meta:
@@ -83,18 +83,34 @@ class CinemaForm(forms.ModelForm):
 
     class Meta:
         model = Cinema
-        fields = ("title", "description", "conditions", "main_image", "image_top_banner")
+        fields = ("title_ru", "title_en","description_ru","description_en" , "conditions", "main_image", "image_top_banner")
 
 # "title, description, conditions, main_image, image_top_banner"
         widgets = {
-            'title':forms.TextInput(attrs={
+            'title_ru':forms.TextInput(attrs={
                 'class': 'form-control',
                 'placeholder': 'название кинотеатра'
             }),
-            'description':forms.Textarea(attrs={
+            'title_en':forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Cinema title'
+            }),
+
+
+
+
+            'description_ru':forms.Textarea(attrs={
                 'class': 'form-control',
                 'aria-label':'With textarea',
                 'placeholder': 'Текст',
+                'rows': 4,
+            }),
+
+
+            'description_en':forms.Textarea(attrs={
+                'class': 'form-control',
+                'aria-label':'With textarea',
+                'placeholder': 'Text',
                 'rows': 4,
             }),
 
@@ -163,18 +179,34 @@ class HallForm(forms.ModelForm):
 class UpdatesForm(forms.ModelForm):
     class Meta:
         model = Updates
+
         exclude = ('content_type',)
 
         widgets = {
-            'title':forms.TextInput(attrs={
-                'class':'form-control',
-                'placeholder':'Название новости',
+            'title_ru':forms.TextInput(attrs={
+                'class': 'form-control',
+
+            }),
+            'title_en':forms.TextInput(attrs={
+                'class': 'form-control',
+
             }),
 
-            'description': forms.Textarea(attrs={
+
+
+
+            'description_ru':forms.Textarea(attrs={
                 'class': 'form-control',
-                'aria-label': 'With textarea',
-                'placeholder': 'Текст',
+                'aria-label':'With textarea',
+
+                'rows': 4,
+            }),
+
+
+            'description_en':forms.Textarea(attrs={
+                'class': 'form-control',
+                'aria-label':'With textarea',
+
                 'rows': 4,
             }),
 

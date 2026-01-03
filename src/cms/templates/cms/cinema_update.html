@@ -10,37 +10,67 @@
     {% csrf_token %}
 
     <div class="p-2">
-        <div class=" col d-flex justify-content-end ">
-            <div class="btn-group btn-group-toggle" data-toggle="buttons">
-                <label class="btn btn-secondary active">
-                    <input type="radio" name="options" id="option1" checked> RUS
-                </label>
-                <label class="btn btn-secondary">
-                    <input type="radio" name="options" id="option2"> ENG
-                </label>
+       <div class=" col d-flex justify-content-end ">
+                <div class="btn-group btn-group-toggle" data-toggle="buttons" id="lang-switcher">
+                    <label class="btn btn-secondary active" data-lang="ru">
+                        <input type="radio" name="options" checked > RUS
+                    </label>
+                    <label class="btn btn-secondary" data-lang="en">
+                        <input type="radio" name="options"  > ENG
+                    </label>
+                </div>
             </div>
-        </div>
 
-        <div class="row">
+
+        <div class="row lang-block lang-ru">
             <div class="col-md-4">
                 <div class="input-group mb-3">
                     <div class="input-group-prepend">
-                        <span class="input-group-text" id="inputGroup-sizing-default">Название кинотеатра</span>
+                        <span class="input-group-text" >Название кинотеатра</span>
                     </div>
-                    {{ cinema_form.title }}
-<!--              <input type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">-->
+                    {{ cinema_form.title_ru}}
+<!--                    <input type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">-->
                 </div>
             </div>
         </div>
 
-        <div class="row">
+         <div class="row lang-block lang-en d-none">
+            <div class="col-md-4">
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" >Cinema title</span>
+                    </div>
+                    {{ cinema_form.title_en}}
+<!--                    <input type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">-->
+                </div>
+            </div>
+        </div>
+
+
+
+
+
+
+
+        <div class="row lang-block lang-ru">
             <div class="col-md-8">
                 <div class="input-group mb-3">
                     <div class="input-group-prepend">
                         <span class="input-group-text">Описание</span>
                     </div>
-                    {{cinema_form.description }}
+                    {{cinema_form.description_ru }}
 
+                </div>
+            </div>
+        </div>
+
+        <div class="row lang-block lang-en d-none">
+            <div class="col-md-8">
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">Description</span>
+                    </div>
+                    {{cinema_form.description_en }}
                 </div>
             </div>
         </div>
@@ -269,6 +299,37 @@
 <script>
 
 document.addEventListener('DOMContentLoaded', function (){
+
+
+     /// реализация переключения полей языка
+    const switcher = document.getElementById('lang-switcher'); // нахожу контейнер с перекл языка
+    const blocks = document.querySelectorAll('.lang-block'); // нахожу блок ввода
+
+
+
+    switcher.addEventListener('click', function (event) {
+        const btn = event.target.closest('[data-lang]');
+        if (!btn) return;
+        const lang = btn.dataset.lang;
+
+        blocks.forEach(function(block) {
+        block.classList.add('d-none');
+    });
+
+        blocks.forEach(function(block) {
+        if (block.classList.contains('lang-' + lang)) {
+            block.classList.remove('d-none');
+        }
+    });
+
+        // подсветка активной кнопки
+        const labels = switcher.querySelectorAll('label');
+        labels.forEach(function(label) {
+            label.classList.remove('active');
+        });
+        btn.classList.add('active');
+    });
+
     /// ОТВЕЧАЕТ ЗА ГАЛЕРЕЮ КАРТИНОК
 
 

@@ -3,6 +3,16 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from .forms import SimpleRegistrationForm, ProfileEditForm
 from src.cms.models.cinema import Movie
+from ..cms.models import Cinema
+
+
+def cinema_list1(request):
+    print('вызвавла вью')
+    cinema = Cinema.objects.all()
+    context ={
+        'cinema':cinema
+    }
+    return render(request, 'main/cinema.html', context)
 
 
 

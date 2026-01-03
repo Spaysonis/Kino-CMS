@@ -6,12 +6,23 @@
     <div class="col-md-10 text-center">
         <h1 class="mb-0">
             {% if content_type == 'news' %}
-            Список новостей1</h1>
+            Список новостей
+            {% elif content_type == 'action' %}
+            Список акций
+
+            {% endif %}
+        </h1>
     </div>
 
     <div class="col-md-2 text-end ">
-        <a href="{% url 'actions_create' %}?update_type=action" class="btn btn-primary ">
+        <a href="" class="btn btn-primary ">
+            {% if content_type == 'news' %}
+
+            Создать новость
+             {% elif content_type == 'action' %}
             Создать акцию
+            {% endif %}
+
         </a>
     </div>
     <div class="card-body ">

@@ -249,85 +249,123 @@ def hall_delete(request, cinema_pk, hall_pk):
 
 
 
-def update_list(request, content_type):
+def content_list(request):
 
     """НУЖНО ИЗМЕНИТЬ НА UPADATE_LIST И ПЕРЕДАВАТЬ В НЕЕ ТИП КОТОРЫЙ БУДЕТ ОТОБРАДЖАТЬ ТАБЛИЦА
     КАК ЭТО СДЕЛАТЬ ???
     """
 
-    qs = Updates.objects.filter(content_type=content_type)
-    print(content_type)
+    content_type = request.GET.get('type')
+    qs = Updates.objects.all()
+    if content_type:
+        qs = qs.filter(content_type=content_type)
+
+
     table = UpdatesTable(data=qs, content_type=content_type)
-    if content_type == 'ACTION':
-        template = 'cms/actions.html'
-    elif content_type == 'NEWS':
-        template = 'cms/news.html'
-    else:
-        template = ''
-    return render(request, template, {'table': table})
+
+    return render(
+        request,
+        'cms/content_list.html',  # ❗ ВСЕГДА ОДИН ШАБЛОН
+        {
+            'table': table,
+            'content_type': content_type,
+            'active_page': content_type,
+        }
+    )
 
 
 
 
-def action_create(request):
-    return create_update(request, content_type='ACTIONS')
+# def action_create(request):
+#     return create_update(request, content_type='ACTIONS')
+#
+#
+# def news_create(request):
+#     return create_update(request, content_type='NEWS')
+#
 
 
-def news_create(request):
-    return create_update(request, content_type='NEWS')
 
 
-def update_form(request, content_type, pk=None):
+
+
+def update_form(request, pk=None):
 
     instance = None
+    update_type = request.GET.get('update_type')  # ключ — это то, что после ? action
+    print('update_type :', update_type)
+    if pk:
+        instance = get_object_or_404(Updates, pk=pk)
+        print(instance.title)
+        print(instance.content_type)
+
+
+    update = UpdatesForm()
+    context = {
+        'update_form':update
+
+    }
+    return render(request, 'cms/actions_create.html', context)
+
+
+
+
+
+
+
+
+
+    #instance = None
 
     if pk:
-        instance = get_object_or_404(Updates, pk=pk, content_type=content_type.lower())
+        pass
+        #instance = get_object_or_404(Updates, pk=pk, content_type=content_type.lower())
 
     if request.method == 'POST':
         pass
 
     else:
-        update_
+        pass
+        # update_
 
 
 
 
 
-
-def create_update(request, content_type):
-
-    template = content_type.lower()
-
-    if request.method == 'POST':
-        update_form = UpdatesForm(request.POST, request.FILES, prefix='update_form')
-        seo_form = SeoBlockForm(request.POST, prefix='seo_form')
-        formset_gallery = GalleryFormSet(request.POST,request.FILES,
-                                         queryset=Gallery.objects.none(), prefix='gallery')
-
-        if update_form.is_valid() and seo_form.is_valid() and formset_gallery.is_valid():
-
-            update = update_form.save(commit=False)
-            update.content_type = content_type
-            seo = seo_form.save()
-            update.seo_block = seo
-            update.save()
-            gallery_objects = formset_gallery.save()
-            update.gallery.set(gallery_objects)
-            return redirect(template)
-    else:
-        update_form = UpdatesForm(prefix='update_form')
-        seo_form = SeoBlockForm(prefix='seo_form')
-        formset_gallery = GalleryFormSet(queryset=Gallery.objects.none(), prefix='gallery')
-
-    context = {
-        'update_form':update_form,
-        'seo_form':seo_form,
-        'formset_gallery':formset_gallery
-    }
-    print('template',template)
-    return render(request,f'cms/{template+'_create'}.html', context)
-
+#
+# def create_update(request, content_type):
+#
+#     template = content_type.lower()
+#
+#     if request.method == 'POST':
+#         update_form = UpdatesForm(request.POST, request.FILES, prefix='update_form')
+#         seo_form = SeoBlockForm(request.POST, prefix='seo_form')
+#         formset_gallery = GalleryFormSet(request.POST,request.FILES,
+#                                          queryset=Gallery.objects.none(), prefix='gallery')
+#
+#         if update_form.is_valid() and seo_form.is_valid() and formset_gallery.is_valid():
+#
+#             update = update_form.save(commit=False)
+#             update.content_type = content_type
+#             seo = seo_form.save()
+#             update.seo_block = seo
+#             update.save()
+#             gallery_objects = formset_gallery.save()
+#             update.gallery.set(gallery_objects)
+#             return redirect(template)
+#     else:
+#         update_form = UpdatesForm(prefix='update_form')
+#         seo_form = SeoBlockForm(prefix='seo_form')
+#         formset_gallery = GalleryFormSet(queryset=Gallery.objects.none(), prefix='gallery')
+#
+#     context = {
+#         'update_form':update_form,
+#         'seo_form':seo_form,
+#         'formset_gallery':formset_gallery
+#     }
+#     print('template',template)
+#     return render(request,f'cms/{template+'_create'}.html', context)
+#
 
 
 #

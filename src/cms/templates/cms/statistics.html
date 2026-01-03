@@ -177,13 +177,13 @@
                     </li>
 
                     <li class="nav-item">
-                        <a href="{% url 'news' %}" class="nav-link {% if active_page == 'news' %}active{% endif %}">
+                        <a href="{% url 'content_list' %}?type=news " class="nav-link {% if active_page == 'news' %}active{% endif %}">
                             <i class="nav-icon fas fa-newspaper"></i>
                             <p>Новости</p>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="{% url 'actions' %}" class="nav-link {% if active_page == 'action' %}active{% endif %}">
+                        <a href="{% url 'content_list' %}?type=action" class="nav-link {% if active_page == 'action' %}active{% endif %}">
                             <i class="nav-icon fas fa-newspaper"></i>
                             <p>Акции</p>
                         </a>

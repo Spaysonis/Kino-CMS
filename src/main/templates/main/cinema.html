@@ -1,0 +1,7 @@
+{% extends "main/base_page.html" %}
+{% block content %}
+    <h1>Кинотеатры</h1>
+    {% for c in cinema %}
+        <h2>{{ c.title }}</h2>
+    {% endfor %}
+{% endblock %}
