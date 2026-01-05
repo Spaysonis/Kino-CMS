@@ -15,11 +15,13 @@
     </div>
 
     <div class="col-md-2 text-end ">
-        <a href="" class="btn btn-primary ">
-            {% if content_type == 'news' %}
+        <a href="{% url 'content_create' slug %} " class="btn btn-primary ">
+            {{ active_page}}
+            {{content_type}}
+            {% if slug == 'news' %}
 
             Создать новость
-             {% elif content_type == 'action' %}
+             {% elif slug == 'action' %}
             Создать акцию
             {% endif %}
 

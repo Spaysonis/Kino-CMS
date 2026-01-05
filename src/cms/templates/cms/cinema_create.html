@@ -365,6 +365,7 @@ document.addEventListener('DOMContentLoaded', function (){
 
         /// удаление баннера
         if (event.target.id === 'deleteImageTopBannerBtn') {
+            console.log('btn delete')
             const input = document.querySelector('input[name="cinema_form-image_top_banner"]');
             input.value = ''
 

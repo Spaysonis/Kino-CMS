@@ -33,7 +33,7 @@ class HallTable(tables.Table):
         attrs = {"class": "table table-bordered table-primary"}
 
     def render_actions(self, record):
-        update_url = reverse('hall_update', args=[  record.cinema.pk, record.pk])
+        update_url = reverse('hall_update', args=[record.cinema.pk, record.pk])
         delete_url = reverse('hall_delete', args=[record.cinema.pk, record.pk])
 
         if record.is_default:
@@ -78,7 +78,7 @@ class UpdatesTable(tables.Table):
     def __init__(self, *args, content_type=None, **kwargs):
         super().__init__(*args, **kwargs)
         self.content_type = content_type
-        print( 'type content', self.content_type)
+        print( 'type content', self.content_type) # NEWS
 
     class Meta:
         fields = ('title', 'publication_data', 'is_active', 'actions')
@@ -90,20 +90,20 @@ class UpdatesTable(tables.Table):
         attrs = {"class": "table table-bordered table-primary"}
 
     def render_actions(self, record):
+        pass
 
-
-        update_url = reverse('news_update', args=[ record.pk])
+        #update_url = reverse('content_update', args=[Updates.ContentType.to_slug(self.content_type), record.pk])
         #delete_url = reverse('news_delete', args=[record.pk])
 
 
-        return mark_safe(
-            f'''
-                    <div class="d-flex justify-content-between" >
-                        <a href="" class="btn btn-sm btn-danger">Удалить</a>
-                        <a href="{update_url}" class="btn btn-sm btn-warning">Редактировать</a>
-                    </div>
-                '''
-        )
+        # return mark_safe(
+        #     f'''
+        #             <div class="d-flex justify-content-between" >
+        #                 <a href="" class="btn btn-sm btn-danger">Удалить</a>
+        #                 <a href="{update_url}" class="btn btn-sm btn-warning">Редактировать</a>
+        #             </div>
+        #         '''
+        # )
 
 
 

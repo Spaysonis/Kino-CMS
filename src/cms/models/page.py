@@ -43,21 +43,36 @@ class Contact(models.Model):
 
 
 class Updates(models.Model):
-    CONTENT_TYPE_CHOICES = [
-        ('NEWS', 'Новости'),
-        ('ACTION', 'Акции'),
-    ]
+    class ContentType(models.TextChoices):
+        NEWS = 'NEWS', 'Новости'
+        ACTION = 'ACTION', 'Акции'
+
+        @classmethod
+        def from_slug(cls, slug):
+            mapping = {
+                'news':cls.NEWS,
+                'action':cls.ACTION
+            }
+            return mapping.get(slug)
+
+        @classmethod
+        def to_slug(cls, enum_value):
+            mapping = {
+                cls.NEWS: 'news',
+                cls.ACTION: 'action',
+            }
+            return mapping.get(enum_value, 'news')
+
 
     seo_block = models.OneToOneField(SeoBlock, on_delete=models.CASCADE, null=True, blank=True)
     gallery = models.ManyToManyField(Gallery, blank=True)
-    title = models.CharField(max_length=255)
+    title = models.CharField(max_length=255, blank=True)
     publication_data = models.DateTimeField()
-    description = models.TextField()
+    description = models.TextField(blank=True)
     main_image = models.ImageField()
     url = models.URLField(max_length=255)
     is_active = models.BooleanField(default=True)
-    content_type = models.CharField(max_length=10, choices=
-                                    CONTENT_TYPE_CHOICES, default='NEWS')
+    content_type = models.CharField(max_length=10, choices=ContentType.choices, default=ContentType.NEWS)
 
 
 

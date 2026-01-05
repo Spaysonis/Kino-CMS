@@ -2,7 +2,7 @@
 
 from .models import Hall
 from src.cms.models.page import SeoBlock, Updates
-
+from django.urls import reverse
 from django.shortcuts import render, redirect, get_object_or_404
 from src.cms.models.cinema import Cinema
 from .forms import MovieForm, SeoBlockForm, UpdatesForm, UserEditForm, CinemaForm, GalleryFormSet, HallForm
@@ -255,78 +255,153 @@ def content_list(request):
     КАК ЭТО СДЕЛАТЬ ???
     """
 
-    content_type = request.GET.get('type')
+    slug = request.GET.get('type')
+    print("------- QUERY PARAM ----- ", slug) # news
+    content_type = Updates.ContentType.from_slug(slug)
+    print('-------content_type',content_type) # NEWS
     qs = Updates.objects.all()
-    if content_type:
-        qs = qs.filter(content_type=content_type)
+    if content_type: # NEWS
+            # ЕСЛИ Я ПОУЛЧИЛ КОНТЕНТ ТАЙП ТО Я ФИЛЬТУЮ БАЗУ ДАННЫХ С НОВОСТЯМИ ПО КОНТЕНТ ТИПУ, content_type
+        qs = qs.filter(content_type=content_type) # NEWS
+        print(len(qs))
 
 
     table = UpdatesTable(data=qs, content_type=content_type)
 
+    print('retrun content type', slug)
     return render(
         request,
-        'cms/content_list.html',  # ❗ ВСЕГДА ОДИН ШАБЛОН
+        'cms/content_list.html',
         {
             'table': table,
-            'content_type': content_type,
+            'slug': slug, # news
             'active_page': content_type,
+            'content_type':content_type
         }
     )
 
 
 
 
-# def action_create(request):
-#     return create_update(request, content_type='ACTIONS')
-#
-#
-# def news_create(request):
-#     return create_update(request, content_type='NEWS')
-#
+def create_news_or_action(request, slug):
 
-
-
-
-
-
-def update_form(request, pk=None):
-
-    instance = None
-    update_type = request.GET.get('update_type')  # ключ — это то, что после ? action
-    print('update_type :', update_type)
-    if pk:
-        instance = get_object_or_404(Updates, pk=pk)
-        print(instance.title)
-        print(instance.content_type)
-
-
-    update = UpdatesForm()
-    context = {
-        'update_form':update
-
-    }
-    return render(request, 'cms/actions_create.html', context)
-
-
-
-
-
-
-
-
-
-    #instance = None
-
-    if pk:
-        pass
-        #instance = get_object_or_404(Updates, pk=pk, content_type=content_type.lower())
+    content_type = Updates.ContentType.from_slug(slug)
 
     if request.method == 'POST':
-        pass
+
+        update_form = UpdatesForm(request.POST, request.FILES, prefix='update')
+        seo_form = SeoBlockForm(request.POST, prefix='seo_form')
+        formset_gallery = GalleryFormSet(request.POST, request.FILES, queryset=Gallery.objects.none(), prefix='gallery')
+
+        if update_form.is_valid() and seo_form.is_valid() and formset_gallery.is_valid():
+            seo_block = seo_form.save()
+
+            update = update_form.save(commit=False)
+            update.seo_block = seo_block
+            update.content_type = content_type
+            update.save()
+
+            gallery_objects = formset_gallery.save()
+            update.gallery.set(gallery_objects)
+
+            url = reverse('content_list')
+            url += f'?type={slug}'
+
+            return redirect(url)
+
+
 
     else:
-        pass
-        # update_
+        update_form = UpdatesForm(prefix='update')
+        seo_form = SeoBlockForm(prefix='seo_form')
+        formset_gallery = GalleryFormSet(queryset=Gallery.objects.none(), prefix='gallery')
+
+    context = {
+        'slug':slug,
+        'update':update_form,
+        'seo_form':seo_form,
+        'formset_gallery':formset_gallery
+    }
+
+    return render(request,'cms/content_create.html', context)
+
+
+
+# def update_form(request, content_type_slug,pk=None):
+#     print('fun create  enter CONTENT TYPE SLUG', content_type_slug) # # NEWS
+#     print('pk----',pk)
+#     content_type = Updates.ContentType.from_slug(content_type_slug)
+#     print(content_type)
+#
+#     instance = None # сущьность акции или новости
+#     # formset_gallery = GalleryFormSet(queryset=Gallery.objects.none())
+#
+#
+#     if pk:
+#
+#         instance = get_object_or_404(Updates, pk=pk, content_type=content_type)
+#         gallery_queryset = instance.gallery.all()
+#     else:
+#         gallery_queryset = Gallery.objects.none()
+#
+#
+#     if request.method == 'POST':
+#
+#         update = UpdatesForm(request.POST, request.FILES, instance=instance , prefix='update')
+#         seo_form = SeoBlockForm(request.POST, instance=instance.seo_block if instance else  None,prefix='seo_form')
+#         formset_gallery = GalleryFormSet(request.POST, request.FILES, queryset=gallery_queryset, prefix='gallery')
+#
+#         if update.is_valid() and seo_form.is_valid() and formset_gallery.is_valid():
+#             obj = update.save(commit=False)
+#             obj.content_type = content_type
+#             seo_block = seo_form.save()
+#             obj.seo_block = seo_block
+#             obj.save()
+#
+#             gallery_objects = formset_gallery.save()  # сохраняю картинки если есть в память
+#             obj.gallery.set(gallery_objects)
+#             print('also saving fun create return content type ', content_type)
+#             return redirect(f'/admin/content/?type={content_type_slug}')
+#         else:
+#
+#             print(update.errors)
+#             print(seo_form.errors)
+#             print(formset_gallery.errors)
+#
+#
+#             return render(request, 'cms/content_create.html', {
+#                 'update': update,
+#                 'seo_form': seo_form,
+#                 'formset_gallery': formset_gallery,
+#                 'content_type': content_type_slug,
+#             })
+#
+#
+#
+#     else:
+#         update = UpdatesForm(instance=instance if pk else None, prefix='update')
+#         seo_form = SeoBlockForm(instance=instance.seo_block if pk else None,prefix='seo_form')
+#         formset_gallery = GalleryFormSet(queryset=gallery_queryset, prefix='gallery')
+#         context = {
+#                 'update':update,
+#                 'content_type':content_type_slug,
+#                 'seo_form':seo_form,
+#                 'formset_gallery':formset_gallery
+#                 # 'seo_form':seo_form,
+#                 # 'formset_gallery':formset_gallery
+#
+#             }
+#         return render(request, 'cms/content_create.html', context)
+#
+#
+#
+
+
+
+
+
+
+
 
 
 

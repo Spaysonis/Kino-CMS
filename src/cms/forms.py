@@ -229,12 +229,14 @@ class UpdatesForm(forms.ModelForm):
             'is_active': forms.CheckboxInput(attrs={
                 'id': 'newsStatusToggle'
             }),
-
-
-
-
         }
 
+    def clean_main_image(self):
+        image = self.cleaned_data.get('main_image')
+        if not image and self.instance.pk:
+            # если редактируем и файла нет, оставляем старый
+            return self.instance.main_image
+        return image
 
 
 GalleryFormSet = modelformset_factory(

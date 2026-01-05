@@ -20,6 +20,13 @@ urlpatterns = [
 
 
     path('content/', views.content_list, name='content_list'),
+    path('content/create/<str:slug>/', views.create_news_or_action, name='content_create'),
+
+
+    #path('content/update/<str:content_type_slug>/<int:pk>', views.update_form, name='content_update'),
+    # path('content/create/<str:content_type>/', views.update_form, name='content_create'),
+
+
     # path('content/', views.update_form, name='content_list'),
 
 
@@ -27,11 +34,11 @@ urlpatterns = [
     # path('actions/', views.update_list, {'content_type': 'ACTION'}, name='actions'),
     #
 
-    path('news/create', views.update_form, name='news_create'),
-    path('action/create', views.update_form, name='actions_create'),
 
-    path('news/<int:pk>/update', views.update_form, name='news_update'),
-    path('action/<int:pk>/update', views.update_form,  name='action_update'),
+    # path('action/create', views.update_form, name='actions_create'),
+
+    # path('news/<int:pk>/update', views.update_form, name='news_update'),
+    # path('action/<int:pk>/update', views.update_form,  name='action_update'),
 
 
 
