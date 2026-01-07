@@ -224,7 +224,7 @@ class UpdatesForm(forms.ModelForm):
                     'class': 'form-control',
                     'type': 'date',
 
-            }),
+            },  format='%Y-%m-%d'),
 
             'is_active': forms.CheckboxInput(attrs={
                 'id': 'newsStatusToggle'

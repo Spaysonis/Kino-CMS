@@ -67,7 +67,7 @@ class Updates(models.Model):
     seo_block = models.OneToOneField(SeoBlock, on_delete=models.CASCADE, null=True, blank=True)
     gallery = models.ManyToManyField(Gallery, blank=True)
     title = models.CharField(max_length=255, blank=True)
-    publication_data = models.DateTimeField()
+    publication_data = models.DateField()
     description = models.TextField(blank=True)
     main_image = models.ImageField()
     url = models.URLField(max_length=255)

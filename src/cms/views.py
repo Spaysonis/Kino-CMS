@@ -251,9 +251,6 @@ def hall_delete(request, cinema_pk, hall_pk):
 
 def content_list(request):
 
-    """НУЖНО ИЗМЕНИТЬ НА UPADATE_LIST И ПЕРЕДАВАТЬ В НЕЕ ТИП КОТОРЫЙ БУДЕТ ОТОБРАДЖАТЬ ТАБЛИЦА
-    КАК ЭТО СДЕЛАТЬ ???
-    """
 
     slug = request.GET.get('type')
     print("------- QUERY PARAM ----- ", slug) # news
@@ -261,12 +258,12 @@ def content_list(request):
     print('-------content_type',content_type) # NEWS
     qs = Updates.objects.all()
     if content_type: # NEWS
-            # ЕСЛИ Я ПОУЛЧИЛ КОНТЕНТ ТАЙП ТО Я ФИЛЬТУЮ БАЗУ ДАННЫХ С НОВОСТЯМИ ПО КОНТЕНТ ТИПУ, content_type
+            # ЕСЛИ Я ПОУЛЧИЛ КОНТЕНТ ТАЙП АППЕР ТО Я ФИЛЬТУЮ БАЗУ ДАННЫХ С НОВОСТЯМИ ПО КОНТЕНТ ТИПУ, content_type
         qs = qs.filter(content_type=content_type) # NEWS
         print(len(qs))
 
 
-    table = UpdatesTable(data=qs, content_type=content_type)
+    table = UpdatesTable(data=qs, content_type=content_type, request=request)
 
     print('retrun content type', slug)
     return render(
@@ -275,7 +272,7 @@ def content_list(request):
         {
             'table': table,
             'slug': slug, # news
-            'active_page': content_type,
+            # 'active_page': content_type,
             'content_type':content_type
         }
     )
@@ -294,8 +291,8 @@ def create_news_or_action(request, slug):
         formset_gallery = GalleryFormSet(request.POST, request.FILES, queryset=Gallery.objects.none(), prefix='gallery')
 
         if update_form.is_valid() and seo_form.is_valid() and formset_gallery.is_valid():
-            seo_block = seo_form.save()
 
+            seo_block = seo_form.save()
             update = update_form.save(commit=False)
             update.seo_block = seo_block
             update.content_type = content_type
@@ -306,10 +303,7 @@ def create_news_or_action(request, slug):
 
             url = reverse('content_list')
             url += f'?type={slug}'
-
             return redirect(url)
-
-
 
     else:
         update_form = UpdatesForm(prefix='update')
@@ -324,6 +318,71 @@ def create_news_or_action(request, slug):
     }
 
     return render(request,'cms/content_create.html', context)
+
+
+
+def update_news_or_action(request,slug, pk):
+
+
+    instance = get_object_or_404(Updates, pk=pk)
+    gallery_qs = Gallery.objects.filter(updates=instance)
+
+
+    if request.method == 'POST':
+        update_form = UpdatesForm(request.POST, request.FILES,instance=instance, prefix='update')
+        seo_form = SeoBlockForm(request.POST, instance=instance.seo_block, prefix='seo_form')
+        formset_gallery = GalleryFormSet(request.POST, request.FILES, queryset=gallery_qs, prefix='gallery')
+
+        if update_form.is_valid() and seo_form.is_valid() and formset_gallery.is_valid():
+
+
+            update = update_form.save(commit=False)
+            seo_block = seo_form.save()
+            update.seo_block = seo_block
+            update.save()
+
+
+            gallery_object = formset_gallery.save()
+            instance.gallery.set(gallery_object)
+
+            url = reverse('content_list')
+            url += f'?type={slug}'
+            return redirect(url)
+
+
+        else:
+            print('update_form', update_form.errors)
+            print('seo_form',seo_form.errors)
+            print('formset_gallery',formset_gallery.errors)
+
+
+
+    else:
+        update_form = UpdatesForm(instance=instance, prefix='update')
+        seo_form = SeoBlockForm(instance=instance.seo_block, prefix='seo_form')
+        formset_gallery = GalleryFormSet(queryset=gallery_qs, prefix='gallery')
+
+    context = {
+        'update':update_form,
+        'seo_form':seo_form,
+        'formset_gallery':formset_gallery,
+        'slug':slug,
+        'instance':instance
+    }
+    return render(request,'cms/content_create.html', context)
+
+
+
+def delete_news_or_action(request, pk):
+    instance = get_object_or_404(Updates, pk=pk)
+    instance.delete()
+    full_url = request.GET.get('full_url', reverse('content_list'))
+
+    return redirect(full_url)
+
+
+
+
 
 
 

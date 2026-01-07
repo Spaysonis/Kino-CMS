@@ -90,20 +90,21 @@ class UpdatesTable(tables.Table):
         attrs = {"class": "table table-bordered table-primary"}
 
     def render_actions(self, record):
-        pass
+        full_url = self.request.get_full_path()
+        print('next url',full_url)
 
-        #update_url = reverse('content_update', args=[Updates.ContentType.to_slug(self.content_type), record.pk])
-        #delete_url = reverse('news_delete', args=[record.pk])
+        update_url = reverse('content_update', args=[Updates.ContentType.to_slug(self.content_type), record.pk])
+        delete_url = reverse('delete_update', args=[ record.pk])
 
 
-        # return mark_safe(
-        #     f'''
-        #             <div class="d-flex justify-content-between" >
-        #                 <a href="" class="btn btn-sm btn-danger">Удалить</a>
-        #                 <a href="{update_url}" class="btn btn-sm btn-warning">Редактировать</a>
-        #             </div>
-        #         '''
-        # )
+        return mark_safe(
+            f'''
+                    <div class="d-flex justify-content-between" >
+                        <a href="{delete_url}?full_url={full_url}" class="btn btn-sm btn-danger">Удалить</a>
+                        <a href="{update_url}" class="btn btn-sm btn-warning">Редактировать</a>
+                    </div>
+                '''
+        )
 
 
 

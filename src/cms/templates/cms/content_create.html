@@ -6,7 +6,11 @@
 
 
 <form   enctype="multipart/form-data" method="post"
-action="{% url 'content_create' slug %}">
+ action="{% if instance %}
+                 {% url 'content_update' slug instance.pk %}
+              {% else %}
+                 {% url 'content_create' slug %}
+              {% endif %}">
 
     {% csrf_token %}
 
@@ -63,7 +67,7 @@ action="{% url 'content_create' slug %}">
                 <div class="lang-block lang-en d-none">
                     <div class="input-group mb-3">
                         <div class="input-group-prepend">
-                            <span class="input-group-text" >Cinema title</span>
+                            <span class="input-group-text" >News title</span>
                         </div>
                         {{ update.title_en}}
                     </div>
@@ -169,8 +173,13 @@ action="{% url 'content_create' slug %}">
             <div class="row" id="gallery-container">
                 {{ formset_gallery.management_form }}
                 {% for form in formset_gallery %}
+                 {{ form.id }}
+                <div style="display:none">
+                    {{ form.DELETE }}
+                </div>
                 <div class="col-md-2 gallery-item mb-3">
                     <!-- Кнопка удалить -->
+
                     <button type="button" class="btn btn-danger w-100 mb-2 remove-image">Удалить</button>
                     {%if form.instance.pk and form.instance.image %}
                     <!-- Превью -->
@@ -490,14 +499,24 @@ document.addEventListener('DOMContentLoaded', function (){
             console.log('блок формы', block);
             /// closest - находит ближайший родительский контейнер контейнера remove-image то еть gallery-item
             ////// <input type="hidden" name="gallery-2-id" id="id_gallery-2-id"
+            const block_id = block.querySelector('input[name$="-id"]')
+            console.log('блок id',  'value',block_id.value);
 
-            block.remove()
-            totalForm.value = parseInt(totalForm.value) -1
-        }
+            const deleteCheckbox = block.querySelector('input[name$="-DELETE"]');
+            console.log('чек блок формы', deleteCheckbox.checked);
 
-    });}
 
-     )})
+            if (block_id.value !=='') {
+                deleteCheckbox.checked = true;
+                block.hidden = true;
+                console.log('check блок формы:', deleteCheckbox.checked);
+            }
+            else {
+                block.remove()
+                totalForm.value = parseInt(totalForm.value) -1
+
+
+            }}})})})
 </script>
 
     {% endblock %}

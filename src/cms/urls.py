@@ -21,6 +21,8 @@ urlpatterns = [
 
     path('content/', views.content_list, name='content_list'),
     path('content/create/<str:slug>/', views.create_news_or_action, name='content_create'),
+    path('content/update/<str:slug>/<int:pk>', views.update_news_or_action, name='content_update'),
+    path('content/delete/<int:pk>', views.delete_news_or_action, name='delete_update'),
 
 
     #path('content/update/<str:content_type_slug>/<int:pk>', views.update_form, name='content_update'),
