@@ -5,7 +5,7 @@ from src.cms.models.page import SeoBlock, Updates
 from django.urls import reverse
 from django.shortcuts import render, redirect, get_object_or_404
 from src.cms.models.cinema import Cinema
-from .forms import MovieForm, SeoBlockForm, UpdatesForm, UserEditForm, CinemaForm, GalleryFormSet, HallForm
+from .forms import MovieForm, SeoBlockForm, UpdatesForm, UserEditForm, CinemaForm, GalleryFormSet, HallForm,  HomePageBannerForm, SliderFormSet
 from .models import Gallery
 from django.shortcuts import render
 from django_tables2 import SingleTableView
@@ -383,6 +383,51 @@ def delete_news_or_action(request, pk):
 
 
 
+
+from django.http import JsonResponse
+def create_banners(request):
+
+    if request.method == 'POST':
+        banner_type = request.POST.get('banner_type')
+        if banner_type == 'TB':
+            top_banner_form = HomePageBannerForm(request.POST, request.FILES, prefix='top_banner_form')
+            top_banner_formset = SliderFormSet(request.POST, request.FILES, prefix='top_banner_formset')
+
+            if top_banner_formset.is_valid() and top_banner_form.is_valid():
+                top_banner = top_banner_form.save()
+
+                form_set_object = top_banner_formset.save()
+
+                top_banner.slider.set(form_set_object)
+                return JsonResponse({
+                        'status': 'success',
+                        'message': f'Баннер {banner_type} сохранен'
+                    })
+            return JsonResponse({
+                        'status': 'error',
+                        'message': f'Баннер {banner_type} не сохранен',
+                        'error_top_banner': top_banner_form.errors,
+                        'error_top_banner_formset':top_banner_formset.errors
+                    })
+
+
+
+    else:
+        top_banner_form = HomePageBannerForm(prefix='top_banner_form')
+        news_banner_form = HomePageBannerForm(prefix='news_banner_form')
+
+        top_banner_formset= SliderFormSet(prefix='top_banner_formset')
+        news_banner_formset = SliderFormSet(prefix='news_banner_formset')
+
+        context = {
+            'top_banner_form':top_banner_form,
+            'news_banner_form':news_banner_form,
+
+            'top_banner_formset':top_banner_formset,
+            'news_banner_formset':news_banner_formset
+        }
+
+        return render(request, 'cms/banners.html', context)
 
 
 

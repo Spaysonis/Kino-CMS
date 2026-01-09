@@ -7,8 +7,17 @@ from .models import Movie, SeoBlock, Updates, Gallery
 
 from src.cms.models.cinema import Cinema, Hall
 from src.cms.models.page import Updates
-
+from src.cms.models.banners import HomePageBanner, Slider
 from ..user.models import BaseUser
+
+
+
+
+
+
+
+
+
 
 
 class UserEditForm(forms.ModelForm):
@@ -134,6 +143,51 @@ class CinemaForm(forms.ModelForm):
 
 
         }
+
+
+class HomePageBannerForm(forms.ModelForm):
+    class Meta:
+        model= HomePageBanner
+        fields = ['is_active','speed', ]
+
+        widgets = {
+            'is_active': forms.CheckboxInput(attrs={
+                'id': 'newsStatusToggle1'}),
+
+            'speed': forms.HiddenInput(attrs={
+            })
+        }
+
+
+
+class SliderForm(forms.ModelForm):
+
+    class Meta:
+        model = Slider
+        fields = "__all__"
+        widgets ={
+            'url':forms.URLInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'URL',
+            }),
+
+            'text':forms.TextInput(attrs={
+                'class':'form-control mt-2',
+                'placeholder': 'Text',
+            }),
+
+            'image':forms.FileInput(attrs={
+                'class':'d-none'
+            })
+        }
+
+SliderFormSet = modelformset_factory(
+    Slider,
+    form = SliderForm,
+    can_delete=True,
+    extra=1
+)
+
 
 
 

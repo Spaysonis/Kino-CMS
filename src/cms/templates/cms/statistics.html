@@ -164,6 +164,13 @@
                     </li>
 
                     <li class="nav-item">
+                        <a href="{% url 'banners' %}" class="nav-link {% if active_page == 'banners' %}active{% endif %}">
+                            <i class="nav-icon fas fa-users"></i>
+                            <p>Баннеры/Слайдеры</p>
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
                         <a href="{% url 'movie' %}" class="nav-link {% if active_page == 'movie' %}active{% endif %}">
                             <i class="nav-icon fas fa-film"></i>
                             <p>Фильмы</p>
