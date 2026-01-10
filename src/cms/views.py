@@ -1,6 +1,6 @@
+from zipimport import alt_path_sep
 
-
-from .models import Hall
+from .models import Hall, Slider, HomePageBanner
 from src.cms.models.page import SeoBlock, Updates
 from django.urls import reverse
 from django.shortcuts import render, redirect, get_object_or_404
@@ -385,39 +385,112 @@ def delete_news_or_action(request, pk):
 
 
 from django.http import JsonResponse
+
+
+from pprint import pprint
+
+from src.cms.services.banners import BANNER_CONFIG
+
+def create(request):
+
+    if request.method == 'GET':
+        banners = []
+
+        for banner_type, cfg in BANNER_CONFIG.items():
+            banner = HomePageBanner.objects.filter(type_banner=banner_type).first()
+
+            form = HomePageBannerForm(instance=banner, prefix=cfg['form_prefix'])
+            formset = SliderFormSet(queryset=banner.slider.all() if banner else Slider.objects.none(), prefix=cfg['formset_prefix'])
+
+            banners.append({
+                "type":banner_type,
+                'form':form,
+                'formset':formset
+            })
+
+
+
+
+
 def create_banners(request):
 
+    if request.method == 'GET':
+        for banner_type, cfg in BANNER_CONFIG.items():
+            # banner = HomePageBanner.objects.filter(
+            #     type_banner=banner_type).first()
+            print("----------,",cfg)
+
+
+    top_banner = HomePageBanner.objects.filter(type_banner=HomePageBanner.TOP_BANNER).first()
+    news_banner = HomePageBanner.objects.filter(type_banner=HomePageBanner.NEWS_BANNER).first()
+
+
+    print(top_banner, '---top_banner')
+    print(news_banner, '---news_banner')
+    if top_banner:
+        print('tp',top_banner.type_banner)
+    if news_banner:
+        print('nb',news_banner.type_banner)
+
+
+    top_banner_form = HomePageBannerForm(instance=top_banner, prefix='top_banner_form')
+    top_banner_formset = SliderFormSet(queryset=top_banner.slider.all() if top_banner else Slider.objects.none(), prefix='top_banner_formset')
+
+    news_banner_form = HomePageBannerForm(instance=news_banner, prefix='news_banner_form')
+    news_banner_formset = SliderFormSet(queryset=news_banner.slider.all() if news_banner else Slider.objects.none(), prefix='news_banner_formset')
+
+
+
     if request.method == 'POST':
+
+        pprint(dict(request.POST))
         banner_type = request.POST.get('banner_type')
+        print(banner_type)
+        print()
         if banner_type == 'TB':
-            top_banner_form = HomePageBannerForm(request.POST, request.FILES, prefix='top_banner_form')
-            top_banner_formset = SliderFormSet(request.POST, request.FILES, prefix='top_banner_formset')
+            top_banner_form = HomePageBannerForm(request.POST, request.FILES,prefix='top_banner_form' )
+            top_banner_formset = SliderFormSet(request.POST,
+                                               request.FILES,
+                                               queryset=top_banner.slider.all() if top_banner else Slider.objects.none(),
+                                               prefix='top_banner_formset')
+            if top_banner_form.is_valid() and top_banner_formset.is_valid():
+                banner, created = HomePageBanner.objects.update_or_create(
+                    type_banner=banner_type,
+                    defaults= {
+                        'is_active':top_banner_form.cleaned_data['is_active'],
+                        'speed':top_banner_form.cleaned_data['speed']
 
-            if top_banner_formset.is_valid() and top_banner_form.is_valid():
-                top_banner = top_banner_form.save()
+                    }
+                )
 
-                form_set_object = top_banner_formset.save()
+                slides = top_banner_formset.save(commit=False)
+                for obj in top_banner_formset.deleted_objects:
+                    obj.delete()
 
-                top_banner.slider.set(form_set_object)
+                for slide in slides:
+                    slide.save()
+                banner.slider.set(
+                    list(banner.slider.all()) + slides
+                )
+
                 return JsonResponse({
-                        'status': 'success',
-                        'message': f'Баннер {banner_type} сохранен'
-                    })
-            return JsonResponse({
-                        'status': 'error',
-                        'message': f'Баннер {banner_type} не сохранен',
-                        'error_top_banner': top_banner_form.errors,
-                        'error_top_banner_formset':top_banner_formset.errors
-                    })
+                    'success': True,
+                    'banner_id': banner.id,
+                    'created': created
+                })
+            else:
+                return JsonResponse({
+                    'success': False,
+                    'errors': {
+                        'form': top_banner_form.errors,
+                        'formset': top_banner_formset.errors
+                    }
+                })
 
-
+        elif banner_type == 'NB':
+            pass
 
     else:
-        top_banner_form = HomePageBannerForm(prefix='top_banner_form')
-        news_banner_form = HomePageBannerForm(prefix='news_banner_form')
-
-        top_banner_formset= SliderFormSet(prefix='top_banner_formset')
-        news_banner_formset = SliderFormSet(prefix='news_banner_formset')
 
         context = {
             'top_banner_form':top_banner_form,

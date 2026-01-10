@@ -12,6 +12,10 @@
         На главной вверх
       </div>
 
+
+
+
+
       <div class="card-body">
 
           <div class="d-flex justify-content-end align-items-center">
@@ -19,6 +23,7 @@
                   статус
               </label>
               {{top_banner_form.is_active}}
+              {{top_banner_form.is_active.value}}
           </div>
 
           <div   class="d-flex justify-content-left" >
@@ -29,12 +34,12 @@
               <div class="row ml-2 mt-2" id="top_banner-container">
                   {{ top_banner_formset.management_form  }}
                   {%for form in top_banner_formset %}
-                  {{ form.id }}
-                   <div style="display:none">
-                            {{ form.DELETE }}
-                   </div>
+
                    <div class="col-md-2 top-banner-item mb-3">
+                       {{ form.id }}
+                       <div style="display: none">{{ form.DELETE }}</div>
                             <!-- Кнопка удалить -->
+
                        <button type="button" class="btn btn-danger w-100 mb-2 remove-image">Удалить</button>
                        {% if form.instance.pk and form.instance.image %}
                        <img class="card-img-top preview mb-2"
@@ -82,21 +87,21 @@
 
 
       <div class="card-footer text-muted ">
-            {{ top_banner_form.speed }}
+
         <div class="btn-toolbar ml-3" role="toolbar" aria-label="Toolbar with button groups">
             <h4 class="mr-5">Speed rotation</h4>
+            {{ top_banner_form.speed }}
             <div class="btn-group mr-2" role="group" aria-label="First group">
-                <button type="button" class="btn btn-secondary">1</button>
-                <button type="button" class="btn btn-secondary">2</button>
-                <button type="button" class="btn btn-secondary">3</button>
-                <button type="button" class="btn btn-secondary">4</button>
-                <button type="button" class="btn btn-secondary">5</button>
+                <button type="button" class="btn btn-secondary" data-value="1">1</button>
+                <button type="button" class="btn btn-secondary" data-value="2">2</button>
+                <button type="button" class="btn btn-secondary" data-value="3">3</button>
+                <button type="button" class="btn btn-secondary" data-value="4">4</button>
+                <button type="button" class="btn btn-secondary" data-value="5">5</button>
             </div>
-
         </div>
-        <div class="d-flex justify-content-center">
-                <button type="submit" class=" btn btn-success ">Success</button>
-            </div>
+          <div class="d-flex justify-content-center">
+              <button type="submit" class=" btn btn-success ">Success</button>
+          </div>
       </div>
 
     </div>
@@ -141,101 +146,124 @@
 
 
 <!--!!! БАННЕР НА ГЛАНОЙ НОВОСТИ И АКЦИИ !! -->
-<div class="card text-center">
-  <div class="card-header">
+<form class="ajax-news-banner-form" data-banner="news-banner"  method="POST" enctype="multipart/form-data" name="news_banner" action="{% url 'banners' %}">
+    <div class="card text-center">
+      <div class="card-header">
 
-    На главной новости и акции
-  </div>
-
-  <div class="card-body">
-
-      <div class="d-flex justify-content-end align-items-center">
-          <label for="newsStatusToggle1" class="mb-0 mr-2">
-              статус
-          </label>
-          {{news_banner_form.is_active}}
+        На главной новости и акции
       </div>
 
-      <div   class="d-flex justify-content-left" >
-          <h4>Size: 1000x190</h4>
-      </div>
+      <div class="card-body">
 
-      <div id="news_banner-wrapper">
-          <div class="row ml-2 mt-2" id="news_banner-container">
-              {{ news_banner_formset.management_form  }}
-              {%for form in news_banner_formset %}
-              {{ form.id }}
-               <div style="display:none">
-                        {{ form.DELETE }}
-               </div>
-               <div class="col-md-2 news-banner-item mb-3">
-                        <!-- Кнопка удалить -->
-                   <button type="button" class="btn btn-danger w-100 mb-2 remove-image">Удалить</button>
-                   {% if form.instance.pk and form.instance.image %}
-                   <img class="card-img-top preview mb-2"
-                             src="{{form.instance.image.url}}" alt="...">
-                   {%else%}
-                   <img class="card-img-top preview mb-2" src="https://www.nomadfoods.com/wp-content/uploads/2018/08/placeholder-1-e1533569576673-960x960.png" alt="...">
-                   {%endif%}
-                   <button type="button" class="btn btn-success w-100 mb-2 upload-btn">Загрузить</button>
-                   {{ form.image }}
-                   {{ form.url}}
-
-               </div>
-              {%endfor%}
+          <div class="d-flex justify-content-end align-items-center">
+              <label for="newsStatusToggle1" class="mb-0 mr-2">
+                  статус
+              </label>
+              {{news_banner_form.is_active}}
           </div>
 
-
-
-          <div class="row ml-2">
-              <div class="col-md-2">
-                  <button type="button" class="btn btn-primary w-100" id="btn-add-news-banner-item">
-                      <i class="fas fa-plus"></i> Добавить
-                  </button>
-              </div>
+          <div   class="d-flex justify-content-left" >
+              <h4>Size: 1000x190</h4>
           </div>
 
-
-          <div id="empty-news-banner-form" style="display: none;">
-            {% with form=top_banner_formset.empty_form %}
-              <div class="col-md-2 news-banner-item mb-3">
+          <div id="news_banner-wrapper">
+              <div class="row ml-2 mt-2" id="news_banner-container">
+                  {{ news_banner_formset.management_form  }}
+                  {%for form in news_banner_formset %}
                   {{ form.id }}
-                  <div style="display: none;">{{form.DELETE }}</div>
-                  <button type="button" class="btn btn-danger w-100 mb-2 remove-image">Удалить</button>
-                  <img src="https://www.nomadfoods.com/wp-content/uploads/2018/08/placeholder-1-e1533569576673-960x960.png" class="card-img-top preview mb-2" alt="placeholder">
+                   <div style="">
+                            {{ form.DELETE }}
+                   </div>
+                   <div class="col-md-2 news-banner-item mb-3">
+                            <!-- Кнопка удалить -->
+                       <button type="button" class="btn btn-danger w-100 mb-2 remove-image">Удалить</button>
+                       {% if form.instance.pk and form.instance.image %}
+                       <img class="card-img-top preview mb-2"
+                                 src="{{form.instance.image.url}}" alt="...">
+                       {%else%}
+                       <img class="card-img-top preview mb-2" src="https://www.nomadfoods.com/wp-content/uploads/2018/08/placeholder-1-e1533569576673-960x960.png" alt="...">
+                       {%endif%}
+                       <button type="button" class="btn btn-success w-100 mb-2 upload-btn">Загрузить</button>
+                       {{ form.image }}
+                       {{ form.url}}
 
-                  <button type="button" class="btn btn-success w-100 mb-2 upload-btn">Загрузить</button>
-                  {{ form.image }}
-                   {{ form.url}}
+                   </div>
+                  {%endfor%}
               </div>
-              {% endwith %}
+
+
+
+              <div class="row ml-2">
+                  <div class="col-md-2">
+                      <button type="button" class="btn btn-primary w-100" id="btn-add-news-banner-item">
+                          <i class="fas fa-plus"></i> Добавить
+                      </button>
+                  </div>
+              </div>
+
+
+              <div id="empty-news-banner-form" style="display: none;">
+                {% with form=top_banner_formset.empty_form %}
+                  <div class="col-md-2 news-banner-item mb-3">
+                      {{ form.id }}
+                      <div style="display: none;">{{form.DELETE }}</div>
+                      <button type="button" class="btn btn-danger w-100 mb-2 remove-image">Удалить</button>
+                      <img src="https://www.nomadfoods.com/wp-content/uploads/2018/08/placeholder-1-e1533569576673-960x960.png" class="card-img-top preview mb-2" alt="placeholder">
+
+                      <button type="button" class="btn btn-success w-100 mb-2 upload-btn">Загрузить</button>
+                      {{ form.image }}
+                       {{ form.url}}
+                  </div>
+                  {% endwith %}
+              </div>
           </div>
+
       </div>
 
-  </div>
 
 
 
+      <div class="card-footer text-muted ">
 
-  <div class="card-footer text-muted ">
 
+        <div class="btn-toolbar ml-3" role="toolbar" aria-label="Toolbar with button groups">
+            <h4 class="mr-5">Speed rotation</h4>
+            <div class="btn-group mr-2" role="group" aria-label="First group">
+                <button type="button" class="btn btn-secondary">1</button>
+                <button type="button" class="btn btn-secondary">2</button>
+                <button type="button" class="btn btn-secondary">3</button>
+                <button type="button" class="btn btn-secondary">4</button>
+                <button type="button" class="btn btn-secondary">5</button>
+            </div>
 
-    <div class="btn-toolbar ml-3" role="toolbar" aria-label="Toolbar with button groups">
-        <h4 class="mr-5">Speed rotation</h4>
-        <div class="btn-group mr-2" role="group" aria-label="First group">
-            <button type="button" class="btn btn-secondary">1</button>
-            <button type="button" class="btn btn-secondary">2</button>
-            <button type="button" class="btn btn-secondary">3</button>
-            <button type="button" class="btn btn-secondary">4</button>
-            <button type="button" class="btn btn-secondary">5</button>
         </div>
 
+          <div class="d-flex justify-content-center">
+              <button type="submit" class=" btn btn-success ">Success</button>
+          </div>
+
+
+      </div>
     </div>
-    <div class="d-flex justify-content-center">
-            <button type="button" class=" btn btn-success ">Success</button>
-        </div>
-  </div>
+</form>
 
+<div class="modal fade" id="successModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Успешно!</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Изменения сохранены успешно.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">Закрыть</button>
+            </div>
+        </div>
+    </div>
 </div>
 
 <!--!!ЗАКРЫЛ БАНННЕР НОВОСТИ И АКЦИИ !!! -->
@@ -279,34 +307,34 @@ document.addEventListener('DOMContentLoaded', function () {
             }
 
         })
+
+            .then(function (response){
+                console.log('Ответ c бэкэнда', response);
+                return response.json()
+            })
+            .then(function (data) {
+                if (data.success) {
+                    $('#successModal').modal('show');
+                }
+            })
+
             // .then(function (response) {
             //     return response.json();
             // })
     })
 
 
-
-    // /// отвечает за скорость баннера новости и акции
-    // const speedInput = document.getElementById('id_speed');
-    // const buttons = document.querySelectorAll('.speed-btn');
-    //
-    // function setActiveButton(value) {
-    //      buttons.forEach(function (btn) {
-    //          if (btn.dataset.value === value) {
-    //
-    //              btn.classList.remove('btn-secondary');
-    //              btn.classList.add('btn-primary');
-    //          }else {
-    //              btn.classList.remove('btn-primary');
-    //              btn.classList.add('btn-secondary');
-    //          }
-    //
-    //          });
-    //      }
-    //      if (speedInput.value) {
-    //          setActiveButton(speedInput.value);
-    //      }
-
+    document.querySelectorAll('.btn-group button').forEach(btn => {
+    btn.addEventListener('click', function() {
+        const speedInput = document.getElementById('id_top_banner_form-speed');
+        if (!speedInput) return;
+        // ставим значение кнопки
+        speedInput.value = this.dataset.value;
+        // подсветка активной кнопки
+        this.parentElement.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+    });
+});
 
 
 
@@ -347,14 +375,32 @@ document.addEventListener('DOMContentLoaded', function () {
 
         }
 
-
-
             /// Удаление формы
         if (even.target.classList.contains('remove-image')) {
             const block_top_banner_form = even.target.closest('.top-banner-item');
-            block_top_banner_form.remove();
-            total_form_top_banner.value = parseInt(total_form_top_banner.value) -1;
-            console.log(block_top_banner_form);
+
+            const delete_input = block_top_banner_form.querySelector('input[type="checkbox"][name$="-DELETE"]');
+            const input_id = block_top_banner_form.querySelector('input[name$="-id"]');
+
+            if (input_id && input_id.value) {
+                if (delete_input) {
+                    delete_input.checked = true;
+                    block_top_banner_form.hidden = true;
+                    console.log('удалил форму с юэкенда')
+                }}
+            else {
+                block_top_banner_form.remove();
+                total_form_top_banner.value = parseInt(total_form_top_banner.value) -1;
+                 console.log('удалил форму с фронтенда')
+            }
+
+
+
+
+
+            // block_top_banner_form.remove();
+            // total_form_top_banner.value = parseInt(total_form_top_banner.value) -1;
+            // console.log(block_top_banner_form);
         }
 
 
@@ -408,10 +454,18 @@ document.addEventListener('DOMContentLoaded', function () {
         }
             /// удаление фыормы
          if (even.target.classList.contains('remove-image')) {
+
             const block_news_banner_form = even.target.closest('.news-banner-item');
-            block_news_banner_form.remove();
-            total_form_news_banner.value = parseInt(total_form_news_banner.value) -1;
-            console.log(block_news_banner_form);
+
+            const delete_input = block_news_banner_form.querySelector('input[type="checkbox"][name$="-DELETE"]');
+            if (delete_input) {
+                block_news_banner_form.checked = true;
+            }
+            block_news_banner_form.style.display = 'none';
+
+            // block_news_banner_form.remove();
+            // total_form_news_banner.value = parseInt(total_form_news_banner.value) -1;
+            // console.log(block_news_banner_form);
         }
     })
 
@@ -446,14 +500,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
     $(document).ready(function () {
-        $('#newsStatusToggle1').bootstrapToggle({
-            on: 'ВКЛ',
-            off: 'ВЫКЛ',
-            onstyle: 'success',
-            offstyle: 'danger',
-            size: 'small'  // можно менять размер
-        });
+    $('.status-toggle').bootstrapToggle({
+        on: 'ВКЛ',
+        off: 'ВЫКЛ',
+        onstyle: 'success',
+        offstyle: 'danger',
+        size: 'small'
     });
+});
 });
 
 </script>

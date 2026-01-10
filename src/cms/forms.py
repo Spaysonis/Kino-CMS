@@ -152,9 +152,10 @@ class HomePageBannerForm(forms.ModelForm):
 
         widgets = {
             'is_active': forms.CheckboxInput(attrs={
-                'id': 'newsStatusToggle1'}),
-
+                'class': 'status-toggle',
+            }),
             'speed': forms.HiddenInput(attrs={
+
             })
         }
 

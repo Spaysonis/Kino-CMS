@@ -19,9 +19,9 @@ class HomePageBanner(models.Model):
         (NEWS_BANNER, 'На главной новости и акции')
     ]
 
-    is_active = models.BooleanField(default=True)
+    is_active = models.BooleanField(default=False)
     type_banner = models.CharField(max_length=2 , choices=BANNER_CHOICE, default=TOP_BANNER)
-    speed = models.IntegerField(default=5)
+    speed = models.IntegerField(default=5, null=True, blank=True)
     slider = models.ManyToManyField(Slider)
 
 

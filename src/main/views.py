@@ -3,6 +3,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from .forms import SimpleRegistrationForm, ProfileEditForm
 from src.cms.models.cinema import Movie
+from src.cms.models.banners import HomePageBanner
 from ..cms.models import Cinema
 
 
@@ -80,13 +81,16 @@ def logout_view(request):
 def main_page(request):
 
     movie = Movie.objects.all()
+    banners = HomePageBanner.objects.filter(is_active=True)
+
 
 
 
     return render(request, 'main/main_view.html', {
         'active_page':'main_page',
         'page_title':'Главная страница',
-        'films': movie
+        'films': movie,
+        'banners':banners
     })
 
 
