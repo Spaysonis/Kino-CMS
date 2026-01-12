@@ -154,9 +154,7 @@ class HomePageBannerForm(forms.ModelForm):
             'is_active': forms.CheckboxInput(attrs={
                 'class': 'status-toggle',
             }),
-            'speed': forms.HiddenInput(attrs={
-
-            })
+            'speed': forms.HiddenInput()
         }
 
 

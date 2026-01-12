@@ -1,0 +1,115 @@
+
+
+
+
+<form class="ajax-banner-form" data-banner-type="NB"  method="POST" enctype="multipart/form-data" name="top_banner" action="{% url 'banners' %}">
+    {% csrf_token %}
+    <!--!!!!ВЕРХНИЙ БАННЕР!!!! -->
+    <div class="card text-center">
+        {%for banner in banners%}
+        {%if banner.type == "NB" %}
+      <div class="card-header">
+        На главной вверх
+      </div>
+
+
+
+
+
+
+      <div class="card-body">
+
+          <div class="d-flex justify-content-end align-items-center">
+              <label for="newsStatusToggle" class="mb-0 mr-2">
+                  статус
+              </label>
+              {{banner.form.is_active}}
+              {{banner.form.is_active.value}}
+          </div>
+
+          <div   class="d-flex justify-content-left" >
+              <h4>Size: 1000x190</h4>
+          </div>
+
+          <div class="banner-wrapper" id="top_banner-wrapper">
+              <div class="row ml-2 mt-2 banner-container" id="banner-container">
+                  {{ banner.formset.management_form  }}
+                  {%for form in banner.formset %}
+
+                   <div class="col-md-2 banner-item mb-3">
+                       {{ form.id }}
+                       <div style="display: none">{{ form.DELETE }}</div>
+                            <!-- Кнопка удалить -->
+
+                       <button type="button" class="btn btn-danger w-100 mb-2 remove-btn">Удалить</button>
+                       {% if form.instance.pk and form.instance.image %}
+                       <img class="card-img-top preview mb-2"
+                                 src="{{form.instance.image.url}}" alt="...">
+                       {%else%}
+                       <img class="card-img-top preview mb-2" src="https://www.nomadfoods.com/wp-content/uploads/2018/08/placeholder-1-e1533569576673-960x960.png" alt="...">
+                       {%endif%}
+                       <button type="button" class="btn btn-success w-100 mb-2 upload-btn">Загрузить</button>
+                       {{ form.image }}
+                       {{ form.url}}
+
+                   </div>
+                  {%endfor%}
+              </div>
+
+
+              <div class="row ml-2">
+                  <div class="col-md-2">
+                      <button type="button" class="btn btn-primary w-100" id="add-banner-form-btn">
+                          <i class="fas fa-plus"></i> Добавить
+                      </button>
+                  </div>
+              </div>
+
+              <div id="empty-top-banner-form" style="display: none;">
+                {% with form=banner.formset.empty_form %}
+                  <div class="col-md-2 banner-item empty-banner-item mb-3">
+                      {{ form.id }}
+                      <div style="display: none;">{{form.DELETE }}</div>
+                      <button type="button" class="btn btn-danger w-100 mb-2 remove-btn">Удалить</button>
+                      <img src="https://www.nomadfoods.com/wp-content/uploads/2018/08/placeholder-1-e1533569576673-960x960.png" class="card-img-top preview mb-2" alt="placeholder">
+                      <button type="button" class="btn btn-success w-100 mb-2 upload-btn">Загрузить</button>
+                      {{ form.image }}
+                      {{ form.url}}
+                      {{ form.text}}
+
+                  </div>
+                  {% endwith %}
+              </div>
+
+          </div>
+      </div>
+
+
+
+
+      <div class="card-footer text-muted ">
+
+        <div class="btn-toolbar ml-3" role="toolbar" aria-label="Toolbar with button groups">
+            <h4 class="mr-5">Speed rotation</h4>
+            {{ banner.form.speed }}
+            {{ banner.form.speed.value }}
+            <div class="btn-group mr-2" role="group" aria-label="First group">
+                <button type="button" class="btn btn-secondary" data-value="1">1</button>
+                <button type="button" class="btn btn-secondary" data-value="2">2</button>
+                <button type="button" class="btn btn-secondary" data-value="3">3</button>
+                <button type="button" class="btn btn-secondary" data-value="4">4</button>
+                <button type="button" class="btn btn-secondary" data-value="5">5</button>
+            </div>
+        </div>
+          <div class="d-flex justify-content-center">
+              <button type="submit" class=" btn btn-success ">Success</button>
+          </div>
+      </div>
+        {%endif%}
+        {%endfor%}
+    </div>
+
+    <!--ЗАКРЫЛ ВЕРХНИЙ БАННЕР-->
+</form>
+
+

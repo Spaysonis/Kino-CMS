@@ -239,6 +239,9 @@
 <!-- AdminLTE App -->
 <script src="{% static 'adminlte/js/adminlte.min.js' %}"></script>
 <script src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/js/bootstrap4-toggle.min.js"></script>
-{% block extra_js %}{% endblock %}
+{% block extra_js %}
+<script src="{% static 'cms/js/banners.js' %}?v={{ version }}"></script>
+
+{% endblock %}
 </body>
 </html>

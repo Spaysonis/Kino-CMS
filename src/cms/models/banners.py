@@ -25,10 +25,6 @@ class HomePageBanner(models.Model):
     slider = models.ManyToManyField(Slider)
 
 
-
-
-
-
 class BackgroundBanner(models.Model):
     main_image = models.ImageField()
     background = models.CharField(max_length=7, default='#FFFFFF')
