@@ -7,7 +7,7 @@ from .models import Movie, SeoBlock, Updates, Gallery
 
 from src.cms.models.cinema import Cinema, Hall
 from src.cms.models.page import Updates
-from src.cms.models.banners import HomePageBanner, Slider
+from src.cms.models.banners import HomePageBanner, Slider, BackgroundBanner
 from ..user.models import BaseUser
 
 
@@ -143,6 +143,33 @@ class CinemaForm(forms.ModelForm):
 
 
         }
+
+
+
+
+class BackgroundBannerForm(forms.ModelForm):
+    class Meta:
+        model = BackgroundBanner
+        fields = '__all__'
+
+        widgets = {
+            'main_image': forms.FileInput(attrs={
+                'class': 'd-none',
+                'id': 'mainImageInput'
+            }),
+            'background': forms.TextInput(attrs={
+                'type': 'color',
+                'class': 'form-control',
+                'id': 'bgColorInput'
+            }),
+            'is_use_image': forms.HiddenInput()
+        }
+
+
+
+
+
+
 
 
 class HomePageBannerForm(forms.ModelForm):

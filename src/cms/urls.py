@@ -11,12 +11,13 @@ urlpatterns = [
 
     path("", views.admin, name="statistics"),
 
+
     path('users/', views.UserListView.as_view(), name='users'),
+    path('users/<int:pk>/edit/', views.edit_user, name='edit_user'),
 
 
 
 
-    #path('news/', views.update_list, {'content_type': 'NEWS'}, name='news'),
 
 
     path('content/', views.content_list, name='content_list'),
@@ -25,40 +26,11 @@ urlpatterns = [
     path('content/delete/<int:pk>', views.delete_news_or_action, name='delete_update'),
 
 
+
+
     path('banners/', views.create_banners, name='banners'),
+    path('background-banner/', views.background_banner, name='background_banner'),
 
-
-    #path('content/update/<str:content_type_slug>/<int:pk>', views.update_form, name='content_update'),
-    # path('content/create/<str:content_type>/', views.update_form, name='content_create'),
-
-
-    # path('content/', views.update_form, name='content_list'),
-
-
-    # path('news/', views.update_list, {'content_type': 'NEWS'}, name='news'),
-    # path('actions/', views.update_list, {'content_type': 'ACTION'}, name='actions'),
-    #
-
-
-    # path('action/create', views.update_form, name='actions_create'),
-
-    # path('news/<int:pk>/update', views.update_form, name='news_update'),
-    # path('action/<int:pk>/update', views.update_form,  name='action_update'),
-
-
-
-
-
-
-
-
-
-
-
-
-    # можно ли совместить один маршрут для :
-    # path('actions_lists/', views.update_list, {'content_type': 'ACTION'}, name='action_list'),
-    # path('news_lists/', views.update_list, {'content_type': 'NEWS'}, name='news_lists'),
 
 
     path('movie/', views.movie_edit, name='movie'),
@@ -75,17 +47,8 @@ urlpatterns = [
 
 
 
-    # path('cinema/upload_gallery/', views.upload_gallery_image, name='upload_gallery_image') ,
-    # path('cinema/add_hall/', views.cinema_create_hall, name='create_hall'),
 
 
 
-    path('users/<int:pk>/edit/', views.edit_user, name='edit_user'),
-    # path('test', views.test, name='test')
 
 ]
-
-
-    #path('banners', views.banners, name="banners" ),]
-#     path('films', views.films, name="films")
-# ]

@@ -1,12 +1,13 @@
 from sys import prefix
 from zipimport import alt_path_sep
 
-from .models import Hall, Slider, HomePageBanner
+from .models import Hall, Slider, HomePageBanner, BackgroundBanner
 from src.cms.models.page import SeoBlock, Updates
 from django.urls import reverse
 from django.shortcuts import render, redirect, get_object_or_404
 from src.cms.models.cinema import Cinema
-from .forms import MovieForm, SeoBlockForm, UpdatesForm, UserEditForm, CinemaForm, GalleryFormSet, HallForm,  HomePageBannerForm, SliderFormSet
+from .forms import MovieForm, SeoBlockForm, UpdatesForm, UserEditForm, CinemaForm, GalleryFormSet, HallForm, \
+    HomePageBannerForm, SliderFormSet, BackgroundBannerForm
 from .models import Gallery
 from django.shortcuts import render
 from django_tables2 import SingleTableView
@@ -418,11 +419,16 @@ def create_banners(request):
                 'form': form,
                 'formset': formset
             })
-        for i in banners:
-            print(i['type'], i)
+
+
+        background_banner = BackgroundBanner.objects.first()
+        background_form = BackgroundBannerForm(instance=background_banner)
 
         return render(request, 'cms/banners.html', {
-            'banners': banners
+            'banners': banners,
+            'background_form':background_form,
+            'background_banner':background_banner
+
         })
 
 
@@ -484,10 +490,57 @@ def create_banners(request):
             })
         return JsonResponse({
             'success': False,
-            'banner_id': '',
+            'banner_id':  banner.id,
             'form_error':form.errors,
             'formset_error':formset.errors
         })
+
+
+
+def background_banner(request):
+    print('data in views')
+
+
+    banner = BackgroundBanner.objects.first()
+
+
+
+    if request.method == 'POST':
+        form = BackgroundBannerForm(request.POST, request.FILES, instance=banner)
+        print(form.data)
+
+
+        if form.is_valid():
+
+            if request.POST.get('delete_image') == 'true':
+                if banner.main_image:
+                    banner.main_image.delete(save=False)
+                banner.main_image = None
+
+            banner = form.save(commit=False)
+            if not banner.is_use_image:
+                banner.main_image.delete(save=False)
+                banner.main_image = None
+            banner.save()
+
+
+
+
+
+
+            return (
+                JsonResponse({
+                'success': True,
+                    'banner':banner.id,
+
+
+                }))
+        else:
+            return JsonResponse({
+        'success': False,
+        'error':form.errors})
+
+
 
 
 
@@ -495,11 +548,7 @@ def create_banners(request):
 
 # def create_banners(request):
 #
-#     if request.method == 'GET':
-#         for banner_type, cfg in BANNER_CONFIG.items():
-#             # banner = HomePageBanner.objects.filter(
-#             #     type_banner=banner_type).first()
-#             print("----------,",cfg)
+#
 #
 #
 #     top_banner = HomePageBanner.objects.filter(type_banner=HomePageBanner.TOP_BANNER).first()

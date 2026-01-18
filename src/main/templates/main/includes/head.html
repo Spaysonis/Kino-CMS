@@ -1,0 +1,82 @@
+
+    {% for banner in banners %}
+
+<div class="container mt-5    p-4" style="background-color: #313549; max-width: 1500px ">
+
+  <div class="container-fluid">
+
+
+
+
+    <div class="d-flex justify-content-end">
+      <button type="button" class="btn btn-primary btn-sm mr-2 mb-2" data-toggle="modal" data-target="#authModal">
+        Авторизация</button>
+    </div>
+
+
+
+
+      <div id="carousel{{ forloop.counter }}" class="carousel slide "  data-ride="carousel" >
+        <div class="carousel-inner">
+          {% for slide in banner.slider.all %}
+          <div class="carousel-item {% if forloop.first %}active{% endif %}">
+            <img src="{{ slide.image.url }}" class="d-block w-100" style=" height:190px; object-fit: cover;">
+            {% if slide.text %}
+            <div class="carousel-caption d-none d-md-block">
+              <p>{{ slide.text }}</p>
+            </div>
+            {% endif %}
+          </div>
+          {% endfor %}
+        </div>
+        <a class="carousel-control-prev" href="#carousel{{ forloop.counter }}" role="button" data-slide="prev">
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        </a>
+        <a class="carousel-control-next" href="#carousel{{ forloop.counter }}" role="button" data-slide="next">
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        </a>
+      </div>
+
+<!--    \\\навигациЯ по сайту-->
+    {% include "main/includes/navigation.html" %}
+
+
+
+
+<!--    модалка для авторизации -->
+
+    <form action="{% url 'user_login' %}" method="post" enctype="multipart/form-data">
+       {% csrf_token %}
+      <div class="modal fade" id="authModal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog" >
+          <div class="modal-content">
+            <div class="modal-header">
+              <h4 class="modal-title text-center w-100">Авторизация</h4>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">×</span>
+              </button>
+            </div>
+            <div class="modal-body">
+
+              <input name="login_name" type="text" class="form-control input-sm" style="width:174px" title="Логин" placeholder="Логин">
+              <input name="login_password" type="password" class="form-control input-sm" style="width:174px" title="Пароль" placeholder="Пароль">
+            </div>
+            <div class="modal-footer justify-content-between">
+              <button type="submit" class="btn btn-primary">Войти</button>
+              <a href="{% url 'user_register' %}" class="btn btn-primary">Регистрация</a>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+    <!-- /.modal-content -->
+
+
+  </div>
+</div>
+
+
+
+
+    {%endfor%}

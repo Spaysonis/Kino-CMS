@@ -2,8 +2,8 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from .forms import SimpleRegistrationForm, ProfileEditForm
-from src.cms.models.cinema import Movie
-from src.cms.models.banners import HomePageBanner
+
+from src.cms.models.banners import HomePageBanner, BackgroundBanner
 from ..cms.models import Cinema
 
 
@@ -17,10 +17,10 @@ def cinema_list1(request):
 
 
 
-def login_view(request):
+def user_login(request):
     if request.method == 'POST':
-        username = request.POST['username']
-        password = request.POST['password']
+        username = request.POST['login_name']
+        password = request.POST['login_password']
         user = authenticate(request, username=username, password=password)
 
         if user is not None:
@@ -32,21 +32,6 @@ def login_view(request):
     return render(request, 'main/login.html')
 
 
-def register_view(request):
-    if request.method == 'POST':
-        form = SimpleRegistrationForm(request.POST)
-        if form.is_valid():
-            user = form.save(commit=False)
-            user.email = form.cleaned_data['email']
-            user.save()
-
-            login(request, user)
-            messages.success(request, f'Добро пожаловать, {user.username}!')
-            return redirect('/')
-    else:
-        form = SimpleRegistrationForm()
-
-    return render(request, 'main/register.html', {'form': form})
 
 
 def edit_profile_view(request):
@@ -78,20 +63,37 @@ def logout_view(request):
     logout(request)
     return redirect('/')  # Перенаправляет на главную страницу
 
-def main_page(request):
-
-    movie = Movie.objects.all()
-    banners = HomePageBanner.objects.filter(is_active=True)
 
 
 
 
-    return render(request, 'main/main_view.html', {
-        'active_page':'main_page',
-        'page_title':'Главная страница',
-        'films': movie,
-        'banners':banners
-    })
+def user_register(request):
+
+    if request.method == 'POST':
+        form = SimpleRegistrationForm(request.POST)
+        if form.is_valid():
+            user = form.save(commit=False)
+            user.email = form.cleaned_data['email']
+            user.save()
+
+            login(request, user)
+            messages.success(request, f'Добро пожаловать, {user.username}!')
+            return redirect('/')
+    else:
+        form = SimpleRegistrationForm()
+
+    return render(request, 'main/pages/main.html', {'form': form, 'show_register': True,
+
+                                                    })
+
+
+
+
+
+
+def main(request):
+
+    return render(request, 'main/pages/main.html')
 
 
 

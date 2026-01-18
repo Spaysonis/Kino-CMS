@@ -9,7 +9,7 @@
         {%for banner in banners%}
         {%if banner.type == "NB" %}
       <div class="card-header">
-        На главной вверх
+        На главной новости и акции
       </div>
 
 
@@ -20,7 +20,7 @@
       <div class="card-body">
 
           <div class="d-flex justify-content-end align-items-center">
-              <label for="newsStatusToggle" class="mb-0 mr-2">
+              <label  class="mb-0 mr-2">
                   статус
               </label>
               {{banner.form.is_active}}
@@ -75,7 +75,7 @@
                       <button type="button" class="btn btn-success w-100 mb-2 upload-btn">Загрузить</button>
                       {{ form.image }}
                       {{ form.url}}
-                      {{ form.text}}
+
 
                   </div>
                   {% endwith %}

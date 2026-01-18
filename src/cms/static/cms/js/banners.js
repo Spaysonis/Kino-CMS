@@ -5,7 +5,116 @@
 
 document.addEventListener('DOMContentLoaded', function () {
 
-    console.log('wwwwwwwwwwwwwwwwwwwwwwww')
+    const isUseImageInput = document.getElementById('id_is_use_image');
+    console.log(isUseImageInput)
+
+    const PLACEHOLDER =
+        'https://www.nomadfoods.com/wp-content/uploads/2018/08/placeholder-1-e1533569576673-960x960.png';
+    const bgImageRadio = document.getElementById('bgImage'); // кнопка для картинки
+
+    const bgColorRadio = document.getElementById('bgColor'); /// кнопка для фона
+
+    const uploadBtn = document.getElementById('uploadLogoBtn'); // кнопка загрузки
+    const deleteBtn = document.getElementById('deleteLogoBtn'); // кнопка удаления
+
+    const fileInput = document.querySelector('#imageInputBlock input[type="file"]');
+    const preview = document.getElementById('mainImagePreview');
+    const deleteImageInput = document.getElementById('deleteImageInput');
+
+    /// переклоюбчение радоикнопки на выбор изображения если нажал загрузить
+
+    uploadBtn.addEventListener('click', function (event){
+        event.preventDefault();
+        bgImageRadio.checked = true;
+        fileInput.click();
+        isUseImageInput.value = 'True'
+
+    })
+    /// замена плейсхолдера на каритинку
+    fileInput.addEventListener('change', function (event){
+        const reader = new FileReader();
+         const file = event.target.files[0];
+         const img = document.getElementById('mainImagePreview')
+          reader.onload = function (e) {
+                    img.src = e.target.result
+                };
+          reader.readAsDataURL(file);
+
+          console.log('yesss')
+    })
+
+    /// удаление картинки
+    deleteBtn.addEventListener('click', function (event) {
+        console.log('delete btn')
+        event.preventDefault();
+        bgColorRadio.checked = true;
+        preview.src = PLACEHOLDER;
+        fileInput.value = '';
+        deleteImageInput.value = 'true';
+
+
+
+
+    })
+
+    bgColorRadio.addEventListener('change', function () {
+    if (!this.checked) return;
+
+    preview.src = PLACEHOLDER;   // убираем превью
+    fileInput.value = '';        // сбрасываем file input
+    deleteImageInput.value = 'true';  // говорим серверу удалить файл
+    isUseImageInput.value = 'False'
+});
+
+
+    function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            // cookie начинается с name=
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+    }
+
+
+
+
+     document.querySelectorAll('.ajax-bg-banner-from').forEach(function (form) {
+         form.addEventListener('submit', function (even) {
+             even.preventDefault();
+             const data = new FormData(form);
+             fetch(form.action, {
+
+                method: 'POST',
+                body: data,
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken')
+                }})
+                .then(function (response){
+                    return response.json();
+                })
+                .then(function (data){
+                    if (data.success){
+                        $('#successModal').modal('show');
+                    }
+                })
+
+
+         })
+    })
+
+
+
+
+
+    console.log('news')
     $(document).ready(function () {
         $('.status-toggle').bootstrapToggle({
             on: 'ВКЛ',
@@ -25,21 +134,9 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
 
-    function getCookie(name) {
-    let cookieValue = null;
-    if (document.cookie && document.cookie !== '') {
-        const cookies = document.cookie.split(';');
-        for (let i = 0; i < cookies.length; i++) {
-            const cookie = cookies[i].trim();
-            // cookie начинается с name=
-            if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                break;
-            }
-        }
-    }
-    return cookieValue;
-    }
+
+    /// яакс для баннера на заднем фоне
+
 
 
 
