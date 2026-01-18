@@ -2,5 +2,76 @@
 
 
 
-<h1>registration pg</h1>
+<div class="container     p-4" style="background-color: #313549; max-width: 1500px ">
 
+  <div class="container-fluid">
+      <div class="card">
+          <div class="card-body register-card-body">
+              <p class="login-box-msg">Register a new membership</p>
+
+              <form action="{% url 'user_register' %}" method="POST">
+                  {% csrf_token %}
+
+                  <div class="input-group mb-3">
+                      {{form.username }}
+                      <div class="input-group-append">
+                          <div class="input-group-text">
+                              <span class="fas fa-user"></span>
+                          </div>
+                      </div>
+                  </div>
+                  <div class="input-group mb-3">
+                      {{form.email}}
+
+                      <div class="input-group-append">
+                          <div class="input-group-text">
+                              <span class="fas fa-envelope"></span>
+                          </div>
+                      </div>
+                  </div>
+                  <div class="input-group mb-3">
+                      {{form.password1}}
+
+                      <div class="input-group-append">
+                          <div class="input-group-text">
+                              <span class="fas fa-lock"></span>
+                          </div>
+                      </div>
+                  </div>
+                  <div class="input-group mb-3">
+                       {{form.password2}}
+
+                      <div class="input-group-append">
+                          <div class="input-group-text">
+                              <span class="fas fa-lock"></span>
+                          </div>
+                      </div>
+                  </div>
+                  <div class="row">
+                      <div class="col-4">
+                          <button type="submit" class="btn btn-primary btn-block">Register</button>
+                      </div>
+          <!-- /.col -->
+                  </div>
+              </form>
+
+    <!-- /.form-box -->
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+</div>

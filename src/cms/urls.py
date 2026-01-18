@@ -1,7 +1,6 @@
 
 
-from django.conf import settings
-from django.conf.urls.static import static
+from django.contrib.admin.views.decorators import staff_member_required
 from django.urls import path, include
 
 from . import views
@@ -9,7 +8,7 @@ from . import views
 
 urlpatterns = [
 
-    path("", views.admin, name="statistics"),
+    path("", staff_member_required (views.admin), name="statistics"),
 
 
     path('users/', views.UserListView.as_view(), name='users'),
@@ -20,7 +19,7 @@ urlpatterns = [
 
 
 
-    path('content/', views.content_list, name='content_list'),
+    path('content/', staff_member_required(views.content_list), name='content_list'),
     path('content/create/<str:slug>/', views.create_news_or_action, name='content_create'),
     path('content/update/<str:slug>/<int:pk>', views.update_news_or_action, name='content_update'),
     path('content/delete/<int:pk>', views.delete_news_or_action, name='delete_update'),

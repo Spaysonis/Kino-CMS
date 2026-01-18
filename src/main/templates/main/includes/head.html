@@ -5,12 +5,28 @@
 
   <div class="container-fluid">
 
+    <a href="/">Главная</a>
+
 
 
 
     <div class="d-flex justify-content-end">
-      <button type="button" class="btn btn-primary btn-sm mr-2 mb-2" data-toggle="modal" data-target="#authModal">
+       {% if request.user.is_authenticated %}
+        <p>Добро пожаловать, {{ request.user.username }}!</p>
+
+      <form action="{% url 'logout' %}" method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-primary btn-sm">
+                Выйти
+            </button>
+        </form>
+    {% else %}
+        <p>Добро пожаловать, Гость!</p>
+         <button type="button" class="btn btn-primary btn-sm mr-2 mb-2" data-toggle="modal" data-target="#authModal">
         Авторизация</button>
+    {% endif %}
+
+
     </div>
 
 

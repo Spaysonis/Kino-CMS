@@ -5,12 +5,29 @@ from src.user.models import BaseUser
 
 
 class SimpleRegistrationForm(UserCreationForm):
-    """ПРОСТАЯ ФОРМА ДЛЯ РЕГИСТРАЦИИ НА САЙТЕ"""
-    email = forms.EmailField(required=True, label='Email')
+
 
     class Meta:
         model = BaseUser
         fields = ('username', 'email', 'password1', 'password2')
+
+        widgets = {
+            'username':forms.TextInput(attrs={
+                'class':'form-control',
+                'placeholder':'Логин'
+            }),
+            'email':forms.EmailInput(attrs={
+                'class':'form-control',
+                'placeholder': 'Email'
+            }),
+            'password1':forms.PasswordInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Пароль'
+            }),
+            'password2': forms.PasswordInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Повторите пароль'
+        })}
 
 
 

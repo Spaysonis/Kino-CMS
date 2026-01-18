@@ -1,7 +1,7 @@
 
 from django.contrib.auth.models import AbstractUser
 from django.db import models
-from django.utils.functional import empty
+
 from phonenumber_field.modelfields import PhoneNumberField
 
 
@@ -21,7 +21,7 @@ class BaseUser(AbstractUser):
     card_num = models.CharField(max_length=19, blank=True, default='')
     language = models.CharField(max_length=100, choices=LANGUAGE_CHOICES, default='ru')
     gender = models.CharField(max_length=100, choices=GENDER_CHOICES, default='')
-    date_of_birth = models.CharField(max_length=100, blank=True, default='')
+    date_of_birth = models.DateField( blank=True, null=True)
     city = models.CharField(max_length=100, blank=True, default='')
     phone_num = PhoneNumberField(blank=True, region='UA', default='')
 

@@ -59,7 +59,7 @@ def edit_profile_view(request):
 
 
 
-def logout_view(request):
+def user_logout(request):
     logout(request)
     return redirect('/')  # Перенаправляет на главную страницу
 
@@ -79,9 +79,11 @@ def user_register(request):
             login(request, user)
             messages.success(request, f'Добро пожаловать, {user.username}!')
             return redirect('/')
+        print(form.errors)
     else:
         form = SimpleRegistrationForm()
 
+    print('error')
     return render(request, 'main/pages/main.html', {'form': form, 'show_register': True,
 
                                                     })
