@@ -2,17 +2,17 @@
 
 
 
-<div class="container     p-4" style="background-color: #313549; max-width: 1500px ">
+<div class="container     p-4 " style="background-color: #313549; max-width: 1500px ">
 
   <div class="container-fluid">
-      <div class="card">
-          <div class="card-body register-card-body">
-              <p class="login-box-msg">Register a new membership</p>
+      <div class="card bg-transparent">
+          <div class="card-body register-card-body  bg-transparent">
+              <p class="login-box-msg">Регистрация нового пользователя</p>
 
               <form action="{% url 'user_register' %}" method="POST">
                   {% csrf_token %}
 
-                  <div class="input-group mb-3">
+                  <div class="input-group mb-3 bg-transparent">
                       {{form.username }}
                       <div class="input-group-append">
                           <div class="input-group-text">
@@ -20,7 +20,7 @@
                           </div>
                       </div>
                   </div>
-                  <div class="input-group mb-3">
+                  <div class="input-group mb-3 ">
                       {{form.email}}
 
                       <div class="input-group-append">
@@ -38,7 +38,7 @@
                           </div>
                       </div>
                   </div>
-                  <div class="input-group mb-3">
+                  <div class="input-group mb-3 ">
                        {{form.password2}}
 
                       <div class="input-group-append">

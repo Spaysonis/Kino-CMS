@@ -13,7 +13,7 @@ class SimpleRegistrationForm(UserCreationForm):
 
         widgets = {
             'username':forms.TextInput(attrs={
-                'class':'form-control',
+                'class':'form-control bg-transparent',
                 'placeholder':'Логин'
             }),
             'email':forms.EmailInput(attrs={

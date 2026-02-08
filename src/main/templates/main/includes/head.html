@@ -1,29 +1,31 @@
-
+{% load i18n %}
     {% for banner in banners %}
 
 <div class="container mt-5    p-4" style="background-color: #313549; max-width: 1500px ">
 
   <div class="container-fluid">
 
-    <a href="/">Главная</a>
+    <a href="/"> {%translate 'Главная' %} </a>
 
 
 
 
     <div class="d-flex justify-content-end">
        {% if request.user.is_authenticated %}
-        <p>Добро пожаловать, {{ request.user.username }}!</p>
+        <p>{% translate ' Добро пожаловать,' %} {{ request.user.username }}!</p>
 
       <form action="{% url 'logout' %}" method="post">
             {% csrf_token %}
             <button type="submit" class="btn btn-primary btn-sm">
-                Выйти
+              {% translate 'Выйти'%}
+
             </button>
         </form>
     {% else %}
-        <p>Добро пожаловать, Гость!</p>
+        <p> {%translate ' Добро пожаловать, Гость!' %} </p>
          <button type="button" class="btn btn-primary btn-sm mr-2 mb-2" data-toggle="modal" data-target="#authModal">
-        Авторизация</button>
+           {% translate 'Авторизация'%}
+        </button>
     {% endif %}
 
 
@@ -63,23 +65,23 @@
 
     <form action="{% url 'user_login' %}" method="post" enctype="multipart/form-data">
        {% csrf_token %}
-      <div class="modal fade" id="authModal" tabindex="-1" role="dialog" aria-hidden="true">
-        <div class="modal-dialog" >
-          <div class="modal-content">
+      <div class="modal fade bg-transparent" id="authModal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog bg-transparent" >
+          <div class="modal-content bg-dark">
             <div class="modal-header">
-              <h4 class="modal-title text-center w-100">Авторизация</h4>
+              <h4 class="modal-title text-center w-100 bg-transparent">{%translate 'Авторизация'%}</h4>
               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">×</span>
               </button>
             </div>
-            <div class="modal-body">
+            <div class="modal-body " style="background-color: #313549; max-width: 1500px ">
 
-              <input name="login_name" type="text" class="form-control input-sm" style="width:174px" title="Логин" placeholder="Логин">
-              <input name="login_password" type="password" class="form-control input-sm" style="width:174px" title="Пароль" placeholder="Пароль">
+              <input name="login_name" type="text" class="form-control input-sm bg-transparent" style="width:174px" title="Логин" placeholder="{% translate 'Логин' %}">
+              <input name="login_password" type="password" class="form-control input-sm bg-transparent" style="width:174px" title="Пароль" placeholder="{% translate 'Пароль' %}" >
             </div>
             <div class="modal-footer justify-content-between">
-              <button type="submit" class="btn btn-primary">Войти</button>
-              <a href="{% url 'user_register' %}" class="btn btn-primary">Регистрация</a>
+              <button type="submit" class="btn btn-primary">{%translate 'Войти' %}</button>
+              <a href="{% url 'user_register' %}" class="btn btn-primary">{% translate 'Регистрация' %}</a>
 
             </div>
           </div>

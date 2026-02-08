@@ -1,25 +1,40 @@
 
-
+{%load i18n%}
 
 <div class="btn-group mt-2" role="group" aria-label="Button group with nested dropdown">
-      <button type="button" class="btn btn-secondary">Афиша</button>
+    <button type="button" class="btn btn-secondary">{%translate 'Афиша'%}</button>
+    <button type="button" class="btn btn-secondary">{%translate 'Расписание'%}</button>
+    <button type="button" class="btn btn-secondary">{%translate 'Скоро'%}</button>
+    <button type="button" class="btn btn-secondary">{%translate 'Кинотеатры'%}</button>
+    <button type="button" class="btn btn-secondary">{%translate 'Акции'%}</button>
 
-      <button type="button" class="btn btn-secondary">Расписание</button>
-      <button type="button" class="btn btn-secondary">Скоро</button>
-      <button type="button" class="btn btn-secondary">Кинотеатры</button>
-      <button type="button" class="btn btn-secondary">Акции</button>
-
-
-      <div class="btn-group" role="group">
+    <div class="btn-group" role="group">
         <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-          О кинотеатре
+            {%translate 'О кинотеатре'%}
+
         </button>
         <div class="dropdown-menu">
-          <a class="dropdown-item" href="#">Новости</a>
-          <a class="dropdown-item" href="#">Реклама</a>
-          <a class="dropdown-item" href="#">Кафе</a>
-          <a class="dropdown-item" href="#">Мобильное приложение</a>
-          <a class="dropdown-item" href="#">Контакты</a>
+            <a class="dropdown-item" href="#">{%translate 'Новости'%}</a>
+            <a class="dropdown-item" href="#">{%translate 'Реклама'%}</a>
+            <a class="dropdown-item" href="#">{%translate 'Кафе'%}</a>
+            <a class="dropdown-item" href="#">{%translate 'Мобильное приложение'%}</a>
+            <a class="dropdown-item" href="#">{%translate 'Контакты'%}</a>
         </div>
-      </div>
     </div>
+    <div class="text-right">
+
+
+        <div class="btn-group ">
+            <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false">
+                {%translate 'Язык'%}
+            </button>
+            <div class="dropdown-menu">
+                <a class="dropdown-item" href="#">{%translate 'Русский'%}</a>
+                <a class="dropdown-item" href="#">{%translate 'Англиский'%}</a>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+

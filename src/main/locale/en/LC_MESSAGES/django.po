@@ -1,0 +1,97 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-01-22 18:24+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: templates/main/includes/head.html:8
+msgid "Главная"
+msgstr "Main"
+
+#: templates/main/includes/head.html:15
+#, fuzzy
+#| msgid " Добро пожаловать, Гость!"
+msgid " Добро пожаловать,"
+msgstr "Welcome"
+
+#: templates/main/includes/head.html:20
+msgid "Выйти"
+msgstr "Exit"
+
+#: templates/main/includes/head.html:25
+msgid " Добро пожаловать, Гость!"
+msgstr "Welcome Gues"
+
+#: templates/main/includes/head.html:27 templates/main/includes/head.html:72
+msgid "Авторизация"
+msgstr "Authorization"
+
+#: templates/main/includes/head.html:79
+msgid "Логин"
+msgstr "Login"
+
+#: templates/main/includes/head.html:80
+msgid "Пароль"
+msgstr "Password"
+
+#: templates/main/includes/head.html:83
+msgid "Войти"
+msgstr "Sing in"
+
+#: templates/main/includes/head.html:84
+msgid "Регистрация"
+msgstr "Registration"
+
+#: templates/main/includes/navigation.html:5
+msgid "Афиша"
+msgstr ""
+
+#: templates/main/includes/navigation.html:7
+msgid "Расписание"
+msgstr ""
+
+#: templates/main/includes/navigation.html:8
+msgid "Скоро"
+msgstr ""
+
+#: templates/main/includes/navigation.html:9
+msgid "Кинотеатры"
+msgstr ""
+
+#: templates/main/includes/navigation.html:10
+msgid "Акции"
+msgstr ""
+
+#: templates/main/includes/navigation.html:18
+msgid "Новости"
+msgstr ""
+
+#: templates/main/includes/navigation.html:19
+msgid "Реклама"
+msgstr ""
+
+#: templates/main/includes/navigation.html:20
+msgid "Кафе"
+msgstr ""
+
+#: templates/main/includes/navigation.html:21
+msgid "Мобильное приложение"
+msgstr ""
+
+#: templates/main/includes/navigation.html:22
+msgid "Контакты"
+msgstr ""

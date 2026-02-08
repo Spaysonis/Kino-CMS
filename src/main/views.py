@@ -35,7 +35,7 @@ def user_login(request):
 
 
 def edit_profile_view(request):
-    """РЕДАКТИРОВАНИЕ ПРОФИЛЯ"""
+
     if request.method == 'POST':
 
 
