@@ -4,7 +4,17 @@ from django.contrib import messages
 from .forms import SimpleRegistrationForm, ProfileEditForm
 
 from src.cms.models.banners import HomePageBanner, BackgroundBanner
-from ..cms.models import Cinema
+from ..cms.models import Cinema, Movie
+
+
+def movies(request):
+    movie = Movie.objects.all()
+
+    context = {
+        'movie':movie
+
+    }
+    return render(request,'movie', context)
 
 
 def cinema_list1(request):
@@ -94,8 +104,14 @@ def user_register(request):
 
 
 def main(request):
+    movies = Movie.objects.all()
 
-    return render(request, 'main/pages/main.html')
+    context = {
+        'movies': movies
+
+    }
+
+    return render(request, 'main/pages/main.html', context)
 
 
 

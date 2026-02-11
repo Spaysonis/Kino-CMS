@@ -1,5 +1,62 @@
+<style>
+.MiniPost {
+    overflow: hidden;
+    margin-bottom: 3px;
+    box-shadow: 0 1px 4px 0 #000 !important;
+    border-radius: 3px;
+    height: 250px;
+    width: 150px;
+}
 
-    <h1>Movies</h1>
-    {% for c in cinema %}
-        <h2>{{ c.title }}</h2>
-    {% endfor %}
+.MiniPostPoster {
+
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+.MiniPostPoster img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.WatchTodayWrapper {
+    display: flex; /* элементы в ряд */
+    gap: 12px;
+    flex-wrap: wrap;
+}
+.MiniPostName {
+    font-size: 14px;
+    line-height: 18px;
+    max-height: 36px; /* 2 строки */
+    overflow: hidden;
+}
+</style>
+
+
+
+<div class="container mt-2    p-4" style="background-color: #313549; max-width: 1500px ">
+{% if movies %}
+    <h1>Смотрите сегодня</h1>
+    <div class="WatchTodayWrapper">
+        {% for movie in movies %}
+        <div class="MiniPost WatchToday">
+            <a href="" class="MiniPostPoster" title="">
+                <img src="{{movie.main_image.url}}" alt="movie">
+            </a>
+            <div class="MiniPostName">
+                <a href="">Пленник</a>
+            </div>
+        </div>
+
+        {%endfor%}
+    </div>
+
+    {%endif%}
+</div>
+
+
+
+
