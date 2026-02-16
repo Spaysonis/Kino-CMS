@@ -3,18 +3,33 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from .forms import SimpleRegistrationForm, ProfileEditForm
 
-from src.cms.models.banners import HomePageBanner, BackgroundBanner
+
 from ..cms.models import Cinema, Movie
 
 
-def movies(request):
-    movie = Movie.objects.all()
+
+def main(request):
+    movies = Movie.objects.all()
 
     context = {
-        'movie':movie
+        'movies': movies
 
     }
-    return render(request,'movie', context)
+    return render(request, 'main/pages/main.html', context)
+
+
+
+
+
+def movie_detail(request, pk):
+
+    movies = Movie.objects.all()
+
+    context = {
+        'movie':movies
+
+    }
+    return render(request,'main/pages/movie_detail.html', context)
 
 
 def cinema_list1(request):
@@ -99,19 +114,6 @@ def user_register(request):
                                                     })
 
 
-
-
-
-
-def main(request):
-    movies = Movie.objects.all()
-
-    context = {
-        'movies': movies
-
-    }
-
-    return render(request, 'main/pages/main.html', context)
 
 
 

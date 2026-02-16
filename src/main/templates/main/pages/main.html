@@ -5,24 +5,12 @@
 
 {% block content %}
 
-
-
-
-
-{% include "main/includes/head.html" %}
-
-
     {% if show_register %}
         {% include "main/register.html" %}
     {% else %}
 
     {% endif %}
-
-
-
 <!--тут я должен поключать мои страници с баннерами -->
 {% include "main/includes/movies.html" %}
-
-
 
 {% endblock %}

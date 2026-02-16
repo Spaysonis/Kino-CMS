@@ -1,18 +1,17 @@
 <style>
+
+
+
 .MiniPost {
-    overflow: hidden;
-    margin-bottom: 3px;
+    display: flex;
+    flex-direction: column;
+    width: 150px;
     box-shadow: 0 1px 4px 0 #000 !important;
     border-radius: 3px;
-    height: 250px;
-    width: 150px;
+    overflow: hidden;
 }
-
 .MiniPostPoster {
-
-    display: block;
-    width: 100%;
-    height: 100%;
+    height: 200px;
 }
 
 .MiniPostPoster img {
@@ -28,27 +27,31 @@
     flex-wrap: wrap;
 }
 .MiniPostName {
-    font-size: 14px;
-    line-height: 18px;
-    max-height: 36px; /* 2 строки */
+    height: 20px;
+    margin-bottom: 3px;
     overflow: hidden;
 }
 </style>
 
 
 
-<div class="container mt-2    p-4" style="background-color: #313549; max-width: 1500px ">
+<div class="container mt-2    p-4" style="background-color: #313549; max-width: 1200px ">
 {% if movies %}
     <h1>Смотрите сегодня</h1>
     <div class="WatchTodayWrapper">
         {% for movie in movies %}
         <div class="MiniPost WatchToday">
-            <a href="" class="MiniPostPoster" title="">
+            <a href="{% url 'movie_detail' movie.id %}" class="MiniPostPoster" title="">
                 <img src="{{movie.main_image.url}}" alt="movie">
             </a>
+
             <div class="MiniPostName">
-                <a href="">Пленник</a>
+                <a href="">{{movie.title}}</a>
             </div>
+            <div class="MiniPostName">
+                <a href="">Button Bay Ticket</a>
+            </div>
+
         </div>
 
         {%endfor%}
