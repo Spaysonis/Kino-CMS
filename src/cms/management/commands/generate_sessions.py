@@ -3,6 +3,7 @@ from datetime import time
 from django.core.management.base import BaseCommand
 
 from src.cms.models import Hall, Movie
+from src.main.models import Schedule
 
 
 class Command(BaseCommand):
@@ -22,7 +23,7 @@ class Command(BaseCommand):
                 for hall in halls:
                     for t in times:
                         for fmt in formats:
-                            Session.objects.get_or_create(
+                            Schedule.objects.get_or_create(
                                 movie=movie,
                                 hall=hall,
                                 date=day,

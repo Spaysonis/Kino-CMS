@@ -23,7 +23,7 @@ class Cinema(models.Model):
 
 class Hall(models.Model):
     cinema = models.ForeignKey(Cinema, on_delete=models.CASCADE,blank=True, null=True)
-    gallery = models.ManyToManyField(Gallery, null=True)
+    gallery = models.ManyToManyField(Gallery)
     seo_block = models.OneToOneField(SeoBlock, on_delete=models.CASCADE, blank=True, null=True)
 
     number = models.CharField(max_length=100, blank=True)
@@ -75,7 +75,8 @@ class Movie(models.Model):
 
     format_movie =models.ManyToManyField(
         MovieFormat,
-        related_name="movies"
+        related_name="movies",
+        blank=True
     )
 
     start_date = models.DateField(null=True, blank=True)
