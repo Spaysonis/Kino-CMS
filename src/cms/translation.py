@@ -1,7 +1,8 @@
 from modeltranslation.translator import register, TranslationOptions
 
 from src.cms.models import Updates
-from src.cms.models.cinema import Cinema, Hall
+from src.cms.models.cinema import Cinema, Hall, Movie
+
 
 @register(Cinema) # декоратор register - регистрирует моедь Cinema в modeltranslation и свзязывает настройки с TranslationOptions
 class CinemaTranslation(TranslationOptions): # говорю TranslationOptions какие поля нужно переводить
@@ -17,3 +18,9 @@ class HallTranslation(TranslationOptions):
 @register(Updates)
 class UpdateTranslation(TranslationOptions):
     fields = ('title', 'description')
+
+
+@register(Movie)
+class MovieTranslation(TranslationOptions):
+    fields = ('title', 'description')
+

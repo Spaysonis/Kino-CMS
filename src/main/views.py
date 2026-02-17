@@ -9,10 +9,20 @@ from ..cms.models import Cinema, Movie
 
 
 def main(request):
+    from datetime import date
+
     movies = Movie.objects.all()
+    today = date.today()
+    current_movies = Movie.objects.filter(start_date__lte=today, end_date__gte=today).order_by('start_date')
+
+    # start_date > today
+    upcoming_movies = Movie.objects.filter(start_date__gt=today).order_by('start_date')
+
 
     context = {
-        'movies': movies
+        'movies': movies,
+        'current_movies':current_movies,
+        'upcoming_movies':upcoming_movies
 
     }
     return render(request, 'main/pages/main.html', context)
@@ -22,11 +32,14 @@ def main(request):
 
 
 def movie_detail(request, pk):
+    print(pk)
+    movie = Movie.objects.get(id=pk)
 
-    movies = Movie.objects.all()
+    cinemas = Cinema.objects.all()
 
     context = {
-        'movie':movies
+        'movie':movie,
+        'cinemas':cinemas
 
     }
     return render(request,'main/pages/movie_detail.html', context)

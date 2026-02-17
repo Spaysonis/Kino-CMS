@@ -32,7 +32,12 @@ urlpatterns = [
 
 
 
-    path('movie/', views.movie_edit, name='movie'),
+    path('movie/', views.movies, name='movies'),
+    path('movie/create', views.movie_create_or_update, name='movie_create'),
+    path('movie/<int:pk>/update', views.movie_create_or_update, name='movie_update'),
+    path('movie/<int:pk>/delete', views.movie_delete, name='movie_delete'),
+
+
 
     path('cinemas/', views.cinema_list, name='cinema_list'),
     path('cinemas/add', views.cinema_create, name='cinema_create'),

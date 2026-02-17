@@ -1,3 +1,5 @@
+from datetime import timedelta, time
+
 from django.db import models
 from .page import SeoBlock
 from .gallery import Gallery
@@ -35,17 +37,85 @@ class Hall(models.Model):
     is_default = models.BooleanField(default=False) # Для дефолтнго зала Если false - то могу удаялть
 
 
-class Movie(models.Model):
-    seo_block = models.OneToOneField(SeoBlock, on_delete=models.CASCADE)
-    gallery = models.ManyToManyField(Gallery)
 
-    title = models.CharField(max_length=100)
-    description = models.TextField()
+
+
+class MovieFormat(models.Model):
+
+    class FormatType(models.TextChoices):
+        Format = "2D", "2D"
+        THREE_D = "3D", "3D"
+        IMAX = "IMAX", "IMAX"
+
+
+    type = models.CharField(
+        max_length=10,
+        choices=FormatType.choices,
+        unique=True
+    )
+
+    def __str__(self):
+        return self.type
+
+
+
+class Movie(models.Model):
+    # I do update fun, adds field = movie_type (choice)
+
+
+
+
+    seo_block = models.OneToOneField(SeoBlock, on_delete=models.CASCADE, blank=True, null=True)
+    gallery = models.ManyToManyField(Gallery, blank=True)
+
+    title = models.CharField(max_length=100, blank=True)
+    description = models.TextField(blank=True)
     main_image = models.ImageField()
     url = models.URLField(max_length=255)
-    format_3d = models.BooleanField(default=False)
-    format_2d = models.BooleanField(default=False)
-    format_imax = models.BooleanField(default=False)
+
+    format_movie =models.ManyToManyField(
+        MovieFormat,
+        related_name="movies"
+    )
+
+    start_date = models.DateField(null=True, blank=True)
+    end_date = models.DateField(null=True, blank=True)
+
+
+    def rental_days(self):
+        """
+        This fun makes list on the data rental
+
+        :return:
+        """
+
+        if not self.start_date and not self.end_date:
+            return []
+        days = []
+        current = self.start_date
+        while current <= self.end_date:
+            days.append(current)
+            current += timedelta(days=1)
+        return days
+
+
+    # def demo_sessions(self):
+    #
+    #     sessions = {}
+    #
+    #     for day in self.rental_days():
+    #         sessions[day] = [
+    #             time(10, 0),
+    #             time(13, 30),
+    #             time(16, 0),
+    #             time(19, 45),
+    #             time(22, 0),
+    #         ]
+    #
+    #     return sessions
+
+
+
 
 
 

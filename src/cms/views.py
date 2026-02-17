@@ -1,11 +1,10 @@
-from sys import prefix
-from zipimport import alt_path_sep
+from django.forms import formset_factory
 
 from .models import Hall, Slider, HomePageBanner, BackgroundBanner
 from src.cms.models.page import SeoBlock, Updates
 from django.urls import reverse
 from django.shortcuts import render, redirect, get_object_or_404
-from src.cms.models.cinema import Cinema
+from src.cms.models.cinema import Cinema, Movie
 from .forms import MovieForm, SeoBlockForm, UpdatesForm, UserEditForm, CinemaForm, GalleryFormSet, HallForm, \
     HomePageBannerForm, SliderFormSet, BackgroundBannerForm
 from .models import Gallery
@@ -21,6 +20,92 @@ def admin(request):
         'active_page': 'statistics',
         'page_title': 'Admin страница'
     })
+
+
+
+def movies(request):
+    from datetime import date
+    '''
+    exact - Равно (по умолчанию, если lookup не указан)
+    gt - больше
+    gte - больше или равно
+    lt - меньше
+    lte - меньше или равно
+    '''
+
+
+    today = date.today()
+
+    # start_date <= today; end_date >= today
+    current_movies = Movie.objects.filter(start_date__lte=today, end_date__gte=today).order_by('start_date')
+
+    # start_date > today
+    upcoming_movies = Movie.objects.filter(start_date__gt=today).order_by('start_date')
+
+    movie = Movie.objects.all().count()
+
+
+    context = {
+        'active_page': 'movie_list',
+        'current_movies':current_movies,
+        'upcoming_movies':upcoming_movies,
+        'movies':movie
+
+    }
+    return render(request, 'cms/movies.html', context=context)
+
+
+
+def movie_create_or_update(request, pk=None):
+    movie = get_object_or_404(Movie, pk=pk) if pk else None
+
+    gallery_qs = movie.gallery.all() if movie else Gallery.objects.none()
+
+
+    if request.method == 'POST':
+        movie_form = MovieForm(request.POST, request.FILES, instance=movie, prefix='movie_form')
+        seo_form = SeoBlockForm(request.POST, instance=movie.seo_block if movie else None, prefix='seo_form')
+        formset_gallery = GalleryFormSet(request.POST, request.FILES, queryset=gallery_qs, prefix='gallery')
+
+        if movie_form.is_valid() and seo_form.is_valid() and formset_gallery.is_valid():
+
+            seo_block = seo_form.save()
+            movie = movie_form.save(commit=False)
+            movie.seo_block = seo_block
+            movie.save()
+            movie_form.save_m2m()
+
+            gallery_object = formset_gallery.save()
+            movie.gallery.add(*gallery_object)
+            return redirect('movies')
+        else:
+            print('movie_form_error^', movie_form.errors,
+                  '\nseo_form_errro', seo_form.errors,
+                  '\ngformset error', formset_gallery.errors)
+    else:
+        movie_form = MovieForm(instance=movie, prefix='movie_form')
+        seo_form = SeoBlockForm(instance=movie.seo_block if movie else None, prefix='seo_form')
+        formset_gallery = GalleryFormSet(queryset=gallery_qs, prefix='gallery')
+
+
+
+    context = {
+        'movie_form':movie_form,
+        'seo_form':seo_form,
+        'formset_gallery' :formset_gallery
+    }
+
+    return render(request, 'cms/movie_edit.html', context=context)
+
+
+
+def movie_delete(request, pk):
+    movie = get_object_or_404(Movie, pk=pk)
+
+    if request.method == 'POST':
+        movie.delete()
+        return redirect('movies')
+    return render(request, 'cms/movies.html')
 
 
 
@@ -539,313 +624,6 @@ def background_banner(request):
             return JsonResponse({
         'success': False,
         'error':form.errors})
-
-
-
-
-
-
-
-# def create_banners(request):
-#
-#
-#
-#
-#     top_banner = HomePageBanner.objects.filter(type_banner=HomePageBanner.TOP_BANNER).first()
-#     news_banner = HomePageBanner.objects.filter(type_banner=HomePageBanner.NEWS_BANNER).first()
-#
-#
-#     print(top_banner, '---top_banner')
-#     print(news_banner, '---news_banner')
-#     if top_banner:
-#         print('tp',top_banner.type_banner)
-#     if news_banner:
-#         print('nb',news_banner.type_banner)
-#
-#
-#     top_banner_form = HomePageBannerForm(instance=top_banner, prefix='top_banner_form')
-#     top_banner_formset = SliderFormSet(queryset=top_banner.slider.all() if top_banner else Slider.objects.none(), prefix='top_banner_formset')
-#
-#     news_banner_form = HomePageBannerForm(instance=news_banner, prefix='news_banner_form')
-#     news_banner_formset = SliderFormSet(queryset=news_banner.slider.all() if news_banner else Slider.objects.none(), prefix='news_banner_formset')
-#
-#
-#
-#     if request.method == 'POST':
-#
-#         pprint(dict(request.POST))
-#         banner_type = request.POST.get('banner_type')
-#         print(banner_type)
-#         print()
-#         if banner_type == 'TB':
-#             top_banner_form = HomePageBannerForm(request.POST, request.FILES,prefix='top_banner_form' )
-#             top_banner_formset = SliderFormSet(request.POST,
-#                                                request.FILES,
-#                                                queryset=top_banner.slider.all() if top_banner else Slider.objects.none(),
-#                                                prefix='top_banner_formset')
-#             if top_banner_form.is_valid() and top_banner_formset.is_valid():
-#                 banner, created = HomePageBanner.objects.update_or_create(
-#                     type_banner=banner_type,
-#                     defaults= {
-#                         'is_active':top_banner_form.cleaned_data['is_active'],
-#                         'speed':top_banner_form.cleaned_data['speed']
-#
-#                     }
-#                 )
-#
-#                 slides = top_banner_formset.save(commit=False)
-#                 for obj in top_banner_formset.deleted_objects:
-#                     obj.delete()
-#
-#                 for slide in slides:
-#                     slide.save()
-#                 banner.slider.set(
-#                     list(banner.slider.all()) + slides
-#                 )
-#
-#                 return JsonResponse({
-#                     'success': True,
-#                     'banner_id': banner.id,
-#                     'created': created
-#                 })
-#             else:
-#                 return JsonResponse({
-#                     'success': False,
-#                     'errors': {
-#                         'form': top_banner_form.errors,
-#                         'formset': top_banner_formset.errors
-#                     }
-#                 })
-#
-#         elif banner_type == 'NB':
-#             pass
-#
-#     else:
-#
-#         context = {
-#             'top_banner_form':top_banner_form,
-#             'news_banner_form':news_banner_form,
-#
-#             'top_banner_formset':top_banner_formset,
-#             'news_banner_formset':news_banner_formset
-#         }
-#
-#         return render(request, 'cms/banners.html', context)
-
-
-# def update_form(request, content_type_slug,pk=None):
-#     print('fun create  enter CONTENT TYPE SLUG', content_type_slug) # # NEWS
-#     print('pk----',pk)
-#     content_type = Updates.ContentType.from_slug(content_type_slug)
-#     print(content_type)
-#
-#     instance = None # сущьность акции или новости
-#     # formset_gallery = GalleryFormSet(queryset=Gallery.objects.none())
-#
-#
-#     if pk:
-#
-#         instance = get_object_or_404(Updates, pk=pk, content_type=content_type)
-#         gallery_queryset = instance.gallery.all()
-#     else:
-#         gallery_queryset = Gallery.objects.none()
-#
-#
-#     if request.method == 'POST':
-#
-#         update = UpdatesForm(request.POST, request.FILES, instance=instance , prefix='update')
-#         seo_form = SeoBlockForm(request.POST, instance=instance.seo_block if instance else  None,prefix='seo_form')
-#         formset_gallery = GalleryFormSet(request.POST, request.FILES, queryset=gallery_queryset, prefix='gallery')
-#
-#         if update.is_valid() and seo_form.is_valid() and formset_gallery.is_valid():
-#             obj = update.save(commit=False)
-#             obj.content_type = content_type
-#             seo_block = seo_form.save()
-#             obj.seo_block = seo_block
-#             obj.save()
-#
-#             gallery_objects = formset_gallery.save()  # сохраняю картинки если есть в память
-#             obj.gallery.set(gallery_objects)
-#             print('also saving fun create return content type ', content_type)
-#             return redirect(f'/admin/content/?type={content_type_slug}')
-#         else:
-#
-#             print(update.errors)
-#             print(seo_form.errors)
-#             print(formset_gallery.errors)
-#
-#
-#             return render(request, 'cms/content_create.html', {
-#                 'update': update,
-#                 'seo_form': seo_form,
-#                 'formset_gallery': formset_gallery,
-#                 'content_type': content_type_slug,
-#             })
-#
-#
-#
-#     else:
-#         update = UpdatesForm(instance=instance if pk else None, prefix='update')
-#         seo_form = SeoBlockForm(instance=instance.seo_block if pk else None,prefix='seo_form')
-#         formset_gallery = GalleryFormSet(queryset=gallery_queryset, prefix='gallery')
-#         context = {
-#                 'update':update,
-#                 'content_type':content_type_slug,
-#                 'seo_form':seo_form,
-#                 'formset_gallery':formset_gallery
-#                 # 'seo_form':seo_form,
-#                 # 'formset_gallery':formset_gallery
-#
-#             }
-#         return render(request, 'cms/content_create.html', context)
-#
-#
-#
-
-
-
-
-
-
-
-
-
-
-
-
-#
-# def create_update(request, content_type):
-#
-#     template = content_type.lower()
-#
-#     if request.method == 'POST':
-#         update_form = UpdatesForm(request.POST, request.FILES, prefix='update_form')
-#         seo_form = SeoBlockForm(request.POST, prefix='seo_form')
-#         formset_gallery = GalleryFormSet(request.POST,request.FILES,
-#                                          queryset=Gallery.objects.none(), prefix='gallery')
-#
-#         if update_form.is_valid() and seo_form.is_valid() and formset_gallery.is_valid():
-#
-#             update = update_form.save(commit=False)
-#             update.content_type = content_type
-#             seo = seo_form.save()
-#             update.seo_block = seo
-#             update.save()
-#             gallery_objects = formset_gallery.save()
-#             update.gallery.set(gallery_objects)
-#             return redirect(template)
-#     else:
-#         update_form = UpdatesForm(prefix='update_form')
-#         seo_form = SeoBlockForm(prefix='seo_form')
-#         formset_gallery = GalleryFormSet(queryset=Gallery.objects.none(), prefix='gallery')
-#
-#     context = {
-#         'update_form':update_form,
-#         'seo_form':seo_form,
-#         'formset_gallery':formset_gallery
-#     }
-#     print('template',template)
-#     return render(request,f'cms/{template+'_create'}.html', context)
-#
-
-
-#
-# def news_update(request):
-#     return
-#
-
-
-
-
-# def update_form(request, content_type, pk=None):
-#
-#     publication = None
-#     gallery_qs = Gallery.objects.none()
-#     print('PK:', pk)
-#
-#     if pk:
-#         print('get pk key')
-#         publication = get_object_or_404(Updates, pk=pk, content_type=content_type)
-#         gallery_qs = publication.gallery.all()
-#
-#         print('instance', publication.main_image)
-#         print('gallery qs',gallery_qs)
-#
-#     if request.method == "POST":
-#         print('POST')
-#         publication_form = UpdatesForm(request.POST, request.FILES, instance=publication,prefix='news_form')
-#
-#         seo_form = SeoBlockForm(request.POST, instance=publication.seo_block if publication else None, prefix='seo_form')
-#
-#         formset_gallery = GalleryFormSet(request.POST, request.FILES,
-#                                          queryset=gallery_qs,
-#                                          prefix='gallery')
-#
-#         print('news_form error', publication_form.errors)
-#         print('news_form error', publication_form.errors)
-#         print('seo_form error', seo_form.errors)
-#         print('formset_gallery error', formset_gallery.errors)
-#
-#
-#
-#
-#         if publication_form.is_valid() and seo_form.is_valid() and formset_gallery.is_valid():
-#
-#             update = publication_form.save(commit=False)
-#             update.content_type = content_type
-#
-#
-#             seo_block = seo_form.save()
-#             update.seo_block = seo_block
-#             update.save()
-#             gallery_objects = formset_gallery.save()
-#             update.gallery.set(gallery_objects)
-#             print('save done')
-#             return redirect('news')
-#
-#     else:
-#
-#         publication_form = UpdatesForm(instance=publication , prefix='news_form')
-#         seo_form = SeoBlockForm(instance=publication.seo_block if publication else None ,prefix='seo_form')
-#         formset_gallery = GalleryFormSet(queryset=gallery_qs, prefix='gallery')
-#
-#     context = {
-#         'publication_form':publication_form,
-#         'seo_form':seo_form,
-#         'formset_gallery':formset_gallery,
-#
-#
-#     }
-#     print('pk-------',publication_form.instance.pk)
-#     return render(request, 'cms/news_update.html', context)
-#
-#
-
-
-def movie_edit(request):
-    if request.method == 'POST':
-        movie_form = MovieForm(request.POST, request.FILES)
-        seo_form = SeoBlockForm(request.POST)
-
-        if movie_form.is_valid() and seo_form.is_valid():
-            seo_block = seo_form.save()
-            movie = movie_form.save(commit=False)
-            movie.seo_block = seo_block
-            movie.save()
-            movie_form.save_m2m()
-            return redirect('movie_list')
-    else:
-        movie_form = MovieForm()
-        seo_form = SeoBlockForm()
-
-    context = {
-        'active_page': 'movie',
-        'page_title': 'Создание фильма',
-        'form': movie_form,
-        'seo_form': seo_form
-    }
-
-    return render(request, 'cms/movie.html', context)
 
 
 

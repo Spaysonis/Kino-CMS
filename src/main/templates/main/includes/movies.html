@@ -36,28 +36,56 @@
 
 
 <div class="container mt-2    p-4" style="background-color: #313549; max-width: 1200px ">
-{% if movies %}
-    <h1>Смотрите сегодня</h1>
-    <div class="WatchTodayWrapper">
-        {% for movie in movies %}
-        <div class="MiniPost WatchToday">
-            <a href="{% url 'movie_detail' movie.id %}" class="MiniPostPoster" title="">
-                <img src="{{movie.main_image.url}}" alt="movie">
-            </a>
 
-            <div class="MiniPostName">
-                <a href="">{{movie.title}}</a>
-            </div>
-            <div class="MiniPostName">
-                <a href="">Button Bay Ticket</a>
+    <div class="current_movies_container">
+        {% if current_movies %}
+
+        <h1>Смотрите сегодня</h1>
+
+        <div class="WatchTodayWrapper">
+            {% for movie in current_movies %}
+            <div class="MiniPost WatchToday">
+                <a href="{% url 'movie_detail' movie.id %}" class="MiniPostPoster" title="">
+                    <img src="{{movie.main_image.url}}" alt="movie">
+                </a>
+
+                <div class="MiniPostName">
+                    <a href="{% url 'movie_detail' movie.id %}">{{movie.title}}</a>
+                </div>
+                <div class="MiniPostName">
+                    <a href="">Button Bay Ticket</a>
+                </div>
+
             </div>
 
+            {%endfor%}
         </div>
-
-        {%endfor%}
+        {%endif%}
     </div>
 
-    {%endif%}
+    <div class="upcoming_movies_container mt-5">
+        <h1>Смотрите скоро</h1>
+        {%if upcoming_movies %}
+
+        <div class="WatchTodayWrapper">
+            {% for movie in upcoming_movies %}
+            <div class="MiniPost WatchToday">
+                <a href="{% url 'movie_detail' movie.id %}" class="MiniPostPoster" title="">
+                    <img src="{{movie.main_image.url}}" alt="movie">
+                </a>
+                <div class="MiniPostName">
+                    <a href="{% url 'movie_detail' movie.id %}">{{movie.title}}</a>
+                </div>
+                <div class="MiniPostName">
+                    <a href="">Button Bay Ticket</a>
+                </div>
+
+            </div>
+            {%endfor%}
+            {%endif%}
+        </div>
+    </div>
+
 </div>
 
 

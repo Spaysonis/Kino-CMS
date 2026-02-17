@@ -336,38 +336,58 @@ GalleryFormSet = modelformset_factory(
 class MovieForm(forms.ModelForm):
     class Meta:
         model = Movie
-        fields = ['gallery', 'title', 'description', 'main_image', 'url',
-                  'format_2d', 'format_3d', 'format_imax']
+        fields = '__all__'
 
         widgets = {
-            'title': forms.TextInput(attrs={
-                'class': 'form-control border-0 bg-dark text-light',
-                'placeholder': 'Введите название фильма'
+            'title_ru': forms.TextInput(attrs={
+                'class': 'form-control',
+
             }),
-            'description': forms.Textarea(attrs={
-                'class': 'form-control border-0 bg-dark text-light',
-                'placeholder': 'Введите описание фильма',
-                'rows': 6
+            'title_en': forms.TextInput(attrs={
+                'class': 'form-control',
+
             }),
+
+            'description_ru': forms.Textarea(attrs={
+                'class': 'form-control',
+                'aria-label': 'With textarea',
+
+                'rows': 4,
+            }),
+
+            'description_en': forms.Textarea(attrs={
+                'class': 'form-control',
+                'aria-label': 'With textarea',
+
+                'rows': 4,
+
+            }),
+
             'url': forms.URLInput(attrs={
-                'class': 'form-control border-0 bg-dark text-light',
+                'class': 'form-control',
                 'placeholder': 'https://example.com'
             }),
-            'main_image': forms.FileInput(attrs={
-                'class': 'form-control'
+             'main_image': forms.FileInput(attrs={
+                'class': 'd-none',
+
             }),
-            'gallery': forms.SelectMultiple(attrs={
-                'class': 'form-select border-0 bg-dark text-light'
-            }),
-            'format_2d': forms.CheckboxInput(attrs={
+
+            'format_movie': forms.CheckboxSelectMultiple(attrs={
                 'class': 'form-check-input'
             }),
-            'format_3d': forms.CheckboxInput(attrs={
-                'class': 'form-check-input'
-            }),
-            'format_imax': forms.CheckboxInput(attrs={
-                'class': 'form-check-input'
-            }),
+
+            'start_date': forms.DateInput(
+                attrs={
+                    'class': 'form-control',
+                    'type': 'date',
+
+                }, format='%Y-%m-%d'),
+            'end_date': forms.DateInput(
+                attrs={
+                    'class': 'form-control',
+                    'type': 'date',
+
+                }, format='%Y-%m-%d'),
         }
 
 

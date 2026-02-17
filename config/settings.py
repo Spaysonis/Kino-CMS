@@ -124,12 +124,12 @@ AUTH_PASSWORD_VALIDATORS = [
 
 
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'en'
 
-LANGUAGES = (
+LANGUAGES = [
     ('ru', 'Русский'),
     ('en', 'English'),
-)
+]
 
 MODELTRANSLATION_DEFAULT_LANGUAGE = 'ru'
 MODELTRANSLATION_LANGUAGES = ('ru', 'en')
