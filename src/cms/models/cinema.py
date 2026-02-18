@@ -1,5 +1,4 @@
 from datetime import timedelta, time
-
 from django.db import models
 from .page import SeoBlock
 from .gallery import Gallery
@@ -60,7 +59,7 @@ class MovieFormat(models.Model):
 
 
 class Movie(models.Model):
-    # I do update fun, adds field = movie_type (choice)
+
 
 
 
@@ -86,8 +85,6 @@ class Movie(models.Model):
     def rental_days(self):
         """
         This fun makes list on the data rental
-
-        :return:
         """
 
         if not self.start_date and not self.end_date:

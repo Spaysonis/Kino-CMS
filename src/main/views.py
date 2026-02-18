@@ -1,8 +1,8 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from .forms import SimpleRegistrationForm, ProfileEditForm
-
+from .models import Schedule
 
 from ..cms.models import Cinema, Movie
 
@@ -32,14 +32,13 @@ def main(request):
 
 
 def movie_detail(request, pk):
-    print(pk)
-    movie = Movie.objects.get(id=pk)
-
+    movie = get_object_or_404(Movie, id=pk)
     cinemas = Cinema.objects.all()
-
     context = {
         'movie':movie,
-        'cinemas':cinemas
+        'cinemas':cinemas,
+
+        "rental_days": movie.rental_days()
 
     }
     return render(request,'main/pages/movie_detail.html', context)
