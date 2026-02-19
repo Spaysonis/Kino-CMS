@@ -15,6 +15,8 @@
     height: 100%;
     object-fit: cover;
 }
+
+
 </style>
 
 
@@ -35,9 +37,9 @@
 
 
 
-    <div class="SessionSchedule row">
+    <div class="SessionSchedule">
         <div>
-           <label for="cinemaSelect" class="mr-2 mb-0">
+           <label for="cinemaSelect" class="mr-2 mb-0 ">
                Расписание сеансов кинотеатра:
            </label>
             <select id="cinemaSelect" class="form-control w-auto d-inline-block">
@@ -53,40 +55,31 @@
 
 
 <!--        контейнер с кнопоками 3д и ДНИ С-->
-        <div class="ButtonContainer" id="ButtonContainer" >
-            <div class="btn-group-format" >
-                <button class="btn btn-success btn-flat active" data-format="">Все</button>
-                <button class="btn btn-success btn-flat" data-format="2D">2D</button>
-                <button class="btn btn-success btn-flat" data-format="3D">3D</button>
+        <div class="ButtonContainer" id="ButtonContainer">
+            <div class="btn-group-format rounded-3 p-1">
+                <button class="btn btn-outline-light active" data-format="">Все</button>
+                <button class="btn btn-outline-light" data-format="2D">2D</button>
+                <button class="btn btn-outline-light" data-format="3D">3D</button>
             </div>
         </div>
     </div>
 
-    <div class="DateContainer" id="DateContainer" >
+
+
+
+    <div class="DateContainer" id="DateContainer">
+    <div class="btn-group-dates bg-olive rounded-3 p-1">
         {% for day in movie.rental_days %}
-        <button class="date-btn{% if forloop.first %} active-date{% endif %}"
+        <button class="btn btn-outline-light date-btn {% if forloop.first %}active{% endif %}"
                 data-date="{{ day|date:'Y-m-d' }}">
             {{ day|date:"j M" }}
         </button>
         {% endfor %}
     </div>
-
+</div>
 </div>
 
-{% if schedules %}
-    <h3>Сеансы на {{ selected_date }}</h3>
 
-    {% for schedule in schedules %}
-        <div>
-            {{ schedule.time }}
-            | Зал: {{ schedule.hall.number }}
-            | Формат: {{ schedule.format }}
-
-        </div>
-    {% empty %}
-        <p>Сеансов нет</p>
-    {% endfor %}
-{% endif %}
 
 
 
@@ -110,7 +103,6 @@
             <div class="card" style="width: 18rem;  margin-left: auto">
                 <div class="card-body">
                     <h5 class="card-title">СЕАНСЫ</h5>
-                    <p class="card-text">List session</p>
 
                     <div id="scheduleContainer">
                         Выберите дату и кинотеатр
@@ -200,16 +192,18 @@
 
 
 
-/// отвачет за кнопки см датой
-    dateBtns = document.querySelectorAll(".date-btn");
-    dateBtns.forEach(function (button){
+/// отвачет за кнопки с датой
+    const dateBtn = document.querySelectorAll(".date-btn");
+    dateBtn.forEach(function (button){
         button.addEventListener('click', function (e){
 
             ///  убираю активный класс с кнопки
-            dateBtns.forEach(function (btn){
-                btn.classList.remove("active-date")
+            dateBtn.forEach(function (btn){
+                btn.classList.remove("active")
+
             })
-            button.classList.add("active-date")
+            button.classList.add("active")
+
             const dateSession = button.dataset.date;
             console.log("Выбрана дата:", dateSession);
             loadSchedules();
@@ -218,14 +212,21 @@
     })
 
     // отвечает за тип фильма 3д и т.д
-    const formatMovie = document.querySelectorAll(".btn-group-format .btn");
+    const formatBtn = document.querySelectorAll(".btn-group-format .btn");
 
-    formatMovie.forEach(function (btn) {
-        btn.addEventListener('click', function (e) {
-            console.log(btn.dataset.format)
+    formatBtn.forEach(function (button) {
+        button.addEventListener('click', function (e) {
+            formatBtn.forEach(function (btn) {
+                btn.classList.remove('active')
+            })
+            button.classList.add('active')
+            const formatMovie = button.dataset.format;
+            console.log(formatMovie)
+            loadSchedules()
         })
-
     })
+
+
 
 
 
@@ -234,9 +235,11 @@
 
     function loadSchedules() {
         const cinemaId = document.getElementById("cinemaSelect")?.value;
-        const dateSession = document.querySelector(".active-date")?.dataset.date;
+        const dateSession = document.querySelector(".date-btn.active")?.dataset.date;
+        const formatMovie = document.querySelector('.btn-group-format .active').dataset.format;
         console.log(cinemaId)
         console.log(dateSession)
+        console.log('отправляю дату',dateSession)
         const container = document.getElementById("scheduleContainer");
 
 
@@ -247,13 +250,16 @@
             })
 
             .then(function (data) {
+                container.innerHTML = "";
                  data.schedules.forEach(s => {
                 container.innerHTML += `
                     <div class="mb-2 p-2 border rounded">
+                    <button class="btn btn-block btn-light btn-lg">
                         <div><strong>${s.time}</strong></div>
                         <div>Зал: ${s.hall}</div>
                         <div>Формат: ${s.format}</div>
                         <div>Цена: ${s.price ?? "—"} грн</div>
+                        </button>
                     </div>
                 `;})
 
