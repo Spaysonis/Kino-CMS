@@ -1,3 +1,4 @@
+from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
@@ -42,6 +43,23 @@ def movie_detail(request, pk):
 
     }
     return render(request,'main/pages/movie_detail.html', context)
+
+
+def booking(request, pk):
+    id_session = Schedule.objects.get(pk=pk)
+    movie = id_session.movie
+
+    print(id_session.hall.gallery)
+    context = {
+        'movie':movie,
+        "format_movie":id_session.format,
+        "hall":id_session.hall
+    }
+    return render(request, 'main/pages/booking.html', context=context)
+
+
+
+
 
 
 def cinema_list1(request):

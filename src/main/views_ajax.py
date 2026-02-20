@@ -30,10 +30,13 @@ def get_schedules_ajax(request, pk):
 
     schedules = schedules.select_related("hall", "format")
     data = [{
-            "time": s.time.strftime("%H:%M"),
-            "hall": s.hall.number,
-            "format": s.format.type,
-            "price": s.price or 0,
+        "time": s.time.strftime("%H:%M"),
+        "hall": s.hall.number,
+        "format": s.format.type,
+        "price": s.price or 0,
+        "id":s.id
+
+
     }
         for s in schedules
     ]

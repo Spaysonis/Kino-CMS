@@ -7,6 +7,7 @@ urlpatterns = [
     path("", views.main, name="main"),
     path("movie/<int:pk>/", views.movie_detail, name="movie_detail"),
     path("movie/<int:pk>/schedules/", get_schedules_ajax, name="movie-schedules-ajax"),
+    path('booking/<int:pk>/', views.booking, name='booking'),
 
 
 
