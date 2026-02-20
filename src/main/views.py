@@ -53,7 +53,8 @@ def booking(request, pk):
     context = {
         'movie':movie,
         "format_movie":id_session.format,
-        "hall":id_session.hall
+        "hall":id_session.hall,
+        'session':id_session
     }
     return render(request, 'main/pages/booking.html', context=context)
 

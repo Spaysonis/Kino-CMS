@@ -33,6 +33,18 @@
     margin-bottom: 3px;
     overflow: hidden;
 }
+
+
+.hall-scheme .screen .caption {
+    text-transform: uppercase;
+    color: #a1a1a1;
+    background-color: #313549;
+    height: 14px;
+    font-size: 14px;
+    display: inline-block;
+    padding: 0 6px;
+    font: 14px / 14px Arial, Helvetica, sans-serif;
+}
 </style>
 
 
@@ -43,29 +55,49 @@
     <h1>UpBanner</h1>
     {{format_movie}}
 
-    <div class="leftContainer">
+    <div class="MainContainer">
         <div class="container">
             <div class="row" style="height: 800px;">
+
                 <div class="col-2 align-self">
                     <div class="MiniPost WatchToday">
-                <a href="" class="MiniPostPoster" title="">
-                    <img src="{{movie.main_image.url}}" alt="movie">
-                </a>
+                        <a href="" class="MiniPostPoster" title="">
+                            <img src="{{movie.main_image.url}}" alt="movie">
+                        </a>
 
-                <div class="MiniPostName">
-                    <a href="{% url 'movie_detail' movie.id %}">{{movie.title}}</a>
+                        <div class="MiniPostName">
+                            <a href="{% url 'movie_detail' movie.id %}">{{movie.title}}</a>
+                        </div>
+                        <div class="MiniPostName">
+                            <a href="">Button Bay Ticket</a>
+                        </div>
+                    </div>
                 </div>
-                <div class="MiniPostName">
-                    <a href="">Button Bay Ticket</a>
-                </div>
 
-            </div>
-
-
-                </div>
                 <div class="col-10 bg-secondary text-white">
-                    Правая часть
+                    <div class="DiscMovieConteiner">
+                        <span class="Title">{{movie.title}} </span>
+                        <span class="DateSession">{{session.date}}</span>
+                        <span class="DateSession">{{session.time}}</span>
+                        <span class="DateSession">{{session.hall.number}}</span>
+                    </div>
+
+                    <div class="">
+                         <span class="Title mr-5">Price </span>
+                         <span class="Title mr-5">reserved </span>
+                         <span class="Title mr-5">You order </span>
+                    </div>
+
+                    <div class="hall-scheme text-center mt-5">
+                        <div class="screen">
+                            <div class="caption">Screen</div>
+                        </div>
+                    {%include "main/includes/scheme.html"%}
+                    </div>
+
                 </div>
+
+
             </div>
         </div>
     </div>
