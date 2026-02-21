@@ -1,136 +1,58 @@
+{% load static %}
+<div class="container">
+  <div class="row align-items-stretch g-3">
 
-  <!-- Ряд 1 -->
-  <div>
-    <span>РЯД 1</span>
-    <div>
-      <button>1</button>
-      <button>2</button>
-      <button>3</button>
-      <button>4</button>
-      <button>5</button>
-      <button>6</button>
-      <button>7</button>
-      <button>8</button>
-      <button>9</button>
-      <button>10</button>
-      <button>11</button>
-      <button>12</button>
+    <!-- Левая колонка — номера рядов (ровно столько же, сколько рядов кнопок) -->
+    <div class="col-1 d-flex flex-column gap-2">
+      <div class="row-item p-2 text-center fw-bold">1</div>
+      <div class="row-item p-2 text-center fw-bold">2</div>
+      <div class="row-item p-2 text-center fw-bold">3</div>
+      <div class="row-item p-2 text-center fw-bold">4</div>
+      <div class="row-item p-2 text-center fw-bold">5</div>
+      <!-- добавь столько же, сколько у тебя рядов кнопок -->
     </div>
-  </div>
 
-  <!-- Ряд 2 -->
-  <div>
-    <span>РЯД 2</span>
-    <div>
-      <button>1</button>
-      <button>2</button>
-      <button>3</button>
-      <button>4</button>
-      <button>5</button>
-      <button>6</button>
-      <button>7</button>
-      <button>8</button>
-      <button>9</button>
-      <button>10</button>
-      <button>11</button>
-      <button>12</button>
-      <button>13</button>
-      <button>14</button>
+    <!-- Правая колонка — места -->
+    <div class="col-10 d-flex flex-column gap-2">
+
+      <!-- Ряд 1 -->
+      <div class="d-flex justify-content-center flex-wrap gap-1 mt-2 " data-row="1">
+        {% for r in second_row %}
+          <button  class="btn btn-outline-light" data-row="1" data-seat="{{ r }}">{{ r }}</button>
+        {% endfor %}
+      </div>
+
+      <!-- Ряд 2 -->
+      <div class="d-flex justify-content-center flex-wrap gap-1 " data-row="2">
+        {% for r in second_row %}
+          <button class="btn btn-outline-light" data-row="2" data-seat="{{ r }}">{{ r }}</button>
+        {% endfor %}
+      </div>
+
+      <!-- Ряд 3 -->
+      <div class="d-flex justify-content-center flex-wrap gap-1 " data-row="3">
+        {% for r in first_row %}   <!-- переименуй переменные по смыслу -->
+          <button class="btn btn-outline-light" data-row="3" data-seat="{{ r }}">{{ r }}</button>
+        {% endfor %}
+      </div>
+
+      <!-- Ряды 4–9 — повтори блок с нужной переменной -->
+      <!-- Ряд 10 -->
+      <div class="d-flex justify-content-center flex-wrap gap-1" data-row="4">
+        {% for r in first_row %}
+          <button class="btn btn-outline-light" data-row="4" data-seat="{{ r }}">{{ r }}</button>
+        {% endfor %}
+      </div>
+
+       <div class="d-flex justify-content-center flex-wrap gap-1" data-row="5">
+        {% for r in vip_row %}
+          <button class="btn btn-outline-light" data-row="5" data-seat="{{ r }}">{{ r }}</button>
+        {% endfor %}
+      </div>
+
     </div>
-  </div>
 
-  <!-- Ряд 3 -->
-  <div>
-    <span>РЯД 3</span>
-    <div>
-      <button>1</button>
-      <button>2</button>
-      <button>3</button>
-      <button>4</button>
-      <button>5</button>
-      <button>6</button>
-      <button>7</button>
-      <button>8</button>
-      <button>9</button>
-      <button>10</button>
-      <button>11</button>
-      <button>12</button>
-      <button>13</button>
-      <button>14</button>
-      <button>15</button>
-    </div>
   </div>
+</div>
 
-  <!-- Ряды 4–9 (по 13 мест) -->
-  <div>
-    <span>РЯД 4</span>
-    <div>
-      <button>1</button><button>2</button><button>3</button><button>4</button>
-      <button>5</button><button>6</button><button>7</button><button>8</button>
-      <button>9</button><button>10</button><button>11</button><button>12</button>
-      <button>13</button>
-    </div>
-  </div>
-
-  <div>
-    <span>РЯД 5</span>
-    <div>
-      <button>1</button><button>2</button><button>3</button><button>4</button>
-      <button>5</button><button>6</button><button>7</button><button>8</button>
-      <button>9</button><button>10</button><button>11</button><button>12</button>
-      <button>13</button>
-    </div>
-  </div>
-
-  <div>
-    <span>РЯД 6</span>
-    <div>
-      <button>1</button><button>2</button><button>3</button><button>4</button>
-      <button>5</button><button>6</button><button>7</button><button>8</button>
-      <button>9</button><button>10</button><button>11</button><button>12</button>
-      <button>13</button>
-    </div>
-  </div>
-
-  <div>
-    <span>РЯД 7</span>
-    <div>
-      <button>1</button><button>2</button><button>3</button><button>4</button>
-      <button>5</button><button>6</button><button>7</button><button>8</button>
-      <button>9</button><button>10</button><button>11</button><button>12</button>
-      <button>13</button>
-    </div>
-  </div>
-
-  <div>
-    <span>РЯД 8</span>
-    <div>
-      <button>1</button><button>2</button><button>3</button><button>4</button>
-      <button>5</button><button>6</button><button>7</button><button>8</button>
-      <button>9</button><button>10</button><button>11</button><button>12</button>
-      <button>13</button>
-    </div>
-  </div>
-
-  <div>
-    <span>РЯД 9</span>
-    <div>
-      <button>1</button><button>2</button><button>3</button><button>4</button>
-      <button>5</button><button>6</button><button>7</button><button>8</button>
-      <button>9</button><button>10</button><button>11</button><button>12</button>
-      <button>13</button>
-    </div>
-  </div>
-
-  <!-- Ряд 10 -->
-  <div>
-    <span>РЯД 10</span>
-    <div>
-      <button>1</button><button>2</button><button>3</button><button>4</button>
-      <button>5</button><button>6</button><button>7</button><button>8</button>
-      <button>9</button><button>10</button><button>11</button><button>12</button>
-      <button>13</button><button>14</button><button>15</button><button>16</button>
-      <button>17</button><button>18</button><button>19</button><button>20</button>
-    </div>
-  </div>
-
+<script src="{% static 'main/js/scheme.js' %}?v={{ version }}"></script>

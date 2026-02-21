@@ -49,12 +49,18 @@ def booking(request, pk):
     id_session = Schedule.objects.get(pk=pk)
     movie = id_session.movie
 
+
+
+
     print(id_session.hall.gallery)
     context = {
         'movie':movie,
         "format_movie":id_session.format,
         "hall":id_session.hall,
-        'session':id_session
+        'session':id_session,
+        'first_row':range(1,13),
+        'second_row':range(1,11),
+        'vip_row':range(1,19)
     }
     return render(request, 'main/pages/booking.html', context=context)
 

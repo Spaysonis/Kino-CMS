@@ -28,3 +28,4 @@ class Booking(models.Model):
     schedule = models.ForeignKey(Schedule, on_delete=models.CASCADE)
     row = models.IntegerField()
     place = models.IntegerField()
+
