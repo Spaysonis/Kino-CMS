@@ -10,6 +10,7 @@ def get_schedules_ajax(request, pk):
     selected_cinema = request.GET.get("cinema")
     selected_format = request.GET.get("format")
 
+
     print(selected_cinema)
     print(selected_date)
     print(selected_format)

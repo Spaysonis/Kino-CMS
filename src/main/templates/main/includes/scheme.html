@@ -4,13 +4,15 @@
 
     <!-- Левая колонка — номера рядов (ровно столько же, сколько рядов кнопок) -->
     <div class="col-1 d-flex flex-column gap-2">
-      <div class="row-item p-2 text-center fw-bold">1</div>
-      <div class="row-item p-2 text-center fw-bold">2</div>
-      <div class="row-item p-2 text-center fw-bold">3</div>
-      <div class="row-item p-2 text-center fw-bold">4</div>
-      <div class="row-item p-2 text-center fw-bold">5</div>
+      <div class="row-item p-2 text-center fw-bold" data-row="1">1</div>
+      <div class="row-item p-2 text-center fw-bold" data-row="2">2</div>
+      <div class="row-item p-2 text-center fw-bold" data-row="3">3</div>
+      <div class="row-item p-2 text-center fw-bold" data-row="4">4</div>
+      <div class="row-item p-2 text-center fw-bold"  data-row="5">5</div>
       <!-- добавь столько же, сколько у тебя рядов кнопок -->
     </div>
+
+{{id_session.id}}
 
     <!-- Правая колонка — места -->
     <div class="col-10 d-flex flex-column gap-2">
@@ -18,21 +20,21 @@
       <!-- Ряд 1 -->
       <div class="d-flex justify-content-center flex-wrap gap-1 mt-2 " data-row="1">
         {% for r in second_row %}
-          <button  class="btn btn-outline-light" data-row="1" data-seat="{{ r }}">{{ r }}</button>
+          <button  class="btn btn-outline-light" data-session="{{id_session.id}}" data-row="1" data-seat="{{ r }}">{{ r }}</button>
         {% endfor %}
       </div>
 
       <!-- Ряд 2 -->
       <div class="d-flex justify-content-center flex-wrap gap-1 " data-row="2">
         {% for r in second_row %}
-          <button class="btn btn-outline-light" data-row="2" data-seat="{{ r }}">{{ r }}</button>
+          <button class="btn btn-outline-light" data-session="{{id_session.id}}" data-row="2" data-seat="{{ r }}">{{ r }}</button>
         {% endfor %}
       </div>
 
       <!-- Ряд 3 -->
       <div class="d-flex justify-content-center flex-wrap gap-1 " data-row="3">
         {% for r in first_row %}   <!-- переименуй переменные по смыслу -->
-          <button class="btn btn-outline-light" data-row="3" data-seat="{{ r }}">{{ r }}</button>
+          <button class="btn btn-outline-light" data-session="{{id_session.id}}" data-row="3" data-seat="{{ r }}">{{ r }}</button>
         {% endfor %}
       </div>
 
@@ -40,13 +42,13 @@
       <!-- Ряд 10 -->
       <div class="d-flex justify-content-center flex-wrap gap-1" data-row="4">
         {% for r in first_row %}
-          <button class="btn btn-outline-light" data-row="4" data-seat="{{ r }}">{{ r }}</button>
+          <button class="btn btn-outline-light" data-session="{{id_session.id}}" data-row="4" data-seat="{{ r }}">{{ r }}</button>
         {% endfor %}
       </div>
 
        <div class="d-flex justify-content-center flex-wrap gap-1" data-row="5">
         {% for r in vip_row %}
-          <button class="btn btn-outline-light" data-row="5" data-seat="{{ r }}">{{ r }}</button>
+          <button class="btn btn-outline-light"  data-session="{{id_session.id}}" data-row="5" data-seat="{{ r }}">{{ r }}</button>
         {% endfor %}
       </div>
 

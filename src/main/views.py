@@ -54,6 +54,7 @@ def booking(request, pk):
 
     print(id_session.hall.gallery)
     context = {
+        'id_session':id_session,
         'movie':movie,
         "format_movie":id_session.format,
         "hall":id_session.hall,
