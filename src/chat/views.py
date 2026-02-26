@@ -6,8 +6,7 @@ def index(request):
     return render(request, "chat/index.html")
 
 def room(request, room_name):
-    return render(request, "chat/room.html", {"room_name": room_name})
-
-
-def base_index(request):
-    return render(request, 'chat/base_index.html')
+    print(room_name)
+    return render(request, 'chat/room.html', context={
+        'room_name':room_name
+    })

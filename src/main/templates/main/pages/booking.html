@@ -1,4 +1,5 @@
 {% extends "main/base_page.html" %}
+{% load static %}
 {%block content%}
 <style>
 
@@ -89,11 +90,16 @@
                          <span class="Title mr-5">You order </span>
                     </div>
 
-                    <div class="hall-scheme text-center mt-5">
+                    <div class="hall-scheme text-center mt-5" id="hall" data-session="{{id_session.id}}">
                         <div class="screen">
                             <div class="caption">Screen</div>
                         </div>
-                    {%include "main/includes/scheme.html"%}
+                        {{ id_session.id}}
+                        {{ id_session.id}}
+                        {{ id_session.id}}
+
+                        {%include "main/includes/scheme.html"%}
+
                     </div>
 
                 </div>
@@ -105,5 +111,5 @@
 
 </div>
 
-
+<script src="{% static 'main/js/booking.js' %}?v={{ version }}"></script>
 {%endblock%}
