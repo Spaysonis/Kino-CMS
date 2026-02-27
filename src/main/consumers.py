@@ -2,6 +2,9 @@ import json
 from channels.generic.websocket import WebsocketConsumer
 from asgiref.sync import async_to_sync
 from django.core.cache import cache
+
+from src.main.models import Booking
+
 HOLD = 30
 class BookingConsumer(WebsocketConsumer):
 
@@ -13,16 +16,25 @@ class BookingConsumer(WebsocketConsumer):
         async_to_sync(self.channel_layer.group_add)(
             self.session_group_name, self.channel_name
         )
-        seat_events = []
+
+
+
 
         self.accept()
+        seat_events = []
+
+        booked_seats = Booking.objects.filter(
+            schedule_id=self.session_id
+        ).values("row", "place")
+
+
         session_cache = cache.get(self.redis_key) or {}
 
         if session_cache:
             for row, seats in session_cache.items():
                 for seat, client in seats.items():
                     seat_events.append({
-                        "action": "book",
+                        "action": "booking",
                         "client_id": client,
                         "row": row,
                         "seat": seat,

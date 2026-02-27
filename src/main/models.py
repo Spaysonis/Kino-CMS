@@ -24,8 +24,18 @@ class Schedule(models.Model):
 
 
 class Booking(models.Model):
+    class BookingType(models.TextChoices):
+        BOOKING = "booking", "Бронь"
+        PURCHASE = "purchase", "Покупка"
+
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     schedule = models.ForeignKey(Schedule, on_delete=models.CASCADE)
     row = models.IntegerField()
     place = models.IntegerField()
+    booking_type = models.CharField(
+        max_length=10,
+        choices=BookingType.choices,
+        default=BookingType.BOOKING
+    )
+
 

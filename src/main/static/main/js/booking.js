@@ -3,7 +3,31 @@
 // const sessionId = hallEl.dataset.session;
 //
 // console.log(sessionId)
-// 1. Получаем или создаём уникальный client_id
+// 1. при конекте к веб сокету я получаю данные с бэжкенда
+// 2. при отправвкее данных на бэк я их там обрабатываю и вывожу на фронтенд
+
+
+
+
+
+document.getElementById('seat-form').addEventListener('submit', function(e){
+    const seats = [];
+    document.querySelectorAll('button[data-row][data-seat]').forEach(btn => {
+        if (btn.dataset.bookedByMe === 'true') {
+            seats.push(`${btn.dataset.row}-${btn.dataset.seat}`);
+        }
+    });
+    if(seats.length === 0){
+        e.preventDefault();
+        alert('Выберите места для покупки');
+        return;
+    }
+    document.getElementById('selected-seats').value = seats.join(',');
+    console.log(seats)
+});
+
+
+
 
 
 let clientId = localStorage.getItem('client_id');
@@ -41,6 +65,13 @@ socket.onmessage = function (e) {
         );
          if (!seatBtn) return;
 
+
+         if (seatInfo.action === "purchased") {
+             seatBtn.classList.remove("booking");
+             seatBtn.classList.add("purchased");п
+             seatBtn.disabled = true;
+         }
+
          if (seatInfo.action === 'cancel') {
             seatBtn.disabled = false;
             seatBtn.classList.remove('btn-info', 'btn-warning');
@@ -49,14 +80,13 @@ socket.onmessage = function (e) {
             return;
         }
 
-        // если это текущее место клиента
         if (seatInfo.client_id === clientId) {
             seatBtn.disabled = false;
             seatBtn.classList.remove('btn-outline-light', 'btn-warning');
             seatBtn.classList.add('btn-info');
             seatBtn.dataset.bookedByMe = 'true';
         } else {
-            // место занято другим
+
             seatBtn.disabled = true;
             seatBtn.classList.remove('btn-outline-light', 'btn-info');
             seatBtn.classList.add('btn-warning');

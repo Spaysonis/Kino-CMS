@@ -3,10 +3,10 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from .forms import SimpleRegistrationForm, ProfileEditForm
-from .models import Schedule
+from .models import Schedule, Booking
 
 from ..cms.models import Cinema, Movie
-
+from django.contrib.auth.decorators import login_required
 
 
 def main(request):
@@ -45,14 +45,39 @@ def movie_detail(request, pk):
     return render(request,'main/pages/movie_detail.html', context)
 
 
+
+
+
 def booking(request, pk):
+    user = request.user
+
+    if request.method == 'POST':
+        if not user.is_authenticated:
+            return redirect('/')
+
+
+
+        user = request.user
+        print(user)
+        print('POST')
+        session_id = request.POST.get('session_id')
+        selected_seats = request.POST.get('selected_seats')
+        selected_type = request.POST.get('action')
+        print(session_id)
+        print(selected_seats)
+        print(selected_type)
+
+
+
     id_session = Schedule.objects.get(pk=pk)
     movie = id_session.movie
 
 
-
-
     print(id_session.hall.gallery)
+    taken_seats = Booking.objects.filter(
+        schedule=id_session
+    ).values_list('row', 'place')
+
     context = {
         'id_session':id_session,
         'movie':movie,
@@ -61,7 +86,8 @@ def booking(request, pk):
         'session':id_session,
         'first_row':range(1,13),
         'second_row':range(1,11),
-        'vip_row':range(1,19)
+        'vip_row':range(1,19),
+        'taken_seats': list(taken_seats)
     }
     return render(request, 'main/pages/booking.html', context=context)
 
