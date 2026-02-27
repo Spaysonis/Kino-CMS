@@ -7,6 +7,11 @@
 
 
 let clientId = localStorage.getItem('client_id');
+if (!clientId){
+    clientId = crypto.randomUUID();
+    localStorage.setItem('client_id', clientId)
+}
+
 const sessionID = document.getElementById('hall').dataset.session
 
 
@@ -17,60 +22,60 @@ const socket = new WebSocket(
 );
 
 
-
 /// onmessage дает ответ только когда бэкенд делает send ()
 socket.onmessage = function (e) {
     const response = JSON.parse(e.data)
-    const data = response.data;
-    console.log('data with server',data)
+    console.log(response.type)
+    let data = response.data;
 
-
-
-    const seatBtn = document.querySelector(
-        `[data-row="${data.row}"][data-seat="${data.seat}"]`);
-
-    if (!seatBtn) return;
-
-    if (data.action === 'cancel') {
-        seatBtn.disabled = false;
-        seatBtn.classList.remove('btn-info', 'btn-warning');
-        seatBtn.classList.add('btn-outline-light');
-        seatBtn.dataset.bookedByMe = 'false';
-        return;
+    console.log(data)
+    if (!Array.isArray(data)) {
+        data = [data];
     }
 
 
 
-    if (data.client_id === clientId) {
-        seatBtn.disabled = false;
-        seatBtn.classList.remove('btn-outline-light', 'btn-danger');
-        seatBtn.classList.add('btn-info');
-        seatBtn.dataset.bookedByMe = 'true';
-    }
+    data.forEach(function (seatInfo) {
+         const seatBtn = document.querySelector(
+            `button[data-row="${seatInfo.row}"][data-seat="${seatInfo.seat}"]`
+        );
+         if (!seatBtn) return;
 
-    else {
-        seatBtn.disabled = false;
-        seatBtn.classList.remove('btn-outline-light', 'btn-warning');
-        seatBtn.classList.add('btn-warning');
-        seatBtn.dataset.bookedByMe = 'false';
-    }
-}
+         if (seatInfo.action === 'cancel') {
+            seatBtn.disabled = false;
+            seatBtn.classList.remove('btn-info', 'btn-warning');
+            seatBtn.classList.add('btn-outline-light');
+            seatBtn.dataset.bookedByMe = 'false';
+            return;
+        }
+
+        // если это текущее место клиента
+        if (seatInfo.client_id === clientId) {
+            seatBtn.disabled = false;
+            seatBtn.classList.remove('btn-outline-light', 'btn-warning');
+            seatBtn.classList.add('btn-info');
+            seatBtn.dataset.bookedByMe = 'true';
+        } else {
+            // место занято другим
+            seatBtn.disabled = true;
+            seatBtn.classList.remove('btn-outline-light', 'btn-info');
+            seatBtn.classList.add('btn-warning');
+            seatBtn.dataset.bookedByMe = 'false';
+
+        }})}
+
 
 
 document.querySelectorAll('.btn[data-row][data-seat]').forEach(function(button) {
     button.addEventListener('click', function() {
 
     let action;
-    console.log(sessionID)
-
     if (this.dataset.bookedByMe === 'true') {
         action = 'cancel';
     }
     else {
-        action = 'book';
+        action = 'booking';
     }
-
-    console.log(action)
 
     socket.send(JSON.stringify({
         action: action,
