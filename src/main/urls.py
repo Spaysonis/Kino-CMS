@@ -1,13 +1,14 @@
 from django.urls import path
 
 from . import views
-from .views_ajax import get_schedules_ajax
+from .views_api import get_schedules_ajax, confirm_booking
 
 urlpatterns = [
     path("", views.main, name="main"),
     path("movie/<int:pk>/", views.movie_detail, name="movie_detail"),
     path("movie/<int:pk>/schedules/", get_schedules_ajax, name="movie-schedules-ajax"),
     path('booking/<int:pk>/', views.booking, name='booking'),
+    path("sessions/<int:pk>/confirm/", confirm_booking, name="confirm_booking"),
 
 
 

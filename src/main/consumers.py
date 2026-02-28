@@ -9,6 +9,7 @@ HOLD = 30
 class BookingConsumer(WebsocketConsumer):
 
     def connect(self):
+        print('connect run')
         self.session_id = self.scope['url_route']['kwargs']['session_id']
         self.session_group_name = f"session_{self.session_id}"
         self.redis_key = self.session_id
@@ -16,10 +17,6 @@ class BookingConsumer(WebsocketConsumer):
         async_to_sync(self.channel_layer.group_add)(
             self.session_group_name, self.channel_name
         )
-
-
-
-
         self.accept()
         seat_events = []
 
@@ -28,13 +25,20 @@ class BookingConsumer(WebsocketConsumer):
         ).values("row", "place")
 
 
+        for seat in booked_seats:
+            seat_events.append({
+                "action": "disable",
+                "row": seat["row"],
+                "seat": seat["place"],
+            })
+
         session_cache = cache.get(self.redis_key) or {}
 
         if session_cache:
             for row, seats in session_cache.items():
                 for seat, client in seats.items():
                     seat_events.append({
-                        "action": "booking",
+                        "action": "ready_to_buy",
                         "client_id": client,
                         "row": row,
                         "seat": seat,
@@ -63,7 +67,7 @@ class BookingConsumer(WebsocketConsumer):
 
         session_cache = cache.get(redis_key) or {}
 
-        if action == 'booking':
+        if action == 'ready_to_buy':
             if row not in session_cache:
                 session_cache[row] = {}
             if seat in session_cache[row]:

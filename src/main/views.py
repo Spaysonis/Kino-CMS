@@ -48,6 +48,7 @@ def movie_detail(request, pk):
 
 
 
+
 def booking(request, pk):
     user = request.user
 

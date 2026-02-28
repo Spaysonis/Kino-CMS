@@ -57,15 +57,15 @@
       </div>
 
     </div>
-    <form id="seat-form" method="POST" action="{% url 'booking' id_session.id %}">
+    <form id="seat-form">
       {% csrf_token %}
       <input type="hidden" name="session_id" value="{{ id_session.id }}">
       <input type="hidden" name="selected_seats" id="selected-seats">
-      <button type="submit" name="action" value="booking" class="btn btn-warning">
+      <button type="button" name="action" value="booking" class="btn btn-warning">
         Забронировать
       </button>
 
-      <button type="submit" name="action" value="purchase" class="btn btn-success">
+      <button type="button" name="action" value="purchase" class="btn btn-success">
         Купить
       </button>
     </form>

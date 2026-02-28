@@ -10,25 +10,6 @@
 
 
 
-document.getElementById('seat-form').addEventListener('submit', function(e){
-    const seats = [];
-    document.querySelectorAll('button[data-row][data-seat]').forEach(btn => {
-        if (btn.dataset.bookedByMe === 'true') {
-            seats.push(`${btn.dataset.row}-${btn.dataset.seat}`);
-        }
-    });
-    if(seats.length === 0){
-        e.preventDefault();
-        alert('Выберите места для покупки');
-        return;
-    }
-    document.getElementById('selected-seats').value = seats.join(',');
-    console.log(seats)
-});
-
-
-
-
 
 let clientId = localStorage.getItem('client_id');
 if (!clientId){
@@ -56,23 +37,30 @@ socket.onmessage = function (e) {
     if (!Array.isArray(data)) {
         data = [data];
     }
-
-
-
     data.forEach(function (seatInfo) {
          const seatBtn = document.querySelector(
             `button[data-row="${seatInfo.row}"][data-seat="${seatInfo.seat}"]`
         );
          if (!seatBtn) return;
 
+         if(seatInfo.action === 'disable') {
+             seatBtn.classList.remove("btn-outline-light")
+             seatBtn.classList.add("btn-danger")
+             seatBtn.dataset.bookedByMe = 'false';
+             seatBtn.disabled = true;
+             return;
+         }
 
-         if (seatInfo.action === "purchased") {
-             seatBtn.classList.remove("booking");
-             seatBtn.classList.add("purchased");п
+
+         if (seatInfo.action === "ready_to_buy") {
+             seatBtn.dataset.bookedByMe = 'true';
+             seatBtn.classList.remove('btn-outline-light')
+             seatBtn.classList.add("btn-warning");
              seatBtn.disabled = true;
          }
 
          if (seatInfo.action === 'cancel') {
+             console.log(seatInfo.action)
             seatBtn.disabled = false;
             seatBtn.classList.remove('btn-info', 'btn-warning');
             seatBtn.classList.add('btn-outline-light');
@@ -85,14 +73,11 @@ socket.onmessage = function (e) {
             seatBtn.classList.remove('btn-outline-light', 'btn-warning');
             seatBtn.classList.add('btn-info');
             seatBtn.dataset.bookedByMe = 'true';
-        } else {
+        }
 
-            seatBtn.disabled = true;
-            seatBtn.classList.remove('btn-outline-light', 'btn-info');
-            seatBtn.classList.add('btn-warning');
-            seatBtn.dataset.bookedByMe = 'false';
 
-        }})}
+
+        })}
 
 
 
@@ -100,13 +85,14 @@ document.querySelectorAll('.btn[data-row][data-seat]').forEach(function(button) 
     button.addEventListener('click', function() {
 
     let action;
+
     if (this.dataset.bookedByMe === 'true') {
         action = 'cancel';
     }
     else {
-        action = 'booking';
+        action = 'ready_to_buy';
     }
-
+    console.log('send socket' , action)
     socket.send(JSON.stringify({
         action: action,
         row: this.dataset.row,
@@ -117,71 +103,51 @@ document.querySelectorAll('.btn[data-row][data-seat]').forEach(function(button) 
 
 });})
 
+/// эта функция собирает места и ряды
+function getSelectedSeats() {
+    // всегда собираем актуальные данные с DOM
+    const seats = [];
+    document.querySelectorAll('button[data-row][data-seat]').forEach(btn => {
+        if (btn.dataset.bookedByMe === 'true') {
+            seats.push({ row: btn.dataset.row, seat: btn.dataset.seat });
+        }
+    });
+    return seats; // возвращаем актуальный массив
+}
+
+// -------------
+/// эта функция передает на бэкенд данные о местах и юзере
+
+function confirmBookingOrPurchase(action) {
+     const seats = getSelectedSeats();
+     if (seats.length === 0) {
+        alert('Выберите места для действия');
+        return;
+    }
+     fetch(`/sessions/${sessionID}/confirm/`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+        },
+        body: JSON.stringify({
+            action: action,        // "booking" или "purchase"
+            seats: seats           // массив выбранных мест {row, seat}
+        })
+     })
+         .then(res => res.json())
+         .then(data => {
+             if (data.success) {
+                 console.log(data);
+             }
+
+         })
+
+}
 
 
-// const socket = new WebSocket(
-//
-//     "ws://" + window.location.host + "/ws/booking/session/" + sessionId + "/"
-// );
-//
-// socket.onmessage = function(e) {
-//     const data = JSON.parse(e.data);
-//     const seatBtn = document.querySelector(
-//         `[data-row="${data.row}"][data-seat="${data.seat}"]`
-//     );
-//     if (seatBtn) {
-//         seatBtn.disabled = true;
-//         seatBtn.classList.remove('btn-outline-light');
-//         seatBtn.classList.add('btn-danger');
-//     }
-// };
-//
-// document.querySelectorAll('.btn').forEach(button => {
-//     button.addEventListener('click', function() {
-//         const row = this.dataset.row;
-//         const seat = this.dataset.seat;
-//
-//         // отправка на сервер
-//         console.log('отправляю даннеые неа сервер - Косьтюмер' , row, seat)
-//         socket.send(JSON.stringify({ row, seat}));
-//
-//         // визуально отмечаем
-//         this.classList.add('btn-success');
-//         this.classList.remove('btn-outline-light');
-//     });
-// });
 
-// cookie_userr = document.cookie
-// console.log(cookie_userr)
-// document.querySelectorAll('.btn').forEach(function (button){
-//         button.addEventListener('click', function (e) {
-//
-//             const Row= this.dataset.row
-//             const SeatUser = this.dataset.seat
-//             const DateSession = this.dataset.session
-//             console.log(Row)
-//             console.log(SeatUser)
-//             console.log(DateSession)
-//
-//
-//              // window.location.pathname = '/booking/'+ DateSession + SeatUser + Row+'/';
-//
-//
-//
-//             if (this.classList.contains('active')) {
-//                 this.classList.remove('active')
-//                 this.classList.remove('btn-success')
-//                 this.classList.add('btn-outline-light')
-//
-//             }
-//             else {
-//                 this.classList.add('active');
-//                 this.classList.remove('btn-outline-light')
-//                 this.classList.add('btn-success')
-//             }
-//         })
-//
-//
-//
-//
-// })
+document.querySelector('button[value="booking"]').addEventListener('click', () => {
+    confirmBookingOrPurchase('booking');
+});
+
