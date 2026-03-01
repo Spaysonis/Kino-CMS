@@ -1,6 +1,10 @@
 const column = document.querySelector(".col-md-6");
 column.querySelector("#allUsers").checked = true
 
+
+
+
+
 document.addEventListener("DOMContentLoaded", function () {
     // Находим только нужную колонку
     const column = document.querySelector(".col-md-6");
@@ -52,14 +56,61 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .then(response => response.json())
         .then(data => {
+            console.log(data.status)
             if (data.status === 'ok') {
-                alert('Файл сохранен');
+                const mail_list = document.getElementById('mail_list');
+                const newItem = document.createElement('div');
+                newItem.className = 'form-check';
+                newItem.innerHTML = `<input class="form-check-input" type="checkbox"><label class="form-check-label">${data.filename}</label>
+            <a href="#" class="text-danger float-right">Удалить</a>
+        `;
+                if (mail_list.children.length === 0) {
+                    mail_list.appendChild(newItem);
+                }
+                else {
+                    mail_list.insertBefore(newItem, mail_list.firstChild);
+                }
+                if (mail_list.children.length > 5) {
+                    mail_list.removeChild(mail_list.lastChild);
+                }
                 fileInput.value = '';
                 fileLabel.textContent = 'Выбрать файл';
             }})})
 
 
 });
+
+
+
+document.addEventListener('DOMContentLoaded', function() {
+    const mailList = document.getElementById('mail_list');
+    const lastLoadedLink = document.querySelector('p:first-of-type a');
+
+
+
+
+
+    // Делегирование событий - обрабатываем клики на чекбоксы внутри mail_list
+    mailList.addEventListener('change', function(e) {
+        if (e.target.type === 'checkbox') {
+            // Снимаем все остальные чекбоксы
+            const checkboxes = mailList.querySelectorAll('input[type="checkbox"]');
+            checkboxes.forEach(cb => {
+                if (cb !== e.target) cb.checked = false;
+            });
+
+            // Если чекбокс отмечен, подставляем имя файла
+            if (e.target.checked) {
+                const fileName = e.target.closest('.form-check').querySelector('label').textContent.trim();
+                lastLoadedLink.textContent = fileName;
+            } else {
+                // Если сняли галочку, очищаем
+                lastLoadedLink.textContent = 'Выбырите фаил для рассылки';
+            }
+        }
+    });
+});
+
 
 function getCookie(name) {
     let cookieValue = null;

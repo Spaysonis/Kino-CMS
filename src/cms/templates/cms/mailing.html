@@ -56,22 +56,22 @@
 
                     <p>
                         Загружен файл:
-                        <a href="#">Рассылка новостей.html</a>
+                        <a href="#">ласт load  фаил</a>
                     </p>
 
                     <p>
                         Шаблон используемый в текущей рассылке:
-                        <a href="#">Рассылка новостей.html</a>
+                        <a href="#">текущая расслка</a>
                     </p>
 
                     <p>
                         Кол-во писем:
-                        <strong>173 629</strong>
+                        <strong>0</strong>
                     </p>
 
                     <p>
                         Рассылка выполнена на:
-                        <strong>45%</strong>
+                        <strong>0%</strong>
                     </p>
 
 
@@ -89,8 +89,9 @@
                         <div class="card-header">
                             Список последних загруженных шаблонов
                         </div>
+                        <div class="card-body" id="mail_list">
                         {%if mail_message %}
-                        <div class="card-body">
+
                             {%for message in mail_message%}
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox">

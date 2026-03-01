@@ -5,17 +5,21 @@ from .models import Mailing
 
 
 def upload_mailing_api(request):
+    file = request.FILES['file']
+    mailing = Mailing.objects.create(file=file)
 
-    # API для загрузки
-    print('=' * 50)
-    print('API VIEW ВЫЗВАНА!')
-    print('Method:', request.method)
-    print('GET:', request.GET)
-    print('POST:', request.POST)
-    print('FILES:', request.FILES)
-    print('=' * 50)
+    all_mailings = Mailing.objects.order_by('-created_at')
+    if all_mailings.count() > 5:
+        mailings_to_delete = all_mailings[5:]
+        for m in mailings_to_delete:
+            if m.file:
+                m.file.delete()
+            m.delete()
 
-    return JsonResponse({'status': 'ok', 'message': 'API work'})
+    return JsonResponse({
+        'status': 'ok',
+        'filename': mailing.file.name
+    })
 
 
 
