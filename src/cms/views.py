@@ -1,6 +1,6 @@
 from django.forms import formset_factory
 
-from .models import Hall, Slider, HomePageBanner, BackgroundBanner
+from .models import Hall, Slider, HomePageBanner, BackgroundBanner, Mailing
 from src.cms.models.page import SeoBlock, Updates
 from django.urls import reverse
 from django.shortcuts import render, redirect, get_object_or_404
@@ -12,6 +12,19 @@ from django.shortcuts import render
 from django_tables2 import SingleTableView
 from src.user.models import BaseUser
 from .tables import UserTable, HallTable, UpdatesTable
+
+
+
+def mailing(request):
+
+    if request.method == 'GET':
+        mail_message = Mailing.objects.all()
+        context = {
+            'mail_message':mail_message
+        }
+        return render(request, 'cms/mailing.html', context)
+    return JsonResponse({'error': 'Method not allowed'}, status=405)
+
 
 
 

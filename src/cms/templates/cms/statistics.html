@@ -195,6 +195,14 @@
                             <p>Акции</p>
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a href="{% url 'mailing' %}?type=mailing" class="nav-link {% if active_page == 'mailing' %}active{% endif %}">
+                            <i class="nav-icon fas fa-newspaper"></i>
+                            <p>Рассылка</p>
+                        </a>
+                    </li>
+
+
                 </ul>
             </nav>
             <!-- /.sidebar-menu -->
@@ -240,7 +248,7 @@
 <script src="{% static 'adminlte/js/adminlte.min.js' %}"></script>
 <script src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/js/bootstrap4-toggle.min.js"></script>
 {% block extra_js %}
-<script src="{% static 'cms/js/banners.js' %}?v={{ version }}"></script>
+
 
 {% endblock %}
 </body>

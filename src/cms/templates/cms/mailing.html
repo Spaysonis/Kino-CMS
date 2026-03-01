@@ -1,0 +1,131 @@
+{% extends "cms/statistics.html" %}
+{%load static%}
+{%block content%}
+
+
+
+
+    <div class="card">
+        <div class="card-body">
+
+            <h2 class="text-center mb-4">E-mail</h2>
+
+            <div class="row">
+
+                <!-- Левая часть -->
+                <div class="col-md-6">
+
+                    <div class="form-group">
+                        <label>Выбрать email кому слать</label>
+
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="allUsers">
+                            <label class="form-check-label" for="allUsers">
+                                Все пользователи на почту
+                            </label>
+                        </div>
+
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="selectedUsers">
+                            <label class="form-check-label" for="selectedUsers">
+                                Выборочно
+                            </label>
+                        </div>
+
+                        <button class="btn btn-outline-secondary btn-sm mt-2">
+                            Выбрать пользователей
+                        </button>
+                    </div>
+
+                    <hr>
+
+                    <div class="form-group">
+                        <label>Загрузить HTML-письмо</label>
+                        <div class="input-group">
+                            <div class="custom-file">
+                                <input type="file" class="custom-file-input" id="htmlFile">
+                                <label class="custom-file-label" for="htmlFile">
+                                    Выбрать файл
+                                </label>
+                            </div>
+                        </div>
+                        <button class="btn btn-primary btn-sm mt-2">
+                            Загрузить
+                        </button>
+                    </div>
+
+                    <p>
+                        Загружен файл:
+                        <a href="#">Рассылка новостей.html</a>
+                    </p>
+
+                    <p>
+                        Шаблон используемый в текущей рассылке:
+                        <a href="#">Рассылка новостей.html</a>
+                    </p>
+
+                    <p>
+                        Кол-во писем:
+                        <strong>173 629</strong>
+                    </p>
+
+                    <p>
+                        Рассылка выполнена на:
+                        <strong>45%</strong>
+                    </p>
+
+
+
+                    <button class="btn btn-success btn-block">
+                        Начать рассылку
+                    </button>
+
+                </div>
+
+                <!-- Правая часть -->
+                <div class="col-md-6">
+
+                    <div class="card">
+                        <div class="card-header">
+                            Список последних загруженных шаблонов
+                        </div>
+                        {%if mail_message %}
+                        <div class="card-body">
+                            {%for message in mail_message%}
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox">
+                                <label class="form-check-label">
+                                    {{message.file.name}}
+                                </label>
+                                <a href="#" class="text-danger float-right">
+                                    Удалить
+                                </a>
+                            </div>
+                            {%endfor%}
+                            {%endif%}
+
+
+
+
+
+
+
+
+
+                        </div>
+                    </div>
+
+
+
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script src="{% static 'cms/js/mailing.js' %}?v={{ version }}"></script>
+
+
+{%endblock%}

@@ -4,7 +4,7 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.urls import path, include
 
 from . import views
-
+from src.cms import api_views
 
 urlpatterns = [
 
@@ -47,6 +47,11 @@ urlpatterns = [
     path('cinemas/<int:pk>/hall_create/', views.hall_create, name='hall_create'),
     path('cinemas/<int:cinema_pk>/hall/<int:hall_pk>/update/', views.hall_update, name='hall_update'),
     path('cinemas/<int:cinema_pk>/hall/<int:hall_pk>/delete/', views.hall_delete, name='hall_delete'),
+
+
+    path('mailing/', views.mailing, name='mailing'),
+    path('api/upload-mailing/', api_views.upload_mailing_api, name='upload_mailing_api'),
+    path('api/delete-mailing/<int:mailing_id>/', api_views.delete_mailing_api, name='delete_mailing_api'),
 
 
 

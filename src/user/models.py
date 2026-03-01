@@ -26,5 +26,5 @@ class BaseUser(AbstractUser):
     phone_num = PhoneNumberField(blank=True, region='UA', default='')
 
 
-
-
+class User:
+    pass

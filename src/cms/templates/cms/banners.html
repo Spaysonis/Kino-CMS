@@ -1,5 +1,5 @@
 {% extends 'cms/statistics.html' %}
-
+{%load static%}
 {%block content%}
 
 {%for banner in banners%}
@@ -124,7 +124,7 @@
 <!--!!ЗАКРЫЛ БАНННЕР НОВОСТИ И АКЦИИ !!! -->
 
 
-
+<script src="{% static 'cms/js/banners.js' %}?v={{ version }}"></script>
 {% endblock%}
 
 
