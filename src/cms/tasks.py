@@ -22,7 +22,7 @@ def send_mailing(mailing_id):
         send_mail(
             subject=subject,
             message='',  # Пустой текст
-            from_email='machete1445@gmail.com',  # Ваш email
+            from_email='',  # Ваш email
             recipient_list=[email],
             html_message=html_message  # HTML содержимое
         )
