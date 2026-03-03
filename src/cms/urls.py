@@ -5,6 +5,7 @@ from django.urls import path, include
 
 from . import views
 from src.cms import api_views
+from .api_views import start_mailing
 
 urlpatterns = [
 
@@ -52,6 +53,7 @@ urlpatterns = [
     path('mailing/', views.mailing, name='mailing'),
     path('api/upload-mailing/', api_views.upload_mailing_api, name='upload_mailing_api'),
     path('api/delete-mailing/<int:mailing_id>/', api_views.delete_mailing_api, name='delete_mailing_api'),
+    path("api/start-mailing/", start_mailing, name="start-mailing")
 
 
 

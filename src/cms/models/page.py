@@ -76,10 +76,29 @@ class Updates(models.Model):
 
 
 
-class Mailing(models.Model):
+class MailTemplate(models.Model):
     file = models.FileField(upload_to='mailings/')
     created_at = models.DateTimeField(auto_now_add=True)
     is_active = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.file.name}"
+
+
+class Mailing(models.Model):
+
+    STATUS_CHOICES = (
+        ('processing', 'В процессе'),
+        ('sent', 'Отправлено'),
+        ('failed', 'Ошибка'),
+    )
+
+    template = models.ForeignKey(MailTemplate, on_delete=models.CASCADE)
+    total_emails = models.IntegerField(default=0)
+    sent_emails = models.IntegerField(default=0)
+    progress = models.IntegerField(default=0)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='processing')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.template.file.name} — {self.status}"

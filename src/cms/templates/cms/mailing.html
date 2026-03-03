@@ -93,8 +93,8 @@
                         {%if mail_message %}
 
                             {%for message in mail_message%}
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox">
+                            <div class="form-check" >
+                                <input class="form-check-input" type="checkbox"  data-mailing-id="{{ message.id }}">
                                 <label class="form-check-label">
                                     {{message.file.name}}
                                 </label>

@@ -112,6 +112,37 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 
+document.addEventListener("DOMContentLoaded", function () {
+    const startBtn = document.querySelector(".btn-success");
+
+    startBtn.addEventListener("click", function () {
+        const selectedCheckbox = document.querySelector("#mail_list input[type='checkbox']:checked");
+
+        if (!selectedCheckbox) {
+            alert("Выберите шаблон для рассылки");
+            return;
+        }
+
+        const mailingId = selectedCheckbox.dataset.mailingId; // присвоить data-mailing-id каждому div
+
+        fetch("/admin/api/start-mailing/", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": getCookie("csrftoken")
+            },
+            body: JSON.stringify({ mailing_id: mailingId })
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (data.status === "ok") {
+                alert("Рассылка запущена!");
+            }
+        });
+    });
+});
+
+
 function getCookie(name) {
     let cookieValue = null;
     if (document.cookie && document.cookie !== '') {

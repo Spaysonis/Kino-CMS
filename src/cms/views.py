@@ -1,7 +1,7 @@
 from django.forms import formset_factory
 
-from .models import Hall, Slider, HomePageBanner, BackgroundBanner, Mailing
-from src.cms.models.page import SeoBlock, Updates
+from .models import Hall, Slider, HomePageBanner, BackgroundBanner
+from src.cms.models.page import SeoBlock, Updates, MailTemplate
 from django.urls import reverse
 from django.shortcuts import render, redirect, get_object_or_404
 from src.cms.models.cinema import Cinema, Movie
@@ -18,7 +18,7 @@ from .tables import UserTable, HallTable, UpdatesTable
 def mailing(request):
 
     if request.method == 'GET':
-        mail_message = Mailing.objects.all()
+        mail_message = MailTemplate.objects.all()
         context = {
             'mail_message':mail_message
         }
