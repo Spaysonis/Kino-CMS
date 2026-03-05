@@ -2,10 +2,10 @@
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
 import json
-from .models import Mailing, MailTemplate
+from .models import  MailTemplate
 from ..user.models import BaseUser
 from src.cms.tasks import send_mailing
-
+from celery.result import AsyncResult
 
 def upload_mailing_api(request):
     file = request.FILES['file']
@@ -35,28 +35,16 @@ def delete_mailing_api(request):
 @require_POST
 def start_mailing(request):
 
+
     data = json.loads(request.body)
     mailing_id = data.get("mailing_id")
-
-
-    if not mailing_id:
-        return JsonResponse({"status": "error", "message": "Mailing ID не указан"})
-
     mail_template = MailTemplate.objects.get(id=mailing_id)
-    mailing = Mailing.objects.create(template=mail_template, status="processing")
-
-    # Получаем количество получателей
-    total = BaseUser.objects.exclude(email='').count()
-    mailing.total_emails = total
-    mailing.status = 'processing'
-    mailing.sent_emails = 0
-    mailing.progress = 0
-    mailing.save(update_fields=["total_emails", "status", "sent_emails", "progress"])
 
 
+    task = send_mailing.delay(mail_template.id)
+    result = AsyncResult(task.id)
 
-    # Запускаем Celery task
-    print('send')
-    send_mailing.delay(mailing.id)
-
-    return JsonResponse({"status": "ok", "mailing_id": mailing.id})
+    response = {
+        "status": result.status
+    }
+    return JsonResponse(response)

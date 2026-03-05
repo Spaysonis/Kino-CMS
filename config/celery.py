@@ -3,7 +3,7 @@ import os
 from celery import Celery
 
 # указываем путь к settings.py
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "KinoCMS.config.settings")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings")
 
 # создаём объект Celery
 app = Celery("KinoCMS")  # уникальное имя для проекта Celery

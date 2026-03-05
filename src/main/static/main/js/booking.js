@@ -131,8 +131,8 @@ function confirmBookingOrPurchase(action) {
             'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
         },
         body: JSON.stringify({
-            action: action,        // "booking" или "purchase"
-            seats: seats           // массив выбранных мест {row, seat}
+            action: action,
+            seats: seats
         })
      })
          .then(res => res.json())

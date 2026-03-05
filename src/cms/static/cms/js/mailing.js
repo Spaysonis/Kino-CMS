@@ -135,12 +135,56 @@ document.addEventListener("DOMContentLoaded", function () {
         })
         .then(r => r.json())
         .then(data => {
+            console.log(data)
             if (data.status === "ok") {
                 alert("Рассылка запущена!");
             }
         });
     });
 });
+
+
+
+
+/////
+const checkboxes = document.querySelectorAll("#mail_list .form-check-input");
+let socket = null;
+
+checkboxes.forEach(chk => {
+    chk.addEventListener("change", function() {
+
+
+
+        const mailingId = this.dataset.mailingId;
+        if (!mailingId) return;
+        if (socket) socket.close()
+
+        socket = new WebSocket(`ws://${window.location.host}/ws/mailing/${mailingId}/`);
+        socket.onopen = function() {
+            console.log("WS work!");
+        };
+
+        const progressBar = document.getElementById("mailing-progress");
+
+        socket.onmessage = function(event) {
+             const data = JSON.parse(event.data);
+             if (data.status === "progress") {
+                  const percent = data.progress;
+                  progressBar.style.width = percent + "%";
+                  progressBar.innerText = percent + "%";
+                  progressBar.setAttribute("aria-valuenow", percent);
+
+                 console.log(`Отправлено: ${data.progress}% (последнее письмо: ${data.email})`);
+             }
+
+
+         }
+    })
+    })
+
+
+
+
 
 
 function getCookie(name) {
@@ -158,6 +202,8 @@ function getCookie(name) {
     }
     return cookieValue;
     }
+
+
 
 
 

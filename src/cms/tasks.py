@@ -1,32 +1,38 @@
 # src/main/tasks.py
+from asgiref.sync import async_to_sync
 from celery import shared_task
+from channels.layers import  get_channel_layer
 from django.core.mail import send_mail
-from .models import Mailing
+from .models import MailTemplate
 from src.user.models import BaseUser
 
 @shared_task
 def send_mailing(mailing_id):
-    # Получаем рассылку
-    print('run task111')
 
-    mailing = Mailing.objects.get(id=mailing_id)
-    print(mailing)
-    subject = "Тема письма по умолчанию 📨"
-
-    # Получаем ВСЕХ пользователей с email (или только подписанных - как хотите)
+    subject = "Тема"
+    mailing_object = MailTemplate.objects.get(pk=mailing_id)
     recipients = BaseUser.objects.exclude(email='').values_list('email', flat=True)
-    print(recipients)
-    html_message = mailing.template.file.read().decode('utf-8')
-    # Отправляем каждому письмо
-    for email in recipients:
+    html_message = mailing_object.file.file.read().decode('utf-8')
+    channel_layer = get_channel_layer()
+    total = len(recipients)
+
+    for i, email in enumerate(recipients, start=1):
         send_mail(
-            subject=subject,
-            message='',  # Пустой текст
-            from_email='',  # Ваш email
+            subject="Тема",
+            message='',
+            from_email=None,
             recipient_list=[email],
-            html_message=html_message  # HTML содержимое
+            html_message=html_message
         )
 
-    # Опционально: меняем статус рассылки
-    mailing.status = 'sent'
-    mailing.save()
+        percent = int(i / total * 100)
+        async_to_sync(channel_layer.group_send)(
+            f"mailing_{mailing_id}",
+            {
+                "type": "mailing.progress",
+                "email": email,
+                "progress": percent
+            }
+        )
+
+
