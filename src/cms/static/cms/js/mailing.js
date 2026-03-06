@@ -2,6 +2,60 @@ const column = document.querySelector(".col-md-6");
 column.querySelector("#allUsers").checked = true
 
 
+const progressBar = document.getElementById("mailing-progress");
+        console.log(progressBar)
+
+document.addEventListener("DOMContentLoaded", function() {
+
+    const progressBar = document.getElementById("mailing-progress");
+    const startBtn = document.getElementById("start-mailing-btn");
+
+    function checkActiveMailing() {
+        fetch("/admin/api/active-mailing/")  // вот сюда обращаемся
+        .then(r => r.json())
+        .then(data => {
+            console.log(data)
+            if (!data.active) {
+                startBtn.disabled = false;  // кнопка запуска активна
+                progressBar.style.width = "0%";
+                progressBar.innerText = "0%";
+                return;
+            }
+
+            // Если есть активная рассылка
+            startBtn.disabled = true; // блокируем запуск новой
+
+            const mailingId = data.mailing_id;
+            const progress = data.progress;
+            const percent = progress.total ? Math.floor(progress.sent / progress.total * 100) : 0;
+
+            progressBar.style.width = percent + "%";
+            progressBar.innerText = percent + "%";
+
+            // WebSocket для live обновлений
+            const socket = new WebSocket(`ws://${window.location.host}/ws/mailing/${mailingId}/`);
+            socket.onmessage = function(event) {
+                const data = JSON.parse(event.data);
+                if (data.status === "progress") {
+                    const percent = Math.floor(data.sent / data.total * 100);
+                    progressBar.style.width = percent + "%";
+                    progressBar.innerText = percent + "%";
+                }
+                if (data.status === "finished") {
+                    progressBar.style.width = "100%";
+                    progressBar.innerText = "100%";
+                    startBtn.disabled = false;  // теперь можно запускать новую
+                }
+            };
+        });
+    }
+
+    // Проверяем при загрузке страницы
+    checkActiveMailing();
+
+    // Можно периодически обновлять на случай проблем с WS
+    setInterval(checkActiveMailing, 30000);
+});
 
 
 
@@ -165,6 +219,7 @@ checkboxes.forEach(chk => {
         };
 
         const progressBar = document.getElementById("mailing-progress");
+        console.log(progressBar)
 
         socket.onmessage = function(event) {
              const data = JSON.parse(event.data);
@@ -173,15 +228,18 @@ checkboxes.forEach(chk => {
                   progressBar.style.width = percent + "%";
                   progressBar.innerText = percent + "%";
                   progressBar.setAttribute("aria-valuenow", percent);
+                  console.log(data.status)
 
-                 console.log(`Отправлено: ${data.progress}% (последнее письмо: ${data.email})`);
              }
+
+             if (data.status === "finished")
+
+                console.log(data.total)
 
 
          }
     })
     })
-
 
 
 

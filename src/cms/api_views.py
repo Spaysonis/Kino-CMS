@@ -3,7 +3,7 @@ from django.http import JsonResponse
 from django.views.decorators.http import require_POST
 import json
 from .models import  MailTemplate
-from ..user.models import BaseUser
+from django.core.cache import cache
 from src.cms.tasks import send_mailing
 from celery.result import AsyncResult
 
@@ -30,16 +30,30 @@ def delete_mailing_api(request):
     # API для удадления
     return JsonResponse({'status': 'ok'})
 
+def active_mailing(request):
+    """
+    Возвращаб текущий статус рассылки
+
+    """
+
+    mailing_id = cache.get("current_mailing")
+    if not mailing_id:
+        return JsonResponse({"active": False})
+
+    data = cache.get(f"mailing:{mailing_id}:progress")
+    return JsonResponse({
+        "active": True,
+        "mailing_id": mailing_id,
+        "progress": data
+    })
 
 
 @require_POST
 def start_mailing(request):
 
-
     data = json.loads(request.body)
     mailing_id = data.get("mailing_id")
     mail_template = MailTemplate.objects.get(id=mailing_id)
-
 
     task = send_mailing.delay(mail_template.id)
     result = AsyncResult(task.id)
@@ -48,3 +62,5 @@ def start_mailing(request):
         "status": result.status
     }
     return JsonResponse(response)
+
+
