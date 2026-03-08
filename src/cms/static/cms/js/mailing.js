@@ -3,7 +3,7 @@ column.querySelector("#allUsers").checked = true
 
 
 const progressBar = document.getElementById("mailing-progress");
-        console.log(progressBar)
+
 
 document.addEventListener("DOMContentLoaded", function() {
 
@@ -14,7 +14,9 @@ document.addEventListener("DOMContentLoaded", function() {
         fetch("/admin/api/active-mailing/")  // вот сюда обращаемся
         .then(r => r.json())
         .then(data => {
-            console.log(data)
+            console.log('data with backend',data)
+            console.log('')
+
             if (!data.active) {
                 startBtn.disabled = false;  // кнопка запуска активна
                 progressBar.style.width = "0%";
@@ -23,29 +25,19 @@ document.addEventListener("DOMContentLoaded", function() {
             }
 
             // Если есть активная рассылка
-            startBtn.disabled = true; // блокируем запуск новой
+            // startBtn.disabled = true; // блокируем запуск новой
 
             const mailingId = data.mailing_id;
-            const progress = data.progress;
-            const percent = progress.total ? Math.floor(progress.sent / progress.total * 100) : 0;
 
-            progressBar.style.width = percent + "%";
-            progressBar.innerText = percent + "%";
+
+
 
             // WebSocket для live обновлений
             const socket = new WebSocket(`ws://${window.location.host}/ws/mailing/${mailingId}/`);
             socket.onmessage = function(event) {
                 const data = JSON.parse(event.data);
-                if (data.status === "progress") {
-                    const percent = Math.floor(data.sent / data.total * 100);
-                    progressBar.style.width = percent + "%";
-                    progressBar.innerText = percent + "%";
-                }
-                if (data.status === "finished") {
-                    progressBar.style.width = "100%";
-                    progressBar.innerText = "100%";
-                    startBtn.disabled = false;  // теперь можно запускать новую
-                }
+                console.log('live update',data)
+
             };
         });
     }
@@ -53,8 +45,7 @@ document.addEventListener("DOMContentLoaded", function() {
     // Проверяем при загрузке страницы
     checkActiveMailing();
 
-    // Можно периодически обновлять на случай проблем с WS
-    setInterval(checkActiveMailing, 30000);
+
 });
 
 
@@ -139,11 +130,6 @@ document.addEventListener('DOMContentLoaded', function() {
 document.addEventListener('DOMContentLoaded', function() {
     const mailList = document.getElementById('mail_list');
     const lastLoadedLink = document.querySelector('p:first-of-type a');
-
-
-
-
-
     // Делегирование событий - обрабатываем клики на чекбоксы внутри mail_list
     mailList.addEventListener('change', function(e) {
         if (e.target.type === 'checkbox') {
@@ -200,46 +186,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 
-/////
-const checkboxes = document.querySelectorAll("#mail_list .form-check-input");
-let socket = null;
-
-checkboxes.forEach(chk => {
-    chk.addEventListener("change", function() {
-
-
-
-        const mailingId = this.dataset.mailingId;
-        if (!mailingId) return;
-        if (socket) socket.close()
-
-        socket = new WebSocket(`ws://${window.location.host}/ws/mailing/${mailingId}/`);
-        socket.onopen = function() {
-            console.log("WS work!");
-        };
-
-        const progressBar = document.getElementById("mailing-progress");
-        console.log(progressBar)
-
-        socket.onmessage = function(event) {
-             const data = JSON.parse(event.data);
-             if (data.status === "progress") {
-                  const percent = data.progress;
-                  progressBar.style.width = percent + "%";
-                  progressBar.innerText = percent + "%";
-                  progressBar.setAttribute("aria-valuenow", percent);
-                  console.log(data.status)
-
-             }
-
-             if (data.status === "finished")
-
-                console.log(data.total)
-
-
-         }
-    })
-    })
 
 
 

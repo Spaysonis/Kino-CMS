@@ -33,7 +33,6 @@ def delete_mailing_api(request):
 def active_mailing(request):
     """
     Возвращаб текущий статус рассылки
-
     """
 
     mailing_id = cache.get("current_mailing")
@@ -41,25 +40,28 @@ def active_mailing(request):
         return JsonResponse({"active": False})
 
     data = cache.get(f"mailing:{mailing_id}:progress")
+    meta = cache.get(f"mailing:{mailing_id}:meta")
     return JsonResponse({
         "active": True,
         "mailing_id": mailing_id,
-        "progress": data
+        "progress": data,
+        'meta':meta
     })
 
 
 @require_POST
 def start_mailing(request):
-
+    """
+    получаю ид рассылки и передаю его в целеритаску
+    :param request:
+    :return:
+    """
     data = json.loads(request.body)
     mailing_id = data.get("mailing_id")
-    mail_template = MailTemplate.objects.get(id=mailing_id)
-
-    task = send_mailing.delay(mail_template.id)
+    task = send_mailing.delay(mailing_id)
     result = AsyncResult(task.id)
-
     response = {
-        "status": result.status
+        "status": 'ok'
     }
     return JsonResponse(response)
 

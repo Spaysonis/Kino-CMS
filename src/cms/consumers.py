@@ -16,11 +16,15 @@ class MailingConsumer(WebsocketConsumer):
 
         #  Отправляю сразу текущий прогресс после подключения
         progress = cache.get(f"mailing:{self.mailing_id}:progress")
+        meta = cache.get(f"mailing:{self.mailing_id}:meta")
+
+
         if progress:
             self.send(text_data=json.dumps({
                 "status": "progress",
-                "sent": progress["sent"],
-                "total": progress["total"],
+                "sent": progress,
+                "meta": meta,
+
                 "progress": int(progress["sent"] / progress["total"] * 100) if progress["total"] else 0
             }))
 
@@ -30,7 +34,8 @@ class MailingConsumer(WebsocketConsumer):
         self.send(text_data=json.dumps({
             "status": "progress",
             "email": event.get("email"),
-            "progress": event.get("progress")
+            "progress": event.get("progress"),
+            'backend':'backend'
         }))
 
 

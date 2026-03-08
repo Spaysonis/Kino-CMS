@@ -11,37 +11,49 @@ from django.core.cache import cache
 
 @shared_task
 def send_mailing(mailing_id):
-    cache.set("current_mailing", mailing_id)
-    subject = "Тема"
-    mailing_object = MailTemplate.objects.get(pk=mailing_id)
-    recipients = BaseUser.objects.exclude(email='').values_list('email', flat=True)
-    html_message = mailing_object.file.file.read().decode('utf-8')
+    cache.set("current_mailing", mailing_id) # state now
 
+    subject = "Тема"
+    template = MailTemplate.objects.get(pk=mailing_id) # Take template with db
+    recipients = BaseUser.objects.exclude(email='').values_list('email', flat=True) # Take user(email) with db
+    html_message = template.file.file.read().decode('utf-8')
+    template_name = template.file.name
     total = len(recipients)
 
-    cache.set(f"mailing:{mailing_id}:progress", {
+    progress_key = f"mailing:{mailing_id}:progress"
+    meta_key = f"mailing:{mailing_id}:meta"
+
+    # meta data
+    cache.set(meta_key, {
+        "template_name": template_name,
+
+    })
+
+    # start state
+    cache.set(progress_key, {
         "sent": 0,
         "total": total,
         "status": "running"
     })
 
+
+
     channel_layer = get_channel_layer()
 
     for i, email in enumerate(recipients, start=1):
         send_mail(
-            subject="Тема",
+            subject=subject,
             message='',
             from_email=None,
             recipient_list=[email],
             html_message=html_message
         )
 
-        progress_data = {
+        cache.set(progress_key, {
             "sent": i,
             "total": total,
-            "status": "running"
-        }
-        cache.set(f"mailing:{mailing_id}:progress", progress_data)
+            "status": "running",
+        })
 
         async_to_sync(channel_layer.group_send)(
             f"mailing_{mailing_id}",
@@ -59,7 +71,7 @@ def send_mailing(mailing_id):
         "total": total,
         "status": "finished"
     })
-    cache.delete("current_mailing")
+    #cache.delete("current_mailing")
 
 
 
