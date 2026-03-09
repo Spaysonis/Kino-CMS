@@ -4,49 +4,76 @@ column.querySelector("#allUsers").checked = true
 
 const progressBar = document.getElementById("mailing-progress");
 
-
-document.addEventListener("DOMContentLoaded", function() {
-
-    const progressBar = document.getElementById("mailing-progress");
-    const startBtn = document.getElementById("start-mailing-btn");
-
-    function checkActiveMailing() {
-        fetch("/admin/api/active-mailing/")  // вот сюда обращаемся
-        .then(r => r.json())
-        .then(data => {
-            console.log('data with backend',data)
-            console.log('')
-
-            if (!data.active) {
-                startBtn.disabled = false;  // кнопка запуска активна
-                progressBar.style.width = "0%";
-                progressBar.innerText = "0%";
-                return;
-            }
-
-            // Если есть активная рассылка
-            // startBtn.disabled = true; // блокируем запуск новой
-
-            const mailingId = data.mailing_id;
+// const startBtn = document.getElementById('start-mailing-btn')
 
 
+function getActiveMailing() {
+     return  fetch("/admin/api/active-mailing/").then(function (res) {
+         return res.json()
+    })
+}
 
 
-            // WebSocket для live обновлений
-            const socket = new WebSocket(`ws://${window.location.host}/ws/mailing/${mailingId}/`);
-            socket.onmessage = function(event) {
-                const data = JSON.parse(event.data);
-                console.log('live update',data)
-
-            };
-        });
+function getSelectedMailingId() {
+    const container = document.getElementById("mail_list");
+    let selected = container.querySelector('input[type="checkbox"]:checked');
+    if (!selected) {
+        alert("Выберите шаблон!");
+        return null;  // ничего не возвращаем, если не выбран
     }
 
-    // Проверяем при загрузке страницы
-    checkActiveMailing();
+    return selected.dataset.mailingId;  // возвращаем выбранный id
+}
 
 
+
+function startMailing () {
+
+
+    const startBtn = document.getElementById('start-mailing-btn')
+    startBtn.addEventListener('click', function () {
+        let mailing_id = getSelectedMailingId()
+        console.log(mailing_id)
+        fetch("/admin/api/start-mailing/", {
+            method: "POST",
+
+            body: JSON.stringify({ mailing_id: mailing_id }),
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken')
+            }
+        })
+        .then(res => res.json())
+        .then(data => {
+            console.log("Рассылка запущена:", data);
+
+        })
+        getActiveMailing()
+
+    })
+}
+
+
+
+document.addEventListener("DOMContentLoaded", startMailing);
+
+
+
+
+document.addEventListener("DOMContentLoaded", function() {
+    getActiveMailing().then(function (data) {
+        if(data.active === false ) {
+            console.log('data ', data)
+        }
+        else {
+
+            console.log('data' ,data)
+        }
+
+    })
 });
+
+
+
 
 
 
@@ -152,36 +179,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 
-document.addEventListener("DOMContentLoaded", function () {
-    const startBtn = document.querySelector(".btn-success");
 
-    startBtn.addEventListener("click", function () {
-        const selectedCheckbox = document.querySelector("#mail_list input[type='checkbox']:checked");
-
-        if (!selectedCheckbox) {
-            alert("Выберите шаблон для рассылки");
-            return;
-        }
-
-        const mailingId = selectedCheckbox.dataset.mailingId; // присвоить data-mailing-id каждому div
-
-        fetch("/admin/api/start-mailing/", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "X-CSRFToken": getCookie("csrftoken")
-            },
-            body: JSON.stringify({ mailing_id: mailingId })
-        })
-        .then(r => r.json())
-        .then(data => {
-            console.log(data)
-            if (data.status === "ok") {
-                alert("Рассылка запущена!");
-            }
-        });
-    });
-});
 
 
 

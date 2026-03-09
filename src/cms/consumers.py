@@ -45,3 +45,4 @@ class MailingConsumer(WebsocketConsumer):
             "status": "finished",
             "total": event.get("total")
         }))
+
