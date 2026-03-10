@@ -51,11 +51,14 @@ urlpatterns = [
 
 
     path('mailing/', views.mailing, name='mailing'),
-    path('api/active-mailing/', api_views.active_mailing, name='active_mailing'),
 
+    path('api/active-mailing/', api_views.active_mailing, name='active_mailing'),
     path('api/upload-mailing/', api_views.upload_mailing_api, name='upload_mailing_api'),
     path('api/delete-mailing/<int:mailing_id>/', api_views.delete_mailing_api, name='delete_mailing_api'),
     path("api/start-mailing/", start_mailing, name="start-mailing"),
+    path("api/set_users/", api_views.api_user_modal , name="user_modal"),
+
+
 
 
 

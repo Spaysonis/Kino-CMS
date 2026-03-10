@@ -1,0 +1,54 @@
+<div class="modal fade" id="userSelectModal" tabindex="-1" role="dialog" aria-labelledby="userSelectModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl" role="document">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h5 class="modal-title" id="userSelectModalLabel">Выбрать пользователей</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Закрыть">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <table id="userTable" class="table table-bordered table-hover">
+          <thead>
+            <tr>
+              <th><input type="checkbox" id="selectAllUsers"></th>
+              <th>ID</th>
+              <th>Дата регистрации</th>
+              <th>День рождения</th>
+              <th>Email</th>
+              <th>Телефон</th>
+              <th>ФИО</th>
+              <th>Псевдоним</th>
+              <th>Город</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for user in users %}
+            <tr>
+              <td><input type="checkbox" class="user-checkbox" data-user-id="{{ user.id }}"></td>
+              <td>{{ user.id }}</td>
+              <td>{{ user.date_registered }}</td>
+              <td>{{ user.birth_date }}</td>
+              <td>{{ user.email }}</td>
+              <td>{{ user.phone }}</td>
+              <td>{{ user.full_name }}</td>
+              <td>{{ user.nickname }}</td>
+              <td>{{ user.city }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
+        <button type="button" class="btn btn-primary" id="saveSelectedUsers">Выбрать</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script src="{% static 'cms/js/user_modal.js' %}?v={{ version }}"></script>

@@ -5,6 +5,16 @@ column.querySelector("#allUsers").checked = true
 const progressBar = document.getElementById("mailing-progress");
 
 // const startBtn = document.getElementById('start-mailing-btn')
+////admin/api/set_users/
+document.getElementById('openUserModal').addEventListener('click', function() {
+    fetch('/admin/api/set_users/')
+        .then(response => response.text())
+        .then(html => {
+            document.getElementById('modalContainer').innerHTML = html;
+            $('#userSelectModal').modal('show')});
+    initUserModal();
+});
+
 
 
 function getActiveMailing() {
@@ -19,7 +29,7 @@ function getSelectedMailingId() {
     let selected = container.querySelector('input[type="checkbox"]:checked');
     if (!selected) {
         alert("Выберите шаблон!");
-        return null;  // ничего не возвращаем, если не выбран
+        return null;
     }
 
     return selected.dataset.mailingId;  // возвращаем выбранный id
@@ -28,45 +38,66 @@ function getSelectedMailingId() {
 
 
 function startMailing () {
-
-
     const startBtn = document.getElementById('start-mailing-btn')
     startBtn.addEventListener('click', function () {
         let mailing_id = getSelectedMailingId()
+        if (!mailing_id) return;
         console.log(mailing_id)
         fetch("/admin/api/start-mailing/", {
             method: "POST",
 
             body: JSON.stringify({ mailing_id: mailing_id }),
             headers: {
+                "Content-Type": "application/json",
                 'X-CSRFToken': getCookie('csrftoken')
             }
         })
         .then(res => res.json())
         .then(data => {
             console.log("Рассылка запущена:", data);
+            console.log('wb connect ')
+            connectSocket(mailing_id);
 
         })
-        getActiveMailing()
-
     })
 }
 
 
+function connectSocket(mailing_id) {
+    const startBtn = document.getElementById('start-mailing-btn');
+    const socket = new WebSocket(
+        `ws://${window.location.host}/ws/mailing/${mailing_id}/`
+    );
+    socket.onmessage = function(event) {
+        const data = JSON.parse(event.data);
+        console.log("live:", data);
 
-document.addEventListener("DOMContentLoaded", startMailing);
+        if (data.status === "progress") {
+            const bar = document.getElementById("mailing-progress");
+
+            bar.style.width = data.progress + "%";
+            bar.innerText = data.progress + "%";
+            startBtn.disabled = true;
+        }
+
+        if (data.status === "finished") {
+            console.log("Рассылка завершена");
+            startBtn.disabled = false
+        }
+    };
+}
+
 
 
 
 
 document.addEventListener("DOMContentLoaded", function() {
+    startMailing()
     getActiveMailing().then(function (data) {
-        if(data.active === false ) {
-            console.log('data ', data)
-        }
+        if (!data.active) return;
         else {
-
             console.log('data' ,data)
+            connectSocket(data.mailing_id);
         }
 
     })
@@ -182,7 +213,44 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 
+//// MODAL
+$(document).ready(function() {
+    // Клик по кнопке "Выбрать пользователей"
+    $('#openUserModal').on('click', function() {
+        // Если модалка уже на странице, просто показываем
+        $('#userSelectModal').modal('show');
 
+        // Инициализация DataTables, если ещё не инициализирована
+        if (!$.fn.DataTable.isDataTable('#userTable')) {
+            $('#userTable').DataTable({
+                pageLength: 5,
+                lengthChange: false,
+                searching: true,
+                ordering: true,
+                info: false,
+                autoWidth: false,
+                pagingType: 'simple_numbers'
+            });
+        }
+    });
+
+    // Выбрать/снять все чекбоксы
+    $(document).on('change', '#selectAllUsers', function() {
+        const checked = this.checked;
+        $('.user-checkbox').prop('checked', checked);
+    });
+
+    // Сохранение выбранных пользователей
+    $(document).on('click', '#saveSelectedUsers', function() {
+        const selectedIds = $('.user-checkbox:checked').map(function() {
+            return $(this).data('user-id');
+        }).get();
+        console.log('Выбраны пользователи:', selectedIds);
+        $('#userSelectModal').modal('hide');
+    });
+});
+
+//// END MODAL
 
 
 

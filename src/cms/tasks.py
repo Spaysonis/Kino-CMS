@@ -71,7 +71,7 @@ def send_mailing(mailing_id):
         "total": total,
         "status": "finished"
     })
-    #cache.delete("current_mailing")
+    cache.delete("current_mailing")
 
 
 

@@ -1,12 +1,13 @@
 
 from django.http import JsonResponse
+from django.shortcuts import render
 from django.views.decorators.http import require_POST
 import json
 from .models import  MailTemplate
 from django.core.cache import cache
 from src.cms.tasks import send_mailing
 from celery.result import AsyncResult
-
+from src.user.models import BaseUser
 def upload_mailing_api(request):
     file = request.FILES['file']
     mailing_temple = MailTemplate.objects.create(file=file)
@@ -60,9 +61,14 @@ def start_mailing(request):
     mailing_id = data.get("mailing_id")
     task = send_mailing.delay(mailing_id)
     result = AsyncResult(task.id)
+    print(result)
     response = {
         "status": 'ok'
     }
     return JsonResponse(response)
 
 
+def api_user_modal(request):
+
+    users = BaseUser.objects.all()
+    return render(request, 'cms/include/modal_users.html', {'users': users})
