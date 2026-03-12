@@ -34,7 +34,9 @@
                         <button class="btn btn-outline-secondary btn-sm mt-2" id="openUserModal">
                             Выбрать пользователей
                         </button>
-                        <div id="modalContainer"></div>
+                        <div id="modalContainer">
+
+                        </div>
                     </div>
 
                     <hr>
@@ -56,7 +58,7 @@
 
                     <p>
                         Загружен файл:
-                        <a href="#">ласт load  фаил</a>
+                        <a href="#">last load  file</a>
                     </p>
 
                     <p>
@@ -128,7 +130,10 @@
     </div>
 </div>
 
-<script src="{% static 'cms/js/mailing.js' %}?v={{ version }}"></script>
 
 
 {%endblock%}
+
+{% block extra_js %}
+<script src="{% static 'cms/js/mailing.js' %}?v={{ version }}"></script>
+{% endblock %}

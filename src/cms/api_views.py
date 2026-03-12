@@ -8,6 +8,9 @@ from django.core.cache import cache
 from src.cms.tasks import send_mailing
 from celery.result import AsyncResult
 from src.user.models import BaseUser
+
+
+
 def upload_mailing_api(request):
     file = request.FILES['file']
     mailing_temple = MailTemplate.objects.create(file=file)
@@ -59,9 +62,15 @@ def start_mailing(request):
     """
     data = json.loads(request.body)
     mailing_id = data.get("mailing_id")
-    task = send_mailing.delay(mailing_id)
+    users = data.get("users")
+    print(users)
+    task = send_mailing.delay(mailing_id, users)
+
     result = AsyncResult(task.id)
-    print(result)
+    data = result.status
+    print(data)
+
+
     response = {
         "status": 'ok'
     }

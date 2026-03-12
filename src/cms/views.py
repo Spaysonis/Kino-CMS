@@ -23,7 +23,7 @@ def mailing(request):
             'mail_message':mail_message
         }
         return render(request, 'cms/mailing.html', context)
-    return JsonResponse({'error': 'Method not allowed'}, status=405)
+    return JsonResponse({'error': 'error'})
 
 
 

@@ -10,15 +10,20 @@ from django.core.cache import cache
 
 
 @shared_task
-def send_mailing(mailing_id):
-    cache.set("current_mailing", mailing_id) # state now
+def send_mailing(mailing_id, users):
 
+
+    if users == 'all':
+        recipients = BaseUser.objects.exclude(email='').values_list('email', flat=True)  # Take user(email) with db
+    else:
+        recipients = BaseUser.objects.filter(id__in=users).exclude(email='').values_list('email', flat=True)
+
+    cache.set("current_mailing", mailing_id) # state now
     subject = "Тема"
     template = MailTemplate.objects.get(pk=mailing_id) # Take template with db
-    recipients = BaseUser.objects.exclude(email='').values_list('email', flat=True) # Take user(email) with db
     html_message = template.file.file.read().decode('utf-8')
     template_name = template.file.name
-    total = len(recipients)
+    total_user = len(recipients)
 
     progress_key = f"mailing:{mailing_id}:progress"
     meta_key = f"mailing:{mailing_id}:meta"
@@ -29,17 +34,15 @@ def send_mailing(mailing_id):
 
     })
 
-    # start state
+    # start state data
     cache.set(progress_key, {
         "sent": 0,
-        "total": total,
+        "total_user": total_user,
         "status": "running"
     })
 
-
-
     channel_layer = get_channel_layer()
-
+    sent = 0
     for i, email in enumerate(recipients, start=1):
         send_mail(
             subject=subject,
@@ -51,7 +54,7 @@ def send_mailing(mailing_id):
 
         cache.set(progress_key, {
             "sent": i,
-            "total": total,
+            "total_user": total_user,
             "status": "running",
         })
 
@@ -59,16 +62,17 @@ def send_mailing(mailing_id):
             f"mailing_{mailing_id}",
             {
                 "type": "mailing.progress",
-                "progress": int(i / total * 100),
+                "progress": int(i / total_user * 100),
                 "sent": i,
-                "total": total,
+                "total_user": total_user,
                 "email": email
             }
         )
+        sent += 1
 
     cache.set(f"mailing:{mailing_id}:progress", {
-        "sent": total,
-        "total": total,
+        "sent":sent ,
+        "total_user": total_user,
         "status": "finished"
     })
     cache.delete("current_mailing")
@@ -79,7 +83,7 @@ def send_mailing(mailing_id):
         f"mailing_{mailing_id}",
         {
             "type": "mailing.finished",
-            "total": total
+            "sent": sent
         }
     )
 

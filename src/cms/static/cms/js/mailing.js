@@ -6,14 +6,6 @@ const progressBar = document.getElementById("mailing-progress");
 
 // const startBtn = document.getElementById('start-mailing-btn')
 ////admin/api/set_users/
-document.getElementById('openUserModal').addEventListener('click', function() {
-    fetch('/admin/api/set_users/')
-        .then(response => response.text())
-        .then(html => {
-            document.getElementById('modalContainer').innerHTML = html;
-            $('#userSelectModal').modal('show')});
-    initUserModal();
-});
 
 
 
@@ -40,13 +32,22 @@ function getSelectedMailingId() {
 function startMailing () {
     const startBtn = document.getElementById('start-mailing-btn')
     startBtn.addEventListener('click', function () {
+
         let mailing_id = getSelectedMailingId()
         if (!mailing_id) return;
         console.log(mailing_id)
+        const users = getSelectedUsers();
+        console.log(users)
+
+        const data = {
+            mailing_id: mailing_id,
+            users: users
+        };
+
         fetch("/admin/api/start-mailing/", {
             method: "POST",
 
-            body: JSON.stringify({ mailing_id: mailing_id }),
+            body: JSON.stringify(data),
             headers: {
                 "Content-Type": "application/json",
                 'X-CSRFToken': getCookie('csrftoken')
@@ -63,9 +64,15 @@ function startMailing () {
 }
 
 
+let socket =null
 function connectSocket(mailing_id) {
     const startBtn = document.getElementById('start-mailing-btn');
-    const socket = new WebSocket(
+    if (socket) {
+        socket.close();
+        socket = null;
+    }
+
+    socket = new WebSocket(
         `ws://${window.location.host}/ws/mailing/${mailing_id}/`
     );
     socket.onmessage = function(event) {
@@ -83,7 +90,14 @@ function connectSocket(mailing_id) {
         if (data.status === "finished") {
             console.log("Рассылка завершена");
             startBtn.disabled = false
+            if (socket) {
+                socket.close();
+                socket = null;
+            }
         }
+    };
+     socket.onclose = function() {
+        console.log("Сокет закрыт");
     };
 }
 
@@ -117,6 +131,8 @@ document.addEventListener("DOMContentLoaded", function () {
     allUsers.addEventListener("change", function () {
         if (this.checked) {
             selectedUsers.checked = false;
+            const table = $('#userTable').DataTable();
+            table.$('.user-checkbox:checked', { "page": "all" }).prop('checked', false);
         }
     });
     selectedUsers.addEventListener("change", function () {
@@ -215,43 +231,75 @@ document.addEventListener('DOMContentLoaded', function() {
 
 //// MODAL
 $(document).ready(function() {
-    // Клик по кнопке "Выбрать пользователей"
+
+    // Открыть модалку и подгрузить пользователей
     $('#openUserModal').on('click', function() {
-        // Если модалка уже на странице, просто показываем
-        $('#userSelectModal').modal('show');
+        selectedUsers.checked = true
+        allUsers.checked = false
 
-        // Инициализация DataTables, если ещё не инициализирована
-        if (!$.fn.DataTable.isDataTable('#userTable')) {
-            $('#userTable').DataTable({
-                pageLength: 5,
-                lengthChange: false,
-                searching: true,
-                ordering: true,
-                info: false,
-                autoWidth: false,
-                pagingType: 'simple_numbers'
-            });
-        }
+        $.get('/admin/api/set_users/', function(data) {
+    $('#modalContainer').html(data);
+    $('#userSelectModal').modal('show');
+
+    // Инициализируем DataTable
+    $('#userTable').DataTable({
+        pageLength: 5,      // сколько пользователей показывать на странице
+        order: [[1, 'asc']], // сортировка по ID по возрастанию
+        columnDefs: [
+            { orderable: false, targets: 0 } // чекбоксы не сортируем
+        ],
+        lengthChange: false,
+        language: {
+             search: "Поиск:",                // заменяем Search на Поиск
+        zeroRecords: "Совпадений не найдено",
+        info: "Показано _START_ до _END_ из _TOTAL_ пользователей",
+        infoEmpty: "Показано 0 до 0 из 0 пользователей",
+        infoFiltered: "(отфильтровано из _MAX_ пользователей)",
+        paginate: {
+            first: "Первая",
+            last: "Последняя",
+            next: "Следующая",
+            previous: "Предыдущая"
+        },
+        decimal: ",",
+        thousands: " "
+    }
     });
 
-    // Выбрать/снять все чекбоксы
-    $(document).on('change', '#selectAllUsers', function() {
-        const checked = this.checked;
-        $('.user-checkbox').prop('checked', checked);
+    // чекбоксы и кнопка
+    $('#selectAllUsers').on('change', function() {
+        $('.user-checkbox').prop('checked', this.checked);
     });
 
-    // Сохранение выбранных пользователей
-    $(document).on('click', '#saveSelectedUsers', function() {
-        const selectedIds = $('.user-checkbox:checked').map(function() {
-            return $(this).data('user-id');
-        }).get();
-        console.log('Выбраны пользователи:', selectedIds);
-        $('#userSelectModal').modal('hide');
+    $(document).on('change', '.user-checkbox', function() {
+        if ($(this).is(':checked')) $('#selectAllUsers').prop('checked', false);
     });
+
+   $('#saveSelectedUsers').on('click', function() {
+    const table = $('#userTable').DataTable();
+
+    // получаем все чекбоксы на всех страницах
+    const selectedIds = table.$('.user-checkbox:checked', { "page": "all" }).map(function() {
+        return $(this).data('user-id');
+    }).get();
+
+    console.log('Выбраны пользователи:', selectedIds);
+    $('#userSelectModal').modal('hide');
 });
+});
+    });
 
+});
 //// END MODAL
+function getSelectedUsers() {
+    const table = $('#userTable').DataTable();
+    const selectedIds = table.$('.user-checkbox:checked', { "page": "all" }).map(function() {
+        return $(this).data('user-id');
+    }).get();
 
+    // Если ничего не выбрано → все пользователи
+    return selectedIds.length ? selectedIds : "all";
+}
 
 
 

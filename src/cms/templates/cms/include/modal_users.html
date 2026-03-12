@@ -34,8 +34,8 @@
               <td>{{ user.email }}</td>
               <td>{{ user.phone }}</td>
               <td>{{ user.full_name }}</td>
-              <td>{{ user.nickname }}</td>
-              <td>{{ user.city }}</td>
+              <td>{{ user.nick_name }}</td>
+              <td>{{ user.address }}</td>
             </tr>
             {% endfor %}
           </tbody>
@@ -51,4 +51,3 @@
   </div>
 </div>
 
-<script src="{% static 'cms/js/user_modal.js' %}?v={{ version }}"></script>

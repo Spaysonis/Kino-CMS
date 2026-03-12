@@ -25,7 +25,7 @@ class MailingConsumer(WebsocketConsumer):
                 "sent": progress,
                 "meta": meta,
 
-                "progress": int(progress["sent"] / progress["total"] * 100) if progress["total"] else 0
+                "progress": int(progress["sent"] / progress["total_user"] * 100) if progress["total_user"] else 0
             }))
 
 
@@ -35,6 +35,7 @@ class MailingConsumer(WebsocketConsumer):
             "status": "progress",
             "email": event.get("email"),
             "progress": event.get("progress"),
+            "sent":event.get('sent'),
             'backend':'backend'
         }))
 
@@ -43,6 +44,6 @@ class MailingConsumer(WebsocketConsumer):
     def mailing_finished(self, event):
         self.send(text_data=json.dumps({
             "status": "finished",
-            "total": event.get("total")
+            "total": event.get("sent")
         }))
 
