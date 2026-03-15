@@ -12,8 +12,10 @@ urlpatterns = [
     path("", staff_member_required (views.admin), name="statistics"),
 
 
-    path('users/', views.UserListView.as_view(), name='users'),
+    path('users/', views.user_list, name='users'),
     path('users/<int:pk>/edit/', views.edit_user, name='edit_user'),
+    path('users/delete-user/<int:user_id>/', api_views.api_delete_user, name='delete_user'),
+
 
 
 

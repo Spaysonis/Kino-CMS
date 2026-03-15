@@ -21,6 +21,15 @@ from ..user.models import BaseUser
 
 
 class UserEditForm(forms.ModelForm):
+    password = forms.CharField(
+        widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Пароль'}),
+        required=False
+    )
+    password2 = forms.CharField(
+        widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Повторите пароль'}),
+        required=False,
+        label="Повторите пароль"
+    )
 
     class Meta:
         model = BaseUser
@@ -43,6 +52,14 @@ class UserEditForm(forms.ModelForm):
                                                      'type':'date'}),
 
         }
+
+    def clean_password2(self):
+        password = self.cleaned_data.get("password")
+        password2 = self.cleaned_data.get("password2")
+        if password or password2:
+            if password != password2:
+                self.add_error('password2', "Пароли не совпадают")
+        return password2
 
 
 

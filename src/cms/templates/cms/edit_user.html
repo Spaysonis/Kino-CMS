@@ -1,137 +1,170 @@
 {% extends "cms/statistics.html" %}
+{% load static %}
 
 {% block content %}
 
+<div class="container-fluid mt-4">
 
+    <h4 class="mb-4">Редактирование пользователя</h4>
 
-<form method="post" action="{% url 'edit_user' user.id %}">
-    {% csrf_token %}
+    <form method="post" action="{% url 'edit_user' user.id %}">
+        {% csrf_token %}
 
-
-
-
-    <div class="p-5">
-        <div class="row mb-3">
-        <!-- Левая часть с полями ввода -->
+        <div class="row">
+            <!-- Левая колонка -->
             <div class="col-md-6">
-                <div class="form-group row mb-3">
-                    <label class="col-sm-4 col-form-label col-form-label-sm">Имя</label>
-                    <div class="col-sm-4">
+
+                <div class="form-group row">
+                    <label class="col-sm-4 col-form-label">Имя</label>
+                    <div class="col-sm-8">
                         {{ form.first_name }}
                     </div>
                 </div>
 
-                <div class="form-group row mb-3">
-                    <label class="col-sm-4 col-form-label col-form-label-sm">Фамилия</label>
-                    <div class="col-sm-4">
-                        {{ form.last_name}}
+                <div class="form-group row">
+                    <label class="col-sm-4 col-form-label">Фамилия</label>
+                    <div class="col-sm-8">
+                        {{ form.last_name }}
                     </div>
                 </div>
 
-                <div class="form-group row mb-3">
-                    <label class="col-sm-4 col-form-label col-form-label-sm">Псевдоним</label>
-                    <div class="col-sm-4">
-                        {{ form.nick_name}}
+                <div class="form-group row">
+                    <label class="col-sm-4 col-form-label">Псевдоним</label>
+                    <div class="col-sm-8">
+                        {{ form.nick_name }}
                     </div>
                 </div>
 
-
-                <div class="form-group row mb-3">
-                    <label class="col-sm-4 col-form-label col-form-label-sm">Email</label>
-                    <div class="col-sm-4">
-                        {{ form.email}}
+                <div class="form-group row">
+                    <label class="col-sm-4 col-form-label">Email</label>
+                    <div class="col-sm-8">
+                        {{ form.email }}
                     </div>
                 </div>
 
-                <div class="form-group row mb-3">
-                    <label class="col-sm-4 col-form-label col-form-label-sm">Адрес</label>
-                    <div class="col-sm-4">
-                        {{ form.address}}
+                <div class="form-group row">
+                    <label class="col-sm-4 col-form-label">Адрес</label>
+                    <div class="col-sm-8">
+                        {{ form.address }}
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-4 col-form-label">Пароль</label>
+                    <div class="col-sm-8">
+                        <div class="input-group mb-2">
+                            {{ form.password }}
+                            <div class="input-group-append">
+                                <div class="input-group-text">
+                                    <span class="fas fa-lock"></span>
+                                </div>
+                            </div>
+                        </div>
+                        {% if form.password.errors %}
+                        <div class="text-danger small mt-1">
+                            {% for error in form.password.errors %}
+                            {{ error }}
+                            {% endfor %}
+                        </div>
+                        {% endif %}
                     </div>
                 </div>
 
-
-                <div class="form-group row mb-3">
-                    <label class="col-sm-4 col-form-label col-form-label-sm">Пароль</label>
-                    <div class="col-sm-4">
-                        {{ form.password}}
+                <div class="form-group row">
+                    <label class="col-sm-4 col-form-label">Повторите пароль</label>
+                    <div class="col-sm-8">
+                        <div class="input-group mb-2">
+                            {{ form.password2 }}
+                            <div class="input-group-append">
+                                <div class="input-group-text">
+                                    <span class="fas fa-lock"></span>
+                                </div>
+                            </div>
+                        </div>
+                        {% if form.password2.errors %}
+                        <div class="text-danger small mt-1">
+                            {% for error in form.password2.errors %}
+                            {{ error }}
+                            {% endfor %}
+                        </div>
+                        {% endif %}
                     </div>
                 </div>
-
-                <div class="form-group row mb-3">
-                    <label class="col-sm-4 col-form-label col-form-label-sm">Повторите пароль</label>
-                    <div class="col-sm-4">
-                        {{ form.password}}
-                    </div>
-                </div>
-
-                <div class="form-group row mb-3">
-                    <label class="col-sm-4 col-form-label col-form-label-sm">Номер карты</label>
-                    <div class="col-sm-4">
+                <div class="form-group row">
+                    <label class="col-sm-4 col-form-label">Номер карты</label>
+                    <div class="col-sm-8">
                         {{ form.card_num }}
                     </div>
                 </div>
 
             </div>
 
-        <!-- Правая часть с полями вводжа -->
-
-
-            <div class=" col-md-6 ">
-                <div class="form-group row mb-3 ">
-                    <label class="col-sm-4 col-form-label col-form-label-sm">Язык</label>
-
-                    <div class="col-sm-8 ">
-                        <div class="language-choices d-flex flex-wrap ">
-                            {% for choice in form.language %}
-                            <div class="me-5 mb-2">
-                                {{ choice }}
-                            </div>
-                            {% endfor %}
-                        </div>
-                    </div>
-
-
-                    <label class="col-sm-4 col-form-label col-form-label-sm">Пол</label>
+            <!-- Правая колонка -->
+            <div class="col-md-6">
+                <div class="form-group row">
+                    <label class="col-sm-4 col-form-label">Язык</label>
                     <div class="col-sm-8">
-                        <div class="language-choices d-flex flex-wrap">
-                            {% for choice in form.gender %}
-                            <div class="me-5 mb-2">
-                                {{ choice }}
+                        <div class="d-flex flex-wrap">
+                            {% for choice in form.language %}
+                            <div class="form-check form-check-inline w-50 mb-2">
+                                {{ choice.tag }}
+                                <label class="form-check-label">{{ choice.choice_label }}</label>
                             </div>
                             {% endfor %}
                         </div>
                     </div>
-
-
-                    <div class="form-group row mb-3">
-                        <label class="col-sm-4 col-form-label col-form-label-sm">Телефон</label>
-                        <div class="col-sm-4">
-                            {{ form.phone_num }}
-                        </div>
-                    </div>
-
-                    <div class="form-group row mb-3">
-                        <label class="col-sm-4 col-form-label col-form-label-sm mt-2">Дата рождения:</label>
-                         <div class="col-sm-4 ">
-
-                            {{ form.date_of_birth }}
-                         </div>
-                    </div>
-
-                    <div class="form-group row mb-3">
-                        <label class="col-sm-4 col-form-label col-form-label-sm mt-2">Город:</label>
-                        <div class="col-sm-4">
-                            {{ form.city }}
-                        </div>
-                    </div>
-
                 </div>
+
+                <div class="form-group row">
+                    <label class="col-sm-4 col-form-label">Пол</label>
+                    <div class="col-sm-8">
+                        <div class="d-flex flex-wrap">
+                            {% for choice in form.gender %}
+                            <div class="form-check form-check-inline w-50 mb-2">
+                                {{ choice.tag }}
+                                <label class="form-check-label">{{ choice.choice_label }}</label>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label class="col-sm-4 col-form-label">Телефон</label>
+                    <div class="col-sm-8">
+                        {{ form.phone_num }}
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label class="col-sm-4 col-form-label">Дата рождения</label>
+                    <div class="col-sm-8">
+                        {{ form.date_of_birth }}
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label class="col-sm-4 col-form-label">Город</label>
+                    <div class="col-sm-8">
+                        {{ form.city }}
+                    </div>
+                </div>
+
+
+
             </div>
         </div>
-    </div>
-<button type="submit" class="btn btn-primary">Сохранить</button>
+
+        <div class="mt-4">
+            <button type="submit" class="btn btn-primary">Сохранить</button>
+            <a href="{% url 'users' %}" class="btn btn-secondary ms-2">Отмена</a>
+        </div>
+
     </form>
 
+</div>
 
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'cms/js/edit_user.js' %}?v={{ version }}"></script>
 {% endblock %}

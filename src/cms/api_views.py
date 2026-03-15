@@ -8,6 +8,20 @@ from django.core.cache import cache
 from src.cms.tasks import send_mailing
 from celery.result import AsyncResult
 from src.user.models import BaseUser
+import requests
+
+def api_delete_user(request, user_id):
+    print('api_delete_user')
+    if request.method == "POST":
+        try:
+            user = BaseUser.objects.get(id=user_id)
+            user.delete()
+            return JsonResponse({'success':True})
+        except BaseUser.DoesNotExist :
+            return JsonResponse({"success": False})
+    return JsonResponse({"success": False})
+
+
 
 
 
@@ -81,3 +95,7 @@ def api_user_modal(request):
 
     users = BaseUser.objects.all()
     return render(request, 'cms/include/modal_users.html', {'users': users})
+
+
+
+

@@ -43,14 +43,29 @@ def send_mailing(mailing_id, users):
 
     channel_layer = get_channel_layer()
     sent = 0
+    errors= 0
     for i, email in enumerate(recipients, start=1):
-        send_mail(
-            subject=subject,
-            message='',
-            from_email=None,
-            recipient_list=[email],
-            html_message=html_message
-        )
+        try:
+            send_mail(
+                subject=subject,
+                message='',
+                from_email=None,
+                recipient_list=[email],
+                html_message=html_message
+            )
+            sent += 1
+        except Exception as e:
+            errors += 1
+            async_to_sync(channel_layer.group_send)(
+                f"mailing_{mailing_id}",
+                {
+                    "type": "mailing.error",
+                    "email": email,
+                    "error": str(e)
+                }
+            )
+            continue
+
 
         cache.set(progress_key, {
             "sent": i,
@@ -68,7 +83,7 @@ def send_mailing(mailing_id, users):
                 "email": email
             }
         )
-        sent += 1
+
 
     cache.set(f"mailing:{mailing_id}:progress", {
         "sent":sent ,

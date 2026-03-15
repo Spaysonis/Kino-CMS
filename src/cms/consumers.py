@@ -22,7 +22,7 @@ class MailingConsumer(WebsocketConsumer):
         if progress:
             self.send(text_data=json.dumps({
                 "status": "progress",
-                "sent": progress,
+                "sent": progress["sent"],
                 "meta": meta,
 
                 "progress": int(progress["sent"] / progress["total_user"] * 100) if progress["total_user"] else 0

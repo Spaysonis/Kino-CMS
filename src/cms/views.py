@@ -597,49 +597,29 @@ def create_banners(request):
 
 def background_banner(request):
     print('data in views')
-
-
     banner = BackgroundBanner.objects.first()
-
-
-
     if request.method == 'POST':
         form = BackgroundBannerForm(request.POST, request.FILES, instance=banner)
         print(form.data)
-
-
         if form.is_valid():
-
             if request.POST.get('delete_image') == 'true':
                 if banner.main_image:
                     banner.main_image.delete(save=False)
                 banner.main_image = None
-
             banner = form.save(commit=False)
             if not banner.is_use_image:
                 banner.main_image.delete(save=False)
                 banner.main_image = None
             banner.save()
-
-
-
-
-
-
             return (
                 JsonResponse({
                 'success': True,
                     'banner':banner.id,
-
-
                 }))
         else:
             return JsonResponse({
         'success': False,
         'error':form.errors})
-
-
-
 
 
 
@@ -661,12 +641,17 @@ def edit_user(request, pk):
 
 
 
-class UserListView(SingleTableView):
-    model = BaseUser
-    table_class = UserTable
-    template_name = 'cms/users.html'
-    paginate_by = 6
-    SingleTableView.table_pagination = False
+
+def user_list(request):
+    users = BaseUser.objects.all()
+    context = {
+        'users':users
+    }
+    return render(request,'cms/users.html', context)
+
+
+
+
 
 
 

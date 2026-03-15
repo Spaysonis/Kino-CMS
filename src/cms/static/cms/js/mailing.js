@@ -56,7 +56,7 @@ function startMailing () {
         .then(res => res.json())
         .then(data => {
             console.log("Рассылка запущена:", data);
-            console.log('wb connect ')
+
             connectSocket(mailing_id);
 
         })
@@ -77,11 +77,21 @@ function connectSocket(mailing_id) {
     );
     socket.onmessage = function(event) {
         const data = JSON.parse(event.data);
-        console.log("live:", data);
+
+
+
+
 
         if (data.status === "progress") {
-            const bar = document.getElementById("mailing-progress");
+            const currentTemplate = document.getElementById("current-template");
+            if (data.meta) {
+                currentTemplate.innerText = data.meta.template_name;
+            }
 
+            const bar = document.getElementById("mailing-progress");
+            const sentCount = document.getElementById("sent-count");
+            sentCount.innerText = data.sent
+            console.log(data)
             bar.style.width = data.progress + "%";
             bar.innerText = data.progress + "%";
             startBtn.disabled = true;
@@ -95,7 +105,12 @@ function connectSocket(mailing_id) {
                 socket = null;
             }
         }
+
+        if (data.status === 'errors') {
+            console.log(data.status)
+        }
     };
+
      socket.onclose = function() {
         console.log("Сокет закрыт");
     };
@@ -175,10 +190,14 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .then(response => response.json())
         .then(data => {
+
             console.log(data.status)
+            console.log(data)
             if (data.status === 'ok') {
                 const mail_list = document.getElementById('mail_list');
                 const newItem = document.createElement('div');
+                const downloadFile = document.getElementById('download_file')
+                downloadFile.innerText = data.filename
                 newItem.className = 'form-check';
                 newItem.innerHTML = `<input class="form-check-input" type="checkbox"><label class="form-check-label">${data.filename}</label>
             <a href="#" class="text-danger float-right">Удалить</a>
@@ -216,7 +235,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // Если чекбокс отмечен, подставляем имя файла
             if (e.target.checked) {
                 const fileName = e.target.closest('.form-check').querySelector('label').textContent.trim();
-                lastLoadedLink.textContent = fileName;
+
             } else {
                 // Если сняли галочку, очищаем
                 lastLoadedLink.textContent = 'Выбырите фаил для рассылки';
