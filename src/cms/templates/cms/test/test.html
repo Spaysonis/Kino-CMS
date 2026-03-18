@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Сбор заказов • ИЖ (цены, валюты)</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        body {
+            background: #f4f6f9;
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+        }
+        .content-wrapper {
+            background: #f4f6f9;
+            padding: 1.5rem 1.5rem 0;
+        }
+        .card {
+            box-shadow: 0 0 15px rgba(0,0,0,0.05), 0 1px 3px rgba(0,0,0,0.1);
+            border-radius: 0.5rem;
+            border: none;
+            margin-bottom: 1.5rem;
+        }
+        .card-header {
+            background-color: #fff;
+            border-bottom: 1px solid #e9ecef;
+            padding: 1rem 1.25rem;
+            font-weight: 600;
+            border-top-left-radius: 0.5rem !important;
+            border-top-right-radius: 0.5rem !important;
+        }
+        .table th {
+            border-top: none;
+            color: #6c757d;
+            font-weight: 500;
+            background-color: #f8f9fa;
+        }
+        .table td {
+            vertical-align: middle;
+        }
+        /* Блок управления количеством */
+        .qty-control {
+            display: inline-flex;
+            align-items: center;
+            background: #f8f9fa;
+            border-radius: 2rem;
+            border: 1px solid #dee2e6;
+            overflow: hidden;
+        }
+        .qty-control button {
+            width: 36px;
+            height: 36px;
+            border: none;
+            background: white;
+            font-size: 1.2rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.15s;
+            color: #495057;
+        }
+        .qty-control button:hover {
+            background: #e9ecef;
+        }
+        .qty-control .qty-value {
+            min-width: 50px;
+            text-align: center;
+            font-weight: 600;
+            background: white;
+            padding: 0.2rem 0;
+            border-left: 1px solid #dee2e6;
+            border-right: 1px solid #dee2e6;
+            cursor: pointer;
+        }
+        .qty-edit-input {
+            width: 60px;
+            text-align: center;
+            border: 1px solid #ced4da;
+            border-radius: 2rem;
+            padding: 0.2rem 0;
+            font-weight: 600;
+            outline: none;
+        }
+        .qty-edit-input:focus {
+            border-color: #86b7fe;
+            box-shadow: 0 0 0 0.2rem rgba(13,110,253,0.15);
+        }
+        .product-photo {
+            width: 50px;
+            height: 50px;
+            background: #e9ecef;
+            border-radius: 0.375rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #6c757d;
+            font-size: 1.5rem;
+            border: 1px dashed #ced4da;
+        }
+        .category-header {
+            background-color: #17a2b8;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            margin-bottom: 1.5rem;
+            display: inline-block;
+        }
+        .search-box {
+            max-width: 300px;
+        }
+        .price-usd {
+            color: #28a745;
+            font-weight: 600;
+        }
+        .price-uah {
+            color: #007bff;
+            font-weight: 600;
+        }
+        .total-price {
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+        .cart-totals {
+            background: #f8f9fa;
+            border-radius: 0.5rem;
+            padding: 1rem;
+        }
+    </style>
+</head>
+<body>
+
+<div class="wrapper">
+    <!-- верхняя навигация -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid px-4">
+            <a class="navbar-brand" href="#">
+                <i class="bi bi-grid-3x3-gap-fill me-2"></i>
+                СБОРЩИК
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#">
+                            <i class="bi bi-basket"></i> Корзина
+                            <span class="badge bg-warning text-dark rounded-pill ms-1" id="cartCounter">0</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#"><i class="bi bi-box-arrow-right"></i> Выход</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Content Wrapper -->
+    <div class="content-wrapper">
+        <div class="container-fluid">
+
+            <!-- Заголовок категории и корзина с суммами по валютам -->
+            <div class="row mb-4 align-items-center">
+                <div class="col-md-6">
+                    <h3 class="mb-0 fw-normal"><i class="bi bi-folder2-open me-2"></i>Категория: <span class="category-header py-1 px-3 ms-2">ИЖ</span></h3>
+                    <p class="text-muted mt-2 mb-0">Выберите товары — цены указаны в USD и UAH</p>
+                </div>
+                <div class="col-md-6 d-flex justify-content-md-end mt-3 mt-md-0">
+                    <div class="cart-totals me-3">
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-cart-check fs-5 me-2"></i>
+                            <div>
+                                <span class="badge bg-success me-1">USD</span> <strong id="totalUsd">0.00</strong><br>
+                                <span class="badge bg-primary me-1">UAH</span> <strong id="totalUah">0.00</strong>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="#" class="btn btn-success">
+                        <i class="bi bi-check2-circle"></i> Завершить сбор
+                    </a>
+                </div>
+            </div>
+
+            <!-- Карточка с товарами -->
+            <div class="card">
+                <div class="card-header d-flex flex-wrap justify-content-between align-items-center">
+                    <span><i class="bi bi-box-seam me-2"></i> Позиции в категории (50)</span>
+                    <div class="search-box mt-2 mt-sm-0">
+                        <div class="input-group">
+                            <span class="input-group-text bg-white border-end-0"><i class="bi bi-search text-muted"></i></span>
+                            <input type="text" class="form-control border-start-0 ps-0" id="searchInput" placeholder="Поиск по названию...">
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0" id="productTable">
+                            <thead class="table-light">
+                                <tr>
+                                    <th style="width: 8%">Фото</th>
+                                    <th style="width: 30%">Название / Артикул</th>
+                                    <th style="width: 12%">Цена</th>
+                                    <th style="width: 20%">Количество</th>
+                                    <th style="width: 15%">Сумма</th>
+                                    <th style="width: 15%"></th>
+                                </tr>
+                            </thead>
+                            <tbody id="tableBody">
+                                <!-- генерация через js -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="card-footer bg-white text-muted d-flex justify-content-between align-items-center py-3">
+                    <span>Всего позиций: <strong id="totalCountDisplay">50</strong></span>
+                    <span>Выбрано позиций: <span id="selectedItemsCount">0</span></span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    (function() {
+        // ----- генерация 50 товаров с алфавитной сортировкой и ценами в двух валютах -----
+        const baseNames = [
+            "Амортизатор", "Бачок тормозной", "Вилка передняя", "Глушитель", "Дроссель",
+            "Звездочка ведомая", "Искрогаситель", "Карбюратор", "Крыло заднее", "Лямбда-зонд",
+            "Маховик", "Насос масляный", "Обтекатель", "Петля боковая", "Ручка газа",
+            "Свеча зажигания", "Трос сцепления", "Указатель поворота", "Фара головная", "Хомут глушителя",
+            "Цилиндр главный", "Чехол рулевой", "Шланг тормозной", "Щиток приборов", "Электродвигатель стартера",
+            "Якорь стартера", "Батарейка", "Вал коленчатый", "Генератор", "Датчик скорости",
+            "Емкость расширительная", "Жиклер", "Замок зажигания", "Игла карбюратора", "Клапан впускной",
+            "Лента тормозная", "Манжета", "Накладка руля", "Оплетка провода", "Патрубок радиатора",
+            "Ролик натяжителя", "Сайлентблок", "Тяга рулевая", "Уплотнитель двери", "Фильтр воздушный",
+            "Храповик", "Цапфа", "Шайба стопорная", "Щетка стеклоочистителя", "Экран глушителя"
+        ];
+
+        // Генерируем товары с ценами (USD и UAH) — случайным образом, но в разумных пределах
+        let products = baseNames.slice(0, 50).sort((a,b) => a.localeCompare(b)).map((name, index) => {
+            // базовая цена в долларах от 5 до 500
+            const priceUsd = Math.round((Math.random() * 495 + 5) * 100) / 100;
+            // цена в гривнах (примерно курс 38-42, но сделаем разнообразнее)
+            const priceUah = Math.round(priceUsd * (38 + Math.random() * 4) * 100) / 100;
+            // чередуем, какая валюта основная для отображения (но показываем обе)
+            return {
+                id: index,
+                name: name,
+                sku: `ИЖ-${(index+1).toString().padStart(4,'0')}`,
+                priceUsd: priceUsd,
+                priceUah: priceUah,
+                selectedQty: 0
+            };
+        });
+
+        // элементы DOM
+        const tbody = document.getElementById('tableBody');
+        const searchInput = document.getElementById('searchInput');
+        const cartCounter = document.getElementById('cartCounter');
+        const selectedItemsSpan = document.getElementById('selectedItemsCount');
+        const totalUsdSpan = document.getElementById('totalUsd');
+        const totalUahSpan = document.getElementById('totalUah');
+
+        // Обновление всех сумм и счетчиков
+        function updateTotals() {
+            let totalUsd = 0, totalUah = 0, totalItems = 0;
+            products.forEach(p => {
+                if (p.selectedQty > 0) {
+                    totalUsd += p.priceUsd * p.selectedQty;
+                    totalUah += p.priceUah * p.selectedQty;
+                    totalItems += p.selectedQty;
+                }
+            });
+            cartCounter.innerText = totalItems;
+            if (selectedItemsSpan) selectedItemsSpan.innerText = totalItems;
+            totalUsdSpan.innerText = totalUsd.toFixed(2);
+            totalUahSpan.innerText = totalUah.toFixed(2);
+        }
+
+        // Рендер таблицы с фильтром
+        function renderTable(filter = '') {
+            const filterLower = filter.toLowerCase();
+            const filtered = products.filter(p => p.name.toLowerCase().includes(filterLower));
+            filtered.sort((a,b) => a.name.localeCompare(b.name));
+
+            let html = '';
+            filtered.forEach(prod => {
+                const rowTotalUsd = (prod.priceUsd * prod.selectedQty).toFixed(2);
+                const rowTotalUah = (prod.priceUah * prod.selectedQty).toFixed(2);
+                html += `<tr data-id="${prod.id}">
+                    <td>
+                        <div class="product-photo">
+                            <i class="bi bi-image"></i>
+                        </div>
+                    </td>
+                    <td>
+                        <strong>${prod.name}</strong><br>
+                        <small class="text-secondary">${prod.sku}</small>
+                    </td>
+                    <td>
+                        <span class="price-usd">$${prod.priceUsd.toFixed(2)}</span><br>
+                        <span class="price-uah">${prod.priceUah.toFixed(2)} ₴</span>
+                    </td>
+                    <td>
+                        <div class="qty-control" data-id="${prod.id}">
+                            <button type="button" class="qty-decr" data-id="${prod.id}">−</button>
+                            <span class="qty-value" data-id="${prod.id}" id="qty-span-${prod.id}">${prod.selectedQty}</span>
+                            <button type="button" class="qty-incr" data-id="${prod.id}">+</button>
+                        </div>
+                        <input type="number" class="qty-edit-input d-none" id="qty-input-${prod.id}" value="${prod.selectedQty}" min="0" step="1" data-id="${prod.id}">
+                    </td>
+                    <td>
+                        <span class="price-usd">$${rowTotalUsd}</span><br>
+                        <span class="price-uah">${rowTotalUah} ₴</span>
+                    </td>
+                    <td>
+                        <!-- можно добавить доп. действия -->
+                    </td>
+                </tr>`;
+            });
+            tbody.innerHTML = html || `<tr><td colspan="6" class="text-center py-5">Ничего не найдено</td></tr>`;
+
+            document.getElementById('totalCountDisplay').innerText = filtered.length;
+            attachQtyEvents();
+            updateTotals();
+        }
+
+        // Обработчики для кнопок +/– и двойного клика
+        function attachQtyEvents() {
+            document.querySelectorAll('.qty-incr').forEach(btn => {
+                btn.removeEventListener('click', incrHandler);
+                btn.addEventListener('click', incrHandler);
+            });
+            document.querySelectorAll('.qty-decr').forEach(btn => {
+                btn.removeEventListener('click', decrHandler);
+                btn.addEventListener('click', decrHandler);
+            });
+            document.querySelectorAll('.qty-value').forEach(span => {
+                span.removeEventListener('dblclick', enableEditMode);
+                span.addEventListener('dblclick', enableEditMode);
+            });
+            document.querySelectorAll('.qty-edit-input').forEach(inp => {
+                inp.removeEventListener('blur', finishEdit);
+                inp.addEventListener('blur', finishEdit);
+                inp.removeEventListener('keypress', inputEnterHandler);
+                inp.addEventListener('keypress', inputEnterHandler);
+            });
+        }
+
+        function incrHandler(e) {
+            const btn = e.currentTarget;
+            const id = parseInt(btn.getAttribute('data-id'));
+            changeQty(id, 1);
+        }
+        function decrHandler(e) {
+            const btn = e.currentTarget;
+            const id = parseInt(btn.getAttribute('data-id'));
+            changeQty(id, -1);
+        }
+        function changeQty(id, delta) {
+            const product = products.find(p => p.id === id);
+            if (!product) return;
+            let newVal = (product.selectedQty || 0) + delta;
+            if (newVal < 0) newVal = 0;
+            product.selectedQty = newVal;
+
+            // Обновляем span и input
+            const span = document.getElementById(`qty-span-${id}`);
+            const inp = document.getElementById(`qty-input-${id}`);
+            if (span) {
+                span.innerText = newVal;
+                span.classList.remove('d-none');
+            }
+            if (inp) {
+                inp.value = newVal;
+                inp.classList.add('d-none');
+            }
+
+            // Обновляем сумму в строке
+            const row = document.querySelector(`tr[data-id="${id}"]`);
+            if (row) {
+                const totalCell = row.cells[4]; // ячейка суммы (индекс 4)
+                if (totalCell) {
+                    totalCell.innerHTML = `<span class="price-usd">$${(product.priceUsd * newVal).toFixed(2)}</span><br>
+                                           <span class="price-uah">${(product.priceUah * newVal).toFixed(2)} ₴</span>`;
+                }
+            }
+
+            updateTotals();
+        }
+
+        function enableEditMode(e) {
+            const span = e.currentTarget;
+            const id = parseInt(span.getAttribute('data-id'));
+            const inp = document.getElementById(`qty-input-${id}`);
+            if (!inp) return;
+            span.classList.add('d-none');
+            inp.classList.remove('d-none');
+            inp.focus();
+            inp.select();
+        }
+
+        function finishEdit(e) {
+            const inp = e.currentTarget;
+            const id = parseInt(inp.getAttribute('data-id'));
+            const span = document.getElementById(`qty-span-${id}`);
+            let newVal = parseInt(inp.value);
+            if (isNaN(newVal) || newVal < 0) newVal = 0;
+
+            const product = products.find(p => p.id === id);
+            if (product) product.selectedQty = newVal;
+
+            if (span) {
+                span.innerText = newVal;
+                span.classList.remove('d-none');
+            }
+            inp.classList.add('d-none');
+
+            // Обновляем сумму в строке
+            if (product) {
+                const row = document.querySelector(`tr[data-id="${id}"]`);
+                if (row) {
+                    const totalCell = row.cells[4];
+                    if (totalCell) {
+                        totalCell.innerHTML = `<span class="price-usd">$${(product.priceUsd * newVal).toFixed(2)}</span><br>
+                                               <span class="price-uah">${(product.priceUah * newVal).toFixed(2)} ₴</span>`;
+                    }
+                }
+            }
+
+            updateTotals();
+        }
+
+        function inputEnterHandler(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                e.currentTarget.blur();
+            }
+        }
+
+        // Поиск с debounce
+        let searchTimer;
+        searchInput.addEventListener('input', (e) => {
+            clearTimeout(searchTimer);
+            searchTimer = setTimeout(() => {
+                renderTable(e.target.value);
+            }, 200);
+        });
+
+        // Старт
+        renderTable();
+    })();
+</script>
+
+<!-- кнопка сброса демо (необязательно) -->
+<div style="position: fixed; bottom: 10px; right: 10px; opacity: 0.3;">
+    <button class="btn btn-sm btn-light" onclick="localStorage.clear(); window.location.reload();">⟲ сброс</button>
+</div>
+
+</body>
+</html>
