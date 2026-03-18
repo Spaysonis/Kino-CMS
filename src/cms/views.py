@@ -1,22 +1,39 @@
-from django.forms import formset_factory
+from unicodedata import category
 
+from django.forms import formset_factory
+from django.contrib.auth import update_session_auth_hash
 from .models import Hall, Slider, HomePageBanner, BackgroundBanner
-from src.cms.models.page import SeoBlock, Updates, MailTemplate
+from src.cms.models.page import SeoBlock, Updates, MailTemplate, Product
 from django.urls import reverse
 from django.shortcuts import render, redirect, get_object_or_404
 from src.cms.models.cinema import Cinema, Movie
 from .forms import MovieForm, SeoBlockForm, UpdatesForm, UserEditForm, CinemaForm, GalleryFormSet, HallForm, \
-    HomePageBannerForm, SliderFormSet, BackgroundBannerForm
+    HomePageBannerForm, SliderFormSet, BackgroundBannerForm, CategoryForm
 from .models import Gallery
 from django.shortcuts import render
 from django_tables2 import SingleTableView
 from src.user.models import BaseUser
 from .tables import UserTable, HallTable, UpdatesTable
+from ..main.models import Schedule, Visitor
 
+def test(request):
+    return render(request, 'cms/test/test.html')
+
+
+def test_admin(request):
+    if request.method == 'POST':
+        form = CategoryForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('test_admin')
+
+    else:
+        form = CategoryForm()
+
+    return render(request, 'cms/test/test_admin.html', {'form': form})
 
 
 def mailing(request):
-
     if request.method == 'GET':
         mail_message = MailTemplate.objects.all()
         context = {
@@ -27,13 +44,115 @@ def mailing(request):
 
 
 
+from django.utils.timezone import now, timedelta
+from django.db.models.functions import TruncDate
+from django.db.models import Count
+import json
 
 def admin(request):
-    return render(request, 'cms/statistics.html', {
-        'active_page': 'statistics',
-        'page_title': 'Admin страница'
-    })
+    if not request.user.is_authenticated or not request.user.is_staff:
+        return HttpResponseForbidden("Нет доступа")
 
+    today = now().date()
+    past_days = 30
+
+    start_date = today - timedelta(days=past_days)
+    end_date = today
+
+    # ================== СЕАНСЫ ==================
+    schedule_qs = (
+        Schedule.objects
+        .filter(date__range=[start_date, end_date])
+        .annotate(day=TruncDate('date'))
+        .values('day')
+        .annotate(count=Count('id'))
+        .order_by('day')
+    )
+
+    # ================== ПОСЕТИТЕЛИ ==================
+    all_visitor_qs = (
+        Visitor.objects
+        .filter(created_at__date__range=[start_date, end_date])
+        .annotate(day=TruncDate('created_at'))
+        .values('day')
+        .annotate(count=Count('id'))
+        .order_by('day')
+    )
+
+    # PC + Tablet
+    desktop_tablet_qs = (
+        Visitor.objects
+        .filter(
+            created_at__date__range=[start_date, end_date],
+            device_type__in=['desktop', 'tablet']
+        )
+        .annotate(day=TruncDate('created_at'))
+        .values('day')
+        .annotate(count=Count('id'))
+        .order_by('day')
+    )
+
+    # Mobile + PC
+
+    mobile_desktop_qs = (
+        Visitor.objects
+        .filter(
+            created_at__date__range=[start_date, end_date],
+            device_type__in=['mobile', 'desktop']
+        )
+        .annotate(day=TruncDate('created_at'))
+        .values('day')
+        .annotate(count=Count('id'))
+        .order_by('day')
+
+    )
+
+    # mobile
+    mobile_qs = (
+        Visitor.objects
+        .filter(created_at__date__range=[start_date, end_date], device_type='mobile')
+        .annotate(day=TruncDate('created_at'))
+        .values('day')
+        .annotate(count=Count('id'))
+        .order_by('day')
+    )
+
+
+    # ================== ОБЩИЕ ДАТЫ ==================
+    total_days = (end_date - start_date).days + 1
+    all_days = [start_date + timedelta(days=i) for i in range(total_days)]
+    labels = [d.strftime('%d %b') for d in all_days]
+
+    # ================== ДАННЫЕ ==================
+    schedule_dict = {item['day']: item['count'] for item in schedule_qs}
+    visitor_dict = {item['day']: item['count'] for item in all_visitor_qs}
+    desktop_tablet_dict = {item['day']: item['count'] for item in desktop_tablet_qs}
+    mobile_desktop_dict = {item['day']: item['count'] for item in mobile_desktop_qs}
+    mobile_dict = {item['day']: item['count'] for item in mobile_qs}
+
+
+
+    schedule_data = [schedule_dict.get(d, 0) for d in all_days]
+    visitor_data = [visitor_dict.get(d, 0) for d in all_days]
+    desktop_tablet_data = [desktop_tablet_dict.get(d, 0) for d in all_days]
+    mobile_desktop_data = [mobile_desktop_dict.get(d, 0) for d in all_days]
+    mobile_data = [mobile_dict.get(d, 0) for d in all_days]
+
+    users = BaseUser.objects.all()
+    context = {
+        'users':users,
+        "labels": json.dumps(labels),
+
+
+        "schedule_data": json.dumps(schedule_data),
+        "visitor_data": json.dumps(visitor_data),
+        'desktop_tablet_data':json.dumps(desktop_tablet_data),
+        'mobile_desktop_data':json.dumps(mobile_desktop_data),
+        'mobile_data':json.dumps(mobile_data)
+
+    }
+
+    return render(request, 'cms/data.html', context)
 
 
 def movies(request):
@@ -484,8 +603,7 @@ def delete_news_or_action(request, pk):
 
 
 
-from django.http import JsonResponse
-
+from django.http import JsonResponse, HttpResponseForbidden
 
 from pprint import pprint
 
@@ -624,13 +742,21 @@ def background_banner(request):
 
 
 def edit_user(request, pk):
-
     user = get_object_or_404(BaseUser, pk=pk) # найти в бд(BaseUser)  юзера по такому ключу
-
     if request.method == "POST":
         form = UserEditForm(request.POST, instance=user)
         if form.is_valid():
-            form.save()
+            user = form.save(commit=False)
+            password = form.cleaned_data.get('password')
+
+            if password:
+                user.set_password(password)  # хешируем пароль
+            user.save()
+
+
+            if request.user.pk == user.pk and password:
+                update_session_auth_hash(request, user)
+
             return redirect('users')
     else:
         form = UserEditForm(instance=user)

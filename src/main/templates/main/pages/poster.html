@@ -1,0 +1,58 @@
+
+{% extends "main/base_page.html" %}
+{% load i18n %}
+{%block content%}
+<style>
+.MiniPost {
+    display: flex;
+    flex-direction: column;
+    width: 150px;
+    box-shadow: 0 1px 4px 0 #000 !important;
+    border-radius: 3px;
+    overflow: hidden;
+}
+.MiniPostPoster {
+    height: 200px;
+}
+
+.MiniPostPoster img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.WatchTodayWrapper {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+.MiniPostName {
+    height: 20px;
+    margin-bottom: 3px;
+    overflow: hidden;
+}
+</style>
+<div class="container mt-2   p-4" style="background-color: #313549; max-width: 1200px; ">
+    {% if current_movies %}
+    <div class="WatchTodayWrapper">
+
+        {% for movie in current_movies %}
+
+        <div class="MiniPost WatchToday">
+            <a href="{% url 'movie_detail' movie.id %}" class="MiniPostPoster" title="">
+                <img src="{{movie.main_image.url}}" alt="movie">
+            </a>
+            <div class="MiniPostName">
+                <a href="{% url 'movie_detail' movie.id %}">{{movie.title}}</a>
+            </div>
+            <div class="MiniPostName">
+                <a href="" class="btn btn-warning btn-sm w-100 py-0" style="font-size: 12px;">{% trans 'Купить билет' %}</a>
+            </div>
+        </div>
+
+        {% endfor %}
+    </div>
+    {% endif %}
+    </div>
+{%endblock%}

@@ -1,6 +1,6 @@
 
 
-from django.contrib.admin.views.decorators import staff_member_required
+
 from django.urls import path, include
 
 from . import views
@@ -8,8 +8,10 @@ from src.cms import api_views
 from .api_views import start_mailing
 
 urlpatterns = [
+    path('test', views.test, name='test'),
+    path('test/admin/', views.test_admin, name='test_admin'),
 
-    path("", staff_member_required (views.admin), name="statistics"),
+    path("", views.admin, name="statistics"),
 
 
     path('users/', views.user_list, name='users'),
@@ -22,7 +24,7 @@ urlpatterns = [
 
 
 
-    path('content/', staff_member_required(views.content_list), name='content_list'),
+    path('content/', views.content_list, name='content_list'),
     path('content/create/<str:slug>/', views.create_news_or_action, name='content_create'),
     path('content/update/<str:slug>/<int:pk>', views.update_news_or_action, name='content_update'),
     path('content/delete/<int:pk>', views.delete_news_or_action, name='delete_update'),

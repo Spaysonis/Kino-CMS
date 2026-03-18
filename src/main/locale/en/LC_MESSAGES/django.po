@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-01-22 18:24+0000\n"
+"POT-Creation-Date: 2026-03-18 17:36+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,80 +18,107 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: templates/main/includes/head.html:8
+#: src/main/templates/main/includes/head.html:8
 msgid "Главная"
 msgstr "Main"
 
-#: templates/main/includes/head.html:15
-#, fuzzy
-#| msgid " Добро пожаловать, Гость!"
+#: src/main/templates/main/includes/head.html:15
 msgid " Добро пожаловать,"
 msgstr "Welcome"
 
-#: templates/main/includes/head.html:20
+#: src/main/templates/main/includes/head.html:20
 msgid "Выйти"
 msgstr "Exit"
 
-#: templates/main/includes/head.html:25
+#: src/main/templates/main/includes/head.html:25
 msgid " Добро пожаловать, Гость!"
-msgstr "Welcome Gues"
+msgstr "Welcome Guest"
 
-#: templates/main/includes/head.html:27 templates/main/includes/head.html:72
+#: src/main/templates/main/includes/head.html:27
+#: src/main/templates/main/includes/head.html:74
 msgid "Авторизация"
 msgstr "Authorization"
 
-#: templates/main/includes/head.html:79
+#: src/main/templates/main/includes/head.html:81
 msgid "Логин"
 msgstr "Login"
 
-#: templates/main/includes/head.html:80
+#: src/main/templates/main/includes/head.html:82
 msgid "Пароль"
 msgstr "Password"
 
-#: templates/main/includes/head.html:83
+#: src/main/templates/main/includes/head.html:85
 msgid "Войти"
-msgstr "Sing in"
+msgstr "Sign in"
 
-#: templates/main/includes/head.html:84
+#: src/main/templates/main/includes/head.html:86
 msgid "Регистрация"
 msgstr "Registration"
 
-#: templates/main/includes/navigation.html:5
-msgid "Афиша"
+#: src/main/templates/main/includes/movies.html:43
+msgid "Смотрите сегодня"
 msgstr ""
 
-#: templates/main/includes/navigation.html:7
-msgid "Расписание"
+#: src/main/templates/main/includes/movies.html:45
+#: src/main/templates/main/includes/movies.html:75
+msgid "фильмов"
 msgstr ""
 
-#: templates/main/includes/navigation.html:8
+#: src/main/templates/main/includes/movies.html:59
+msgid "Купить билет"
+msgstr "Bay Ticket"
+
+#: src/main/templates/main/includes/movies.html:73
+msgid "Смотрите скоро"
+msgstr ""
+
+#: src/main/templates/main/includes/movies.html:90
+#: src/main/templates/main/includes/navigation.html:7
 msgid "Скоро"
-msgstr ""
+msgstr "Coming Soon"
 
-#: templates/main/includes/navigation.html:9
+#: src/main/templates/main/includes/navigation.html:5
+msgid "Афиша"
+msgstr "Poster"
+
+#: src/main/templates/main/includes/navigation.html:6
+msgid "Расписание"
+msgstr "Schedule"
+
+#: src/main/templates/main/includes/navigation.html:8
 msgid "Кинотеатры"
-msgstr ""
+msgstr "Cinemas"
 
-#: templates/main/includes/navigation.html:10
+#: src/main/templates/main/includes/navigation.html:9
 msgid "Акции"
-msgstr ""
+msgstr "Promotions"
 
-#: templates/main/includes/navigation.html:18
+#: src/main/templates/main/includes/navigation.html:13
+#, fuzzy
+#| msgid "Кинотеатры"
+msgid "О кинотеатре"
+msgstr "Cinemas"
+
+#: src/main/templates/main/includes/navigation.html:16
 msgid "Новости"
-msgstr ""
+msgstr "News"
 
-#: templates/main/includes/navigation.html:19
+#: src/main/templates/main/includes/navigation.html:17
 msgid "Реклама"
-msgstr ""
+msgstr "Advertising"
 
-#: templates/main/includes/navigation.html:20
+#: src/main/templates/main/includes/navigation.html:18
 msgid "Кафе"
-msgstr ""
+msgstr "Cafe"
 
-#: templates/main/includes/navigation.html:21
+#: src/main/templates/main/includes/navigation.html:19
 msgid "Мобильное приложение"
-msgstr ""
+msgstr "Mobile App"
 
-#: templates/main/includes/navigation.html:22
+#: src/main/templates/main/includes/navigation.html:20
 msgid "Контакты"
+msgstr "Contact"
+
+#: src/main/templates/main/includes/navigation.html:34
+msgid "Язык"
 msgstr ""

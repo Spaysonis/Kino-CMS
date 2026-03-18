@@ -85,3 +85,35 @@ class MailTemplate(models.Model):
         return f"{self.file.name}"
 
 
+
+
+
+
+
+
+
+class Product(models.Model):
+    CATEGORY_CHOICES = [
+        ('IZ', 'ИЖ'),
+        ('JAVA', 'Ява'),
+        ('URAL', 'Урал'),
+        ('DNIPRO', 'Днепр'),
+        ('PARTS', 'Запчасти'),
+    ]
+
+    CURRENCY_CHOICES = [
+        ('USD', 'Доллар'),
+        ('UAH', 'Гривна'),
+    ]
+
+    category = models.CharField(max_length=10, choices=CATEGORY_CHOICES, default='IZ')
+    name = models.CharField(max_length=255)
+    article = models.CharField(max_length=50)
+    description = models.TextField(blank=True)
+    price = models.DecimalField(max_digits=10, decimal_places=2)
+    currency = models.CharField(max_length=3, choices=CURRENCY_CHOICES, default='UAH')
+    image = models.ImageField(upload_to='products/', blank=True, null=True)
+    quantity = models.PositiveIntegerField(default=0)  # для теста
+
+    def __str__(self):
+        return f"{self.name} ({self.article})"

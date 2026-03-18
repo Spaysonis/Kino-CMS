@@ -6,13 +6,46 @@ from django import forms
 from .models import Movie, SeoBlock, Updates, Gallery
 
 from src.cms.models.cinema import Cinema, Hall
-from src.cms.models.page import Updates
+from src.cms.models.page import Updates, Product
 from src.cms.models.banners import HomePageBanner, Slider, BackgroundBanner
 from ..user.models import BaseUser
 
 
+class CategoryForm(forms.ModelForm):
+    class Meta:
+        model = Product
+        fields = "__all__"
 
-
+        widgets = {
+            'category': forms.Select(attrs={
+                'class': 'form-select',
+                'id': 'category'
+            }),
+            'name': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Название товара'
+            }),
+            'article': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Артикул'
+            }),
+            'description': forms.Textarea(attrs={
+                'class': 'form-control',
+                'rows': 4
+            }),
+            'price': forms.NumberInput(attrs={
+                'class': 'form-control'
+            }),
+            'currency': forms.Select(attrs={
+                'class': 'form-select'
+            }),
+            'image': forms.ClearableFileInput(attrs={
+                'class': 'form-control'
+            }),
+            'quantity': forms.NumberInput(attrs={
+                'class': 'form-control'
+            }),
+        }
 
 
 
@@ -34,7 +67,7 @@ class UserEditForm(forms.ModelForm):
     class Meta:
         model = BaseUser
         fields = ['first_name', 'last_name', 'nick_name', 'phone_num', 'city', 'address', 'gender', 'date_of_birth',
-                  'language', 'email', 'password', 'card_num' ]
+                  'language', 'email', 'card_num' ]
 
         widgets = {
             'first_name' : forms.TextInput(attrs={'class':'form-control'}),

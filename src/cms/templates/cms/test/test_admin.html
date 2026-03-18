@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Добавление товара</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-white">
+                    <h4 class="mb-0">Добавить новый товар</h4>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{% url 'test_admin' %}" enctype="multipart/form-data">
+                        {% csrf_token %}
+
+                        <!-- Категория -->
+                        <div class="mb-3">
+                            <label class="form-label">Категория</label>
+                            {{ form.category }}
+                        </div>
+
+                        <!-- Название товара -->
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Название товара</label>
+                            <input type="text" class="form-control" id="name" name="name" required>
+                        </div>
+
+                        <!-- Артикул -->
+                        <div class="mb-3">
+                            <label for="article" class="form-label">Артикул</label>
+                            <input type="text" class="form-control" id="article" name="article" placeholder="ИЖ-0001" required>
+                        </div>
+
+                        <!-- Описание -->
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Описание</label>
+                            <textarea class="form-control" id="description" name="description" rows="3"></textarea>
+                        </div>
+
+                        <!-- Цена и валюта -->
+                        <div class="row">
+                            <div class="col-md-8 mb-3">
+                                <label for="price" class="form-label">Цена</label>
+                                <input type="number" step="0.01" class="form-control" id="price" name="price" required>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="currency" class="form-label">Валюта</label>
+                                <select class="form-select" id="currency" name="currency" required>
+                                    <option value="UAH">Гривна (₴)</option>
+                                    <option value="USD">Доллар ($)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Количество -->
+                        <div class="mb-3">
+                            <label for="quantity" class="form-label">Количество на складе</label>
+                            <input type="number" class="form-control" id="quantity" name="quantity" value="0" min="0">
+                        </div>
+
+                        <!-- Фото -->
+                        <div class="mb-4">
+                            <label for="image" class="form-label">Фото товара</label>
+                            <input class="form-control" type="file" id="image" name="image" accept="image/*">
+                            <div class="form-text">Загрузите изображение товара (необязательно)</div>
+                        </div>
+
+                        <!-- Кнопки -->
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary">Сохранить товар</button>
+                            <button type="reset" class="btn btn-secondary">Очистить</button>
+                            <a href="#" class="btn btn-outline-secondary ms-auto">Отмена</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Простая таблица последних добавленных -->
+            <div class="card shadow-sm mt-4">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0">Последние добавленные товары</h5>
+                </div>
+                <div class="card-body p-0">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Фото</th>
+                                <th>Артикул</th>
+                                <th>Название</th>
+                                <th>Цена</th>
+                                <th>Кол-во</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <div class="bg-secondary bg-opacity-10 rounded" style="width: 40px; height: 40px;"></div>
+                                </td>
+                                <td>ИЖ-0001</td>
+                                <td>Амортизатор</td>
+                                <td>1500 ₴</td>
+                                <td>10</td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="bg-secondary bg-opacity-10 rounded" style="width: 40px; height: 40px;"></div>
+                                </td>
+                                <td>ИЖ-0002</td>
+                                <td>Глушитель</td>
+                                <td>$45.50</td>
+                                <td>5</td>
+                            </tr>
+                            <tr>
+                                <td colspan="5" class="text-center text-muted py-3">
+                                    <small>Всего 50 товаров в базе</small>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap JS (для работы форм) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

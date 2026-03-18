@@ -29,7 +29,11 @@ SECRET_KEY = 'django-insecure-f3ujl9b3(z9+nd(+4j9dc@v_cv9lx*i$!&z1@)as^is0t%5yui
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    '127.0.0.1',
+    'localhost',
+    '192.168.0.105',
+]
 
 
 # Application definition
@@ -126,7 +130,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 
 
-LANGUAGE_CODE = 'en'
+LANGUAGE_CODE = 'ru'
 
 LANGUAGES = [
     ('ru', 'Русский'),
@@ -187,6 +191,8 @@ CACHES = {
         }
     }
 }
+
+LOGIN_URL = '/admin/'
 
 
 CELERY_BROKER_URL = "redis://localhost:6379/0"

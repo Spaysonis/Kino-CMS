@@ -3,6 +3,25 @@ from src.cms.models.cinema import Movie, Hall, MovieFormat
 from src.user.models import BaseUser as User
 
 
+
+class Visitor(models.Model):
+    DEVICE_CHOICES = [
+        ('mobile', 'Mobile'),
+        ('tablet', 'Tablet'),
+        ('desktop', 'Desktop'),
+        ('other', 'Other'),
+    ]
+    session_key = models.CharField(max_length=100, null=True, blank=True)
+    device_type = models.CharField(max_length=20, choices=DEVICE_CHOICES)
+    created_at = models.DateTimeField(auto_now_add=True)
+    country = models.CharField(max_length=100, blank=True)
+    ip_address = models.GenericIPAddressField(null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.device_type} — {self.created_at.date()}"
+
+
+
 class Schedule(models.Model):
     movie = models.ForeignKey(Movie, on_delete=models.CASCADE, related_name="schedules")
     hall = models.ForeignKey(Hall, on_delete=models.CASCADE)

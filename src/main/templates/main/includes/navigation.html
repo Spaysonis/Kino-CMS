@@ -1,40 +1,64 @@
+{% load i18n %}
 
-{%load i18n%}
+<div class="d-flex flex-wrap align-items-center justify-content-between mt-2 p-3" style="background-color: #313549; border-radius: 8px;">
+    <div class="btn-group flex-wrap" role="group" aria-label="Main navigation">
+        <a href="{% url 'poster' %}" class="btn btn-outline-warning">{% trans 'Афиша' %}</a>
 
-<div class="btn-group mt-2" role="group" aria-label="Button group with nested dropdown">
-    <button type="button" class="btn btn-secondary">{%translate 'Афиша'%}</button>
-    <button type="button" class="btn btn-secondary">{%translate 'Расписание'%}</button>
-    <button type="button" class="btn btn-secondary">{%translate 'Скоро'%}</button>
-    <button type="button" class="btn btn-secondary">{%translate 'Кинотеатры'%}</button>
-    <button type="button" class="btn btn-secondary">{%translate 'Акции'%}</button>
+        <a href="{% url  'schedule' %}" class="btn btn-outline-warning">{% trans 'Расписание' %}</a>
+        <a href="" class="btn btn-outline-warning">{% trans 'Скоро' %}</a>
+        <a href="" class="btn btn-outline-warning">{% trans 'Кинотеатры' %}</a>
+        <a href="" class="btn btn-outline-warning">{% trans 'Акции' %}</a>
 
-    <div class="btn-group" role="group">
-        <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-            {%translate 'О кинотеатре'%}
-
-        </button>
-        <div class="dropdown-menu">
-            <a class="dropdown-item" href="#">{%translate 'Новости'%}</a>
-            <a class="dropdown-item" href="#">{%translate 'Реклама'%}</a>
-            <a class="dropdown-item" href="#">{%translate 'Кафе'%}</a>
-            <a class="dropdown-item" href="#">{%translate 'Мобильное приложение'%}</a>
-            <a class="dropdown-item" href="#">{%translate 'Контакты'%}</a>
-        </div>
-    </div>
-    <div class="text-right">
-
-
-        <div class="btn-group ">
-            <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false">
-                {%translate 'Язык'%}
+        <div class="btn-group" role="group">
+            <button type="button" class="btn btn-outline-warning dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                {% trans 'О кинотеатре' %}
             </button>
-            <div class="dropdown-menu">
-                <a class="dropdown-item" href="#">{%translate 'Русский'%}</a>
-                <a class="dropdown-item" href="#">{%translate 'Англиский'%}</a>
+            <div class="dropdown-menu" style="background-color: #313549; border: 1px solid #ffc107;">
+                <a class="dropdown-item text-warning" href="" style="background-color: transparent;">{% translate 'Новости' %}</a>
+                <a class="dropdown-item text-warning" href="#" style="background-color: transparent;">{% translate 'Реклама' %}</a>
+                <a class="dropdown-item text-warning" href="#" style="background-color: transparent;">{% translate 'Кафе' %}</a>
+                <a class="dropdown-item text-warning" href="#" style="background-color: transparent;">{% translate 'Мобильное приложение' %}</a>
+                <a class="dropdown-item text-warning" href="#" style="background-color: transparent;">{% translate 'Контакты' %}</a>
             </div>
         </div>
     </div>
 
+    <!-- Улучшенный переключатель языка -->
+    <div class="btn-group ml-2" role="group">
+        {% get_current_language as LANGUAGE_CODE %}
+        <button type="button" class="btn btn-warning dropdown-toggle text-dark font-weight-bold" data-toggle="dropdown" aria-expanded="false">
+            {% if LANGUAGE_CODE == 'ru' %}
+                🇷🇺 Русский
+            {% elif LANGUAGE_CODE == 'en' %}
+                🇬🇧 English
+            {% else %}
+                {% translate 'Язык' %}
+            {% endif %}
+        </button>
+        <div class="dropdown-menu dropdown-menu-right" style="background-color: #313549; border: 1px solid #ffc107; min-width: 160px;">
+            <form action="{% url 'set_language' %}" method="post" style="display: inline;">
+                {% csrf_token %}
+                <input name="next" type="hidden" value="{{ redirect_to }}">
+                <button type="submit" name="language" value="ru" class="dropdown-item text-warning d-flex align-items-center" style="background-color: {% if LANGUAGE_CODE == 'ru' %}#3d4155{% else %}transparent{% endif %};">
+                    🇷🇺 <span class="ml-2">Русский</span>
+                    {% if LANGUAGE_CODE == 'ru' %}
+                        <span class="ml-auto">✓</span>
+                    {% endif %}
+                </button>
+            </form>
+            <form action="{% url 'set_language' %}" method="post" style="display: inline;">
+                {% csrf_token %}
+                <input name="next" type="hidden" value="{{ redirect_to }}">
+                <button type="submit" name="language" value="en" class="dropdown-item text-warning d-flex align-items-center" style="background-color: {% if LANGUAGE_CODE == 'en' %}#3d4155{% else %}transparent{% endif %};">
+                    🇬🇧 <span class="ml-2">English</span>
+                    {% if LANGUAGE_CODE == 'en' %}
+                        <span class="ml-auto">✓</span>
+                    {% endif %}
+                </button>
+            </form>
+        </div>
+    </div>
 </div>
 
-
+<!-- Не забудьте добавить этот URL в urls.py для работы переключения языка -->
+<!-- path('i18n/', include('django.conf.urls.i18n')), -->

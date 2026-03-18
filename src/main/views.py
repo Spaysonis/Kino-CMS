@@ -3,14 +3,43 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from .forms import SimpleRegistrationForm, ProfileEditForm
-from .models import Schedule, Booking
+from .models import Schedule, Booking, Visitor
 
 from ..cms.models import Cinema, Movie
-from django.contrib.auth.decorators import login_required
+from src.main.utils import get_device_type, get_country_from_ip, get_client_ip
+from datetime import date
+
+def schedule(request):
+    cinemas = Cinema.objects.all()
+    movies = Movie.objects.all()
+    schedules = Schedule.objects.all()
+    movies = Movie.objects.all()
+    context = {
+        'cinemas':cinemas,
+        'movies':movies,
+        'schedules':schedules,
+
+
+    }
+    return render(request, 'main/pages/schedule.html', context)
+
+
+
+def poster_coming(request):
+    movies = Movie.objects.all()
+
+    today = date.today()
+    current_movies = Movie.objects.filter(start_date__lte=today, end_date__gte=today).order_by('start_date')
+
+    context = {
+        'current_movies':movies
+    }
+    return render(request, 'main/pages/poster.html', context)
+
 
 
 def main(request):
-    from datetime import date
+
 
     movies = Movie.objects.all()
     today = date.today()
@@ -19,6 +48,24 @@ def main(request):
     # start_date > today
     upcoming_movies = Movie.objects.filter(start_date__gt=today).order_by('start_date')
 
+
+    session_key = request.session.session_key
+    if not session_key:
+        request.session.create()
+        session_key = request.session.session_key
+
+    ip = get_client_ip(request)
+    device = get_device_type(request)
+    country = get_country_from_ip(ip)
+
+    visitor, created = Visitor.objects.get_or_create(
+        session_key=session_key,
+        defaults={
+            'device_type': device,
+            'ip_address': ip,
+            'country': country,
+        }
+    )
 
     context = {
         'movies': movies,
