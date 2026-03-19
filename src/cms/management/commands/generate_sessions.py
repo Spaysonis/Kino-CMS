@@ -1,3 +1,4 @@
+import random
 from datetime import time
 
 from django.core.management.base import BaseCommand
@@ -10,22 +11,43 @@ class Command(BaseCommand):
     help = 'sessions list'
 
     def handle(self, *args, **kwargs):
-        halls = Hall.objects.all()  # все залы
+        halls = list(Hall.objects.all())
+        movies = list(Movie.objects.all())
+
         times = [time(10, 0), time(14, 0), time(18, 0), time(21, 0)]
 
-        for movie in Movie.objects.all():
-            days = movie.rental_days()
-            formats = movie.format_movie.all()
+        # собираем все дни проката
+        all_days = set()
+        for movie in movies:
+            all_days.update(movie.rental_days())
 
-            for day in days:
-                for hall in halls:
-                    for t in times:
-                        for fmt in formats:
-                            Schedule.objects.get_or_create(
-                                movie=movie,
-                                hall=hall,
-                                date=day,
-                                time=t,
-                                format=fmt
-                            )
-        self.stdout.write(self.style.SUCCESS("Сеансы для всех залов успешно созданы!"))
+        for day in sorted(all_days):
+            for t in times:
+                random.shuffle(movies)  # перемешиваем фильмы
+
+                for i, hall in enumerate(halls):
+                    if i >= len(movies):
+                        break
+
+                    movie = movies[i]
+
+                    # берем случайный формат фильма
+                    formats = list(movie.format_movie.all())
+                    if not formats:
+                        continue
+
+                    fmt = random.choice(formats)
+
+                    # проверка на занятость зала
+                    if Schedule.objects.filter(hall=hall, date=day, time=t).exists():
+                        continue
+
+                    Schedule.objects.create(
+                        movie=movie,
+                        hall=hall,
+                        date=day,
+                        time=t,
+                        format=fmt
+                    )
+
+        self.stdout.write(self.style.SUCCESS("Расписание успешно сгенерировано!"))

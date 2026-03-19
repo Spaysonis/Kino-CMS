@@ -5,22 +5,80 @@ from django.contrib import messages
 from .forms import SimpleRegistrationForm, ProfileEditForm
 from .models import Schedule, Booking, Visitor
 
-from ..cms.models import Cinema, Movie
+from ..cms.models import Cinema, Movie, Hall
 from src.main.utils import get_device_type, get_country_from_ip, get_client_ip
 from datetime import date
+from django.utils import timezone
+
+
+def cinema(request):
+
+    cinemas = Cinema.objects.all()
+
+    context = {
+        'cinemas':cinemas
+    }
+    return render(request, 'main/pages/cinema.html',context)
 
 def schedule(request):
     cinemas = Cinema.objects.all()
     movies = Movie.objects.all()
-    schedules = Schedule.objects.all()
-    movies = Movie.objects.all()
-    context = {
-        'cinemas':cinemas,
-        'movies':movies,
-        'schedules':schedules,
+    halls = Hall.objects.all()
 
+    schedules = Schedule.objects.all()
+
+    # получаем параметры
+    cinema_id = request.GET.get('cinema')
+    movie_id = request.GET.get('movie')
+    hall_id = request.GET.get('hall')
+    date_str = request.GET.get('date_session')
+    selected_date = date_str if date_str else timezone.localdate().strftime("%Y-%m-%d")
+    print(selected_date)
+
+    try:
+        selected_cinema = int(cinema_id) if cinema_id else None
+    except ValueError:
+        selected_cinema = None
+
+    try:
+        selected_movie = int(movie_id) if movie_id else None
+    except ValueError:
+        selected_movie = None
+
+    try:
+        selected_hall = int(hall_id) if hall_id else None
+    except ValueError:
+        selected_hall = None
+
+
+
+    # фильтры
+    if cinema_id:
+        schedules = schedules.filter(hall__cinema_id=cinema_id)
+
+    if movie_id:
+        schedules = schedules.filter(movie_id=movie_id)
+
+    if hall_id:
+        schedules = schedules.filter(hall_id=hall_id)
+
+    if date_str:
+        schedules = schedules.filter(date=selected_date)
+    else:
+        schedules = schedules.filter(date=timezone.localdate())  # по умолчанию сегодня
+
+    context = {
+        'cinemas': cinemas,
+        'movies': movies,
+        'halls': halls,
+        'schedules': schedules,
+        'selected_cinema': selected_cinema,
+        'selected_movie': selected_movie,
+        'selected_hall': selected_hall,
+        'selected_date':selected_date
 
     }
+
     return render(request, 'main/pages/schedule.html', context)
 
 

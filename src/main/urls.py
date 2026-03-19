@@ -13,6 +13,9 @@ urlpatterns = [
     path("sessions/<int:pk>/confirm/", confirm_booking, name="confirm_booking"),
 
 
+    path("cinemas", views.cinema, name="cinemas"),
+
+
 
 
     path('login/', views.user_login, name='user_login'),
