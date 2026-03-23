@@ -1,0 +1,224 @@
+{% extends "cms/statistics.html" %}
+
+{% block content %}
+
+<style>
+    .switch {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 24px;
+}
+
+.switch input {
+  display: none;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  background-color: #ccc;
+  border-radius: 24px;
+  top: 0; left: 0; right: 0; bottom: 0;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  border-radius: 50%;
+  transition: 0.3s;
+}
+
+input:checked + .slider {
+  background-color: green;
+}
+
+input:checked + .slider:before {
+  transform: translateX(26px);
+}
+</style>
+
+<div class="row justify-content-center">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">Информация о кинотеатре</h4>
+            </div>
+            <form method="POST" enctype="multipart/form-data">
+                <div class="card-body " id="wrapper-form">
+                    {% csrf_token %}
+                    {{ formset.management_form }}
+                    {% for form in formset %}
+                    {{ form.id }}
+                    <div class="form-item border p-3 mb-3">
+                        <h5>Кинотеатр #{{ forloop.counter }}</h5>
+                        {%if form.instance.id == 1 %}
+                        {{ form.is_active.as_hidden }}
+                        {% else %}
+                        <div class="d-flex align-items-center mr-5">
+                        <label class="switch">
+                            {{ form.is_active }}
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                        {%endif%}
+
+                        <div class="form-group">
+                            <label >Название кинотеарта  </label>
+                            {{ form.title }}
+                        </div>
+                        <!-- Адрес -->
+                        <div class="form-group">
+                            <label >Адрес</label>
+                            {{form.address}}
+                        </div>
+
+                        <!-- Координаты для карты -->
+                        <div class="form-group">
+                            <label>Координаты для карты</label>
+                            {{form.coordinates}}
+                        </div>
+
+                        <!-- Логотип -->
+                        <div class="form-group">
+                            <label>Лого</label>
+                            <div class="custom-file">
+                                {{form.main_image}}
+                                <label class="custom-file-label"  aria-describedby="inputGroupFileAddon02">Выберете фаил</label>
+                            </div>
+                        </div>
+
+                        <div class="mt-3 logo-preview" style="display: {% if form.instance.main_image %}flex{% else %}none{% endif %};">
+                            <div class="d-flex align-items-center">
+                                <img class="preview-image mr-3 border p-1"
+                                     src="{% if form.instance.main_image %}{{ form.instance.main_image.url }}{% else %}#{% endif %}"
+                                     alt="Предпросмотр лого"
+                                     style="max-width: 150px; max-height: 100px;">
+                                <button type="button" class="btn btn-danger btn-sm remove-logo">Удалить</button>
+                            </div>
+                        </div>
+                        <hr class="my-4">
+                    </div>
+                    {%endfor%}
+                </div>
+                <div class="text-center">
+                    <button type="button" id="add-form" class="btn btn-success mt-3">Добавить еще кинотеатр </button>
+                </div>
+                <div class="text-center">
+                    <button type="submit" class="btn btn-success mt-3">Сохранить</button>
+                </div>
+            </form>
+        </div>
+
+        <div id="empty-form" style="display: none;">
+                {% with form=formset.empty_form %}
+                <div class="form-item border p-3 mb-3">
+                    <div class="d-flex align-items-center mr-5">
+                        <label class="switch">
+                            {{ form.is_active }}
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+
+                    <div class="form-group">
+                        <label >Название кинотеарта</label>
+                        {{ form.title }}
+                    </div>
+                    <!-- Адрес -->
+                    <div class="form-group">
+                        <label >Адрес</label>
+                        {{form.address}}
+                    </div>
+
+                        <!-- Координаты для карты -->
+                    <div class="form-group">
+                        <label>Координаты для карты</label>
+                        {{form.coordinates}}
+                    </div>
+
+                        <!-- Логотип -->
+                    <div class="form-group">
+                        <label>Лого</label>
+                        <div class="custom-file">
+                            {{form.main_image}}
+                            <label class="custom-file-label"  aria-describedby="inputGroupFileAddon02">Выберете фаил</label>
+                        </div>
+                    </div>
+                    <div class="mt-3 logo-preview" style="display: none;">
+                        <div class="d-flex align-items-center">
+                            <img class="preview-image mr-3 border p-1" src="#" alt="Предпросмотр лого" style="max-width: 150px; max-height: 100px;">
+                            <button type="button" class="btn btn-danger btn-sm remove-logo">Удалить</button>
+                        </div>
+                    </div>
+                </div>
+                {% endwith %}
+            </div>
+
+    </div>
+</div>
+
+
+
+
+
+
+
+
+<script>
+
+
+document.addEventListener("DOMContentLoaded", function() {
+    const addBtn = document.getElementById("add-form");
+    const totalForms = document.querySelector("#id_form-TOTAL_FORMS");
+    const wrapper = document.getElementById("wrapper-form");
+    const emptyForm = document.getElementById("empty-form").innerHTML;
+
+    console.log(totalForms.value)
+
+    addBtn.addEventListener("click", function() {
+        let formCount = parseInt(totalForms.value);
+        let newForm = emptyForm.replace(/__prefix__/g, formCount);
+        wrapper.insertAdjacentHTML("beforeend", newForm);
+        totalForms.value = formCount + 1;
+        console.log(totalForms.value)
+    });
+
+});
+
+document.addEventListener("DOMContentLoaded", function() {
+    document.querySelectorAll(".form-item").forEach(container => {
+        const inputFile = container.querySelector("input[type='file']");
+        const previewContainer = container.querySelector(".logo-preview");
+        const previewImage = container.querySelector(".preview-image");
+        const removeBtn = container.querySelector(".remove-logo");
+
+        if (!inputFile) return;
+
+        // При выборе нового файла
+        inputFile.addEventListener("change", function() {
+            if (inputFile.files && inputFile.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    previewImage.src = e.target.result;
+                    previewContainer.style.display = "flex";
+                }
+                reader.readAsDataURL(inputFile.files[0]);
+            }
+        });
+
+        // Кнопка удалить
+        removeBtn?.addEventListener("click", function() {
+            inputFile.value = "";
+            previewImage.src = "#";  // скрываем старое
+            previewContainer.style.display = "none";
+        });
+    });
+});
+
+</script>
+{% endblock %}

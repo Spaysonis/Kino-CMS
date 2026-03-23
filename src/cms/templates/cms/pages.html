@@ -1,0 +1,44 @@
+{% extends "cms/statistics.html" %}
+
+{% block content %}
+    <a href="{% url 'page_create' %}" class="btn btn-success mb-3">
+        Создать страницу
+    </a>
+
+    <table class="table table-bordered table-hover">
+        <thead class="thead-light">
+        <tr>
+            <th>Название</th>
+            <th>Дата создания</th>
+            <th>Статус</th>
+            <th>Действия</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for page in pages %}
+        <tr class="table-secondary">
+            <td>{{ page.get_page_type_display }}</td>
+            <td>{{ page.creation_data }}</td>
+            {%if page.is_active %}
+            <td>Вкл</td>
+            {%else%}
+            <td>Выкл</td>
+            {%endif%}
+
+            <td class="text-center">
+                <a href="{{ page.get_edit_url }}" class="btn btn-sm btn-outline-primary mr-1" title="Редактировать">
+                    <i class="fas fa-pencil-alt"></i>
+                </a>
+                {% if page.deletable %}
+                <button class="btn btn-sm btn-outline-danger" title="Удалить">
+                    <i class="fas fa-trash"></i>
+                </button>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+
+{%endblock%}

@@ -7,5 +7,6 @@ class UserConfig(AppConfig):
 
     def ready(self):
         import src.cms.translation
+        import src.cms.signals
         print('идет импорт -> import src.cms.translation ')
 

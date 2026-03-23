@@ -1,0 +1,53 @@
+{% extends "cms/statistics.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-body">
+
+            <!-- Название кинотеатра -->
+            <div class="form-group row">
+                <label class="col-md-3 col-form-label">Название кинотеатра</label>
+                <div class="col-md-6">
+                    <input type="text" class="form-control" placeholder="Название кинотеатра">
+                </div>
+            </div>
+
+            <!-- Адрес -->
+            <div class="form-group row">
+                <label class="col-md-3 col-form-label">Адрес</label>
+                <div class="col-md-9">
+                    <textarea class="form-control" rows="4" placeholder="Кинотеатр 'Золотой Дюк'&#10;Одесса, проспект Академика Глушко, 11ж&#10;Бронирование билетов: (048) 746-32-33, (048) 746-32-20&#10;e-mail: goldd u ke@kino.odessa.ua"></textarea>
+                </div>
+            </div>
+
+            <!-- Координаты -->
+            <div class="form-group row">
+                <label class="col-md-3 col-form-label">Координаты для карты</label>
+                <div class="col-md-4">
+                    <input type="text" class="form-control" placeholder="Координаты для карты">
+                </div>
+            </div>
+
+            <!-- Лого -->
+            <div class="form-group row align-items-center">
+                <label class="col-md-3 col-form-label">Лого</label>
+
+                <div class="col-md-2">
+                    <div class="border d-flex align-items-center justify-content-center" style="height:100px;">
+                        <span class="text-muted">нет фото</span>
+                    </div>
+                </div>
+
+                <div class="col-md-7">
+                    <div class="d-flex">
+                        <input type="file" class="form-control-file mr-3">
+                        <button type="button" class="btn btn-outline-danger">Удалить</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,19 +1,25 @@
 {% extends "cms/statistics.html" %}
-{% load django_tables2 %}
+
 
 {% block content %}
 
 
 
-<form   enctype="multipart/form-data" method="post"
- action="{% if movie_form.instance.pk %}
-                  {% url 'movie_update' movie_form.instance.pk %}
-              {% else %}
-                  {% url 'movie_create' %}
-              {% endif %}">
+<form action="{% url 'page_create' %}" method="post" enctype="multipart/form-data">
+
     {% csrf_token %}
+    <input type="hidden" name="type" value="{{ page.page_type }}">
     <div class="p-2">
-        <div class="col d-flex justify-content-end pr-5">
+         <div class="col d-flex justify-content-end pr-5">
+
+            <div class="d-flex align-items-center mr-5">
+                <label for="newsStatusToggle" class="mb-0 mr-2">
+                    Активная страница
+                </label>
+                {{ page_form.is_active }}
+            </div>
+
+
             <div class="btn-group btn-group-toggle" data-toggle="buttons" id="lang-switcher">
                 <label class="btn btn-secondary active" data-lang="ru">
                     <input type="radio" name="options" checked > RUS
@@ -23,29 +29,29 @@
                 </label>
             </div>
         </div>
-        <div class="row">
-            <div class="col-md-4">
-                <div class="lang-block lang-ru">
-                    <div class="input-group mb-3">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text" >
-                                Назавние фильма
-                            </span>
-                        </div>
-                        {{ movie_form.title_ru}}
-                    </div>
-                </div>
 
-                <div class="lang-block lang-en d-none">
-                    <div class="input-group mb-3">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text" >News title</span>
-                        </div>
-                        {{ movie_form.title_en}}
+
+
+        <div class="row lang-block lang-ru">
+            <div class="col-md-4">
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" >Название</span>
                     </div>
+                    {{ page_form.title_ru}}
                 </div>
             </div>
+        </div>
 
+         <div class="row lang-block lang-en d-none">
+            <div class="col-md-4">
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" >Title</span>
+                    </div>
+                    {{ page_form.title_en}}
+                </div>
+            </div>
         </div>
 
 
@@ -60,7 +66,7 @@
                     <div class="input-group-prepend">
                         <span class="input-group-text">Описание</span>
                     </div>
-                    {{movie_form.description_ru }}
+                    {{page_form.description_ru }}
 
                 </div>
             </div>
@@ -72,12 +78,22 @@
                     <div class="input-group-prepend">
                         <span class="input-group-text">Description</span>
                     </div>
-                    {{movie_form.description_en }}
+                    {{page_form.description_en }}
                 </div>
             </div>
         </div>
 
 
+        <div class="row">
+            <div class="col-md-8">
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">Условия</span>
+                    </div>
+                    {{page_form.conditions}}
+                </div>
+            </div>
+        </div>
 
         <div id="bannerAndLogo-wrapper">
             <div class="row">
@@ -91,21 +107,20 @@
 
 
                 <div class="card col-md-2" style="width: 20rem;">
-                    {% if movie_form.instance.main_image %}
-                    <img id="mainImagePreview" src="{{movie_form.instance.main_image.url}}"  class="card-img-top"  alt="">
-                    {% else %}
-                    <img id='mainImagePreview' src="https://www.nomadfoods.com/wp-content/uploads/2018/08/placeholder-1-e1533569576673-960x960.png" class="card-img-top" alt="...">
-                    {% endif %}
+                    <img id="mainImagePreview"
+                         src="{% if page.main_image %}{{ page.main_image.url }}{% else %}https://www.nomadfoods.com/wp-content/uploads/2018/08/placeholder-1-e1533569576673-960x960.png{% endif %}"
+                         class="card-img-top"  alt="">
                 </div>
                 <div  class="col-md-2">
                     <button type="button"  id="uploadLogoBtn" class="btn btn-success">Загрузить</button>
-                    {{ movie_form.main_image }}
                 </div>
                 <div  class="col-md-2">
                    <button type="button" id="deleteLogoBtn" class="btn btn-danger">Удалить</button>
                 </div>
-
+                {{ page_form.main_image }}
             </div>
+
+
         </div>
 
 
@@ -135,34 +150,28 @@
             </div>
 
             <!-- Контейнер для галереи -->
+            <!-- Контейнер для галереи -->
             <div class="row" id="gallery-container">
-                {{ formset_gallery.management_form }}
-                {% for form in formset_gallery %}
-                   {{ form.id }}
-                <div style="display:none">
-                    {{ form.DELETE }}
-                </div>
+                {{ formset.management_form }}
+                {% for form in formset %}
                 <div class="col-md-2 gallery-item mb-3">
+                    {{ form.id }}
+                    <div style="display: none;">{{form.DELETE}}</div>
                     <!-- Кнопка удалить -->
-
                     <button type="button" class="btn btn-danger w-100 mb-2 remove-image">Удалить</button>
-                     {{form.instance.pk }}
-                    {%if form.instance.pk and form.instance.image %}
-                    <!-- Превью -->
-                    <img class="card-img-top preview mb-2"
-                         src="{{form.instance.image.url}}" alt="...">
-                    {%else%}
+                <!-- Превью -->
+                    {% if form.instance.pk and form.instance.image%}
+                    <img class="card-img-top preview mb-2" src="{{ form.instance.image.url }}" alt="preview">
+                    {% else %}
                     <img class="card-img-top preview mb-2" src="https://www.nomadfoods.com/wp-content/uploads/2018/08/placeholder-1-e1533569576673-960x960.png" alt="...">
-                    {%endif%}
-                    <!-- Загрузить -->
+                    {% endif %}
+                <!-- Загрузить -->
                     <button type="button" class="btn btn-success w-100 mb-2 upload-btn">Загрузить</button>
-
                     {{ form.image }}
                 </div>
                 {% endfor %}
             </div>
-
-            <!-- Кнопка добавить -->
+        <!-- Кнопка добавить -->
             <div class="row">
                 <div class="col-md-2">
                     <button type="button" class="btn btn-primary w-100" id="add-gallery-item">
@@ -171,57 +180,48 @@
                 </div>
             </div>
 
+
+        <!-- Скрытый шаблон для новых форм -->
             <div id="empty-gallery-form" style="display: none;">
-            {% with form=formset_gallery.empty_form %}
-            <div class="col-md-2 gallery-item mb-3">
-                {{ form.id }}
-                <div style="display: none;">{{form.DELETE }}</div>
-                <button type="button" class="btn btn-danger w-100 mb-2 remove-image">Удалить</button>
-                <img src="https://www.nomadfoods.com/wp-content/uploads/2018/08/placeholder-1-e1533569576673-960x960.png" class="card-img-top preview mb-2" alt="placeholder">
-                {{ form.image }}
-                <button type="button" class="btn btn-success w-100 mb-2 upload-btn">Загрузить</button>
-            </div>
-            {% endwith %}
+                {% with form=formset.empty_form %}
+                <div class="col-md-2 gallery-item mb-3">
+                    {{ form.id }}
+                    <div style="display: none;">{{form.DELETE }}</div>
+                    <button type="button" class="btn btn-danger w-100 mb-2 remove-image">Удалить</button>
+                    <img src="https://www.nomadfoods.com/wp-content/uploads/2018/08/placeholder-1-e1533569576673-960x960.png" class="card-img-top preview mb-2" alt="placeholder">
+                    {{ form.image }}
+                    <button type="button" class="btn btn-success w-100 mb-2 upload-btn">Загрузить</button>
+                </div>
+                {% endwith %}
             </div>
         </div>
 
-        <div class="row mt-4">
-            <div class="col-md-8">
-                <div class="input-group mb-3 mt-2">
-                    <div class="input-group-prepend ">
-                        <span class="input-group-text ">Сслыка на видео</span>
-                    </div>
-                    {{ movie_form.url }}
-                </div>
-            </div>
-        </div>
-        <div class="row mb-4 align-items-center">
-             <span class="input-group-text mr-5 ml-2">Тип фильма:</span>
-            <div class="col-sm-10">
-                {% for checkbox in movie_form.format_movie %}
-                <div class="form-check form-check-inline">
-                    {{ checkbox.tag }}
-                    {{ checkbox.choice_label }}
-                </div>
-                {% endfor %}
-            </div>
-        </div>
 
-        <div class="col-md-4">
-            <div class="input-group mb-2 ">
-                <div class="input-group-prepend">
-                    <span class="input-group-text">Старт проката</span>
-                </div>
-                {{ movie_form.start_date }}
-            </div>
 
-            <div class="input-group mb-3 ">
-                <div class="input-group-prepend">
-                    <span class="input-group-text">Конец проката</span>
-                </div>
-                {{ movie_form.end_date }}
-            </div>
-        </div>
+
+
+
+<!--Закрыл блоки галерея картинок &#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;-->
+
+
+<!--        <div class="text-center mt-5">-->
+<!--            <h1>Список залов</h1>-->
+<!--        </div>-->
+
+<!--        <div class="card-body ml-5">-->
+
+<!--        </div>-->
+
+
+
+<!--        <div class="row mt-4">-->
+<!--            <div class="col-md-12 d-flex justify-content-center mt-5">-->
+
+<!--                <button type="submit" name="action" value="add_hall" class="btn btn-primary">-->
+<!--                    Создать зал-->
+<!--                </button>-->
+<!--            </div>-->
+<!--        </div>-->
 
 
         <div class="row mt-5">
@@ -273,7 +273,6 @@
         </div>
 
 
-
         <div class="row mt-4">
             <div class="col-md-12 d-flex justify-content-center mt-5">
                 <button type="submit" class="btn btn-primary">
@@ -281,11 +280,23 @@
                 </button>
             </div>
         </div>
+
     </div>
 
 
+
+
+
+
+
+
+
+
+</form>
+
 <script>
-document.addEventListener('DOMContentLoaded', function (){
+
+    document.addEventListener('DOMContentLoaded', function (){
      $(document).ready(function() {
     $('#newsStatusToggle').bootstrapToggle({
         on: 'ВКЛ',
@@ -293,9 +304,12 @@ document.addEventListener('DOMContentLoaded', function (){
         onstyle: 'success',
         offstyle: 'danger',
         size: 'small'  // можно менять размер
-    })
+    })})})
 
-    /// реализация переключения полей языка
+         document.addEventListener('DOMContentLoaded', function (){
+
+
+     /// реализация переключения полей языка
     const switcher = document.getElementById('lang-switcher'); // нахожу контейнер с перекл языка
     const blocks = document.querySelectorAll('.lang-block'); // нахожу блок ввода
 
@@ -324,14 +338,12 @@ document.addEventListener('DOMContentLoaded', function (){
         btn.classList.add('active');
     });
 
-
-
     /// ОТВЕЧАЕТ ЗА ГАЛЕРЕЮ КАРТИНОК
 
 
     const galleryWrapper = document.getElementById('gallery-wrapper');
     const Form = document.getElementById('empty-gallery-form').querySelector('.gallery-item')
-    const totalForm =  document.getElementById('id_gallery-TOTAL_FORMS')
+    const totalForm =  document.getElementById('id_formset-TOTAL_FORMS')
     const galleryContainer = document.getElementById('gallery-container')
 
     /// ОТВЕЧАЕТ ЗА ЗАГРУЗКУ КАРТИНКИ ЛОГОТИ И БАННЕР
@@ -343,8 +355,7 @@ document.addEventListener('DOMContentLoaded', function (){
         /// удаление логитпа
 
         if (event.target.id === 'deleteLogoBtn') {
-            console.log('btn delete')
-            const input = document.querySelector('input[name="movie_form-main_image"]');
+            const input = document.querySelector('input[name="page_form-main_image"]');
             input.value = ''
 
             const preview = document.getElementById('mainImagePreview');
@@ -354,14 +365,24 @@ document.addEventListener('DOMContentLoaded', function (){
 
         // загрузка логитпа
         if(event.target.id === 'uploadLogoBtn') {
-            document.querySelector('input[name="movie_form-main_image"]').click();
+            document.querySelector('input[name="page_form-main_image"]').click();
 
         }
 
+        /// удаление баннера
+        if (event.target.id === 'deleteImageTopBannerBtn') {
+            const input = document.querySelector('input[name="cinema_form-image_top_banner"]');
+            input.value = ''
+
+            const preview = document.getElementById('ImageTopBannerPreview');
+            preview.src = placeholderLogo
+        }
 
 
-
-
+        // загрузка баннера
+        if (event.target.id === 'uploadImageTopBannerBtn') {
+            document.querySelector('input[name="cinema_form-image_top_banner"]').click();
+        }
     })
 
     /// ОТВЕЧАЕТ ЗА ЗАМЕНУ КАРТИНКИ ЛОГОТИПА И БАННЕРА
@@ -375,12 +396,12 @@ document.addEventListener('DOMContentLoaded', function (){
 
             let previewId; /// создаю временную переменную для храниения названия превью
 
-            if (event.target.name === 'movie_form-main_image') {
+            if (event.target.name === 'page_form-main_image') {
                 previewId = 'mainImagePreview';
 
             }
-            else if (event.target.name === 'movie_form-image_top_banner') {
-                previewId = 'mainImagePreview'
+            else if (event.target.name === 'cinema_form-image_top_banner') {
+                previewId = 'ImageTopBannerPreview'
             }
 
             /// тут получаю место где лежит старая картинка или плейсхолдер
@@ -481,7 +502,19 @@ document.addEventListener('DOMContentLoaded', function (){
                 totalForm.value = parseInt(totalForm.value) -1
 
 
-            }}})})})
-</script>
-    {% endblock %}
+            }
+        }
+    });});
 
+
+</script>
+
+
+
+
+
+
+
+
+
+{% endblock%}

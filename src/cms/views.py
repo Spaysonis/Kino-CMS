@@ -1,17 +1,19 @@
-from unicodedata import category
+import uuid
 
-from django.forms import formset_factory
 from django.contrib.auth import update_session_auth_hash
+
+
 from .models import Hall, Slider, HomePageBanner, BackgroundBanner
-from src.cms.models.page import SeoBlock, Updates, MailTemplate, Product
+from src.cms.models.page import SeoBlock, Updates, MailTemplate, Product, Page, Contact
 from django.urls import reverse
 from django.shortcuts import render, redirect, get_object_or_404
 from src.cms.models.cinema import Cinema, Movie
 from .forms import MovieForm, SeoBlockForm, UpdatesForm, UserEditForm, CinemaForm, GalleryFormSet, HallForm, \
-    HomePageBannerForm, SliderFormSet, BackgroundBannerForm, CategoryForm
+    HomePageBannerForm, SliderFormSet, BackgroundBannerForm, CategoryForm, ContactForm, PageForm, GalleryFrom, \
+    ContactFormSet
 from .models import Gallery
 from django.shortcuts import render
-from django_tables2 import SingleTableView
+
 from src.user.models import BaseUser
 from .tables import UserTable, HallTable, UpdatesTable
 from ..main.models import Schedule, Visitor
@@ -31,6 +33,158 @@ def test_admin(request):
         form = CategoryForm()
 
     return render(request, 'cms/test/test_admin.html', {'form': form})
+
+def page_create(request):
+
+    page_type = request.POST.get('type') or request.GET.get('type')
+    if page_type:
+        # Редактирование существующей страницы
+        page = get_object_or_404(Page, page_type=page_type)
+        gallery_qs = page.gallery.all()
+
+        page_url = Page.objects.get(page_type=page_type)
+        place_holder = page.get_page_type_display()
+    else:
+        # Создание новой страницы — пустой объект пока не создаём
+        page = None
+        gallery_qs = Gallery.objects.none()
+
+        place_holder = None
+        page_url = None
+
+
+
+    print(gallery_qs)
+    if request.method == 'POST':
+        page_form = PageForm(
+            request.POST or None,
+            request.FILES or None,
+            instance=page,
+            placeholder=place_holder,
+            prefix='page_form'
+        )
+        seo_form = SeoBlockForm(
+            request.POST or None,
+            instance=page.seo_block,
+            prefix='seo_form'
+        )
+
+        formset = GalleryFormSet(request.POST, request.FILES, queryset=gallery_qs, prefix='formset')
+
+
+        if page_form.is_valid() and seo_form.is_valid() and formset.is_valid():
+            # Сохраняем изменения\
+            seo = seo_form.save()
+            page = page_form.save(commit=False)
+            page.seo_block = seo
+            page.save()
+            page_form.save_m2m()
+            gallery_object = formset.save()
+            page.gallery.add(*gallery_object)
+
+            return redirect('pages')  # или редирект на ту же страницу
+        else:
+            # Если форма не валидна, покажем ошибки вместе с уже введёнными данными
+            print("=== Page Form Errors ===", page_form.errors)
+            print("=== SEO Form Errors ===", seo_form.errors)
+            print("=== Formset Errors ===", formset.errors)
+
+    else:
+        page_form = PageForm(instance=page, prefix='page_form')
+        seo_form = SeoBlockForm(instance=page.seo_block if page else None, prefix='seo_form')
+        formset = GalleryFormSet(queryset=gallery_qs, prefix='formset')
+
+
+    return render(request, 'cms/about_page.html', {
+        'type_page': place_holder,
+        'page_form': page_form,
+        'seo_form': seo_form,
+        'formset': formset,
+        'page': page,
+        'page_url':page_url
+    })
+
+
+def contacts_edit(request):
+    if request.method == 'POST':
+        print('works form contacts')
+
+        formset = ContactFormSet(request.POST, request.FILES)
+
+        print(f"Total forms submitted: {formset.total_form_count()}")
+        if formset.is_valid():
+            for form in formset:
+                print(form.cleaned_data.get('is_active'))
+        else:
+            for i, form in enumerate(formset):
+                if form.errors:
+                    print(f"Form {i} (prefix={form.prefix}) has errors:")
+                    for field, errors in form.errors.items():
+                        print(f"  {field}: {errors}")
+
+
+        formset = ContactFormSet(request.POST, request.FILES)
+        if formset.is_valid():
+            for obj in formset.save(commit=False):
+                obj.save()
+            for obj in formset.deleted_objects:
+                if obj.pk != 1:
+                    obj.delete()
+            return redirect('pages')
+    else:
+        queryset = Contact.objects.all()
+        formset = ContactFormSet(queryset=queryset)
+    return render(request, 'cms/contacts_edit.html', {'formset': formset})
+
+
+
+def home_edit(request):
+    return render(request, 'cms/home_edit.html')
+
+
+
+
+
+def pages(request):
+    all_page = Page.objects.all()
+    context = {
+        'pages':all_page,
+        'active_page':'pages'
+    }
+    return render(request, 'cms/pages.html', context)
+
+
+def add_contact(request):
+
+
+    all_cinema = Cinema.objects.all()
+    context = {
+        'cinemas':all_cinema
+    }
+    if request.method == 'POST':
+        contact_form = ContactForm(request.POST, request.FILES)
+        seo_form = SeoBlockForm(request.POST)
+        if contact_form.is_valid() and seo_form.is_valid():
+            seo_block = seo_form.save()
+            contact = contact_form.save(commit=False)
+            contact.seo_block = seo_block
+            contact.save()
+            return redirect('add_contact')
+        else:
+            context = {
+                'contact_form': contact_form,
+                'seo_form': seo_form,
+                'cinemas': all_cinema
+            }
+        return render(request, 'cms/add_contact.html', context)
+
+
+    return render(request, 'cms/add_contact.html', context)
+
+
+
+
+
 
 
 def mailing(request):

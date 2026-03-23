@@ -5,7 +5,7 @@ from django.contrib import messages
 from .forms import SimpleRegistrationForm, ProfileEditForm
 from .models import Schedule, Booking, Visitor
 
-from ..cms.models import Cinema, Movie, Hall
+from ..cms.models import Cinema, Movie, Hall, Page
 from src.main.utils import get_device_type, get_country_from_ip, get_client_ip
 from datetime import date
 from django.utils import timezone
@@ -18,7 +18,32 @@ def cinema(request):
     context = {
         'cinemas':cinemas
     }
-    return render(request, 'main/pages/cinema.html',context)
+    return render(request, 'main/pages/cinemas.html',context)
+
+
+def cinema_card(request):
+    from datetime import date
+    cinema_id = request.GET.get('id')
+    cinema_obj = get_object_or_404(Cinema, id=cinema_id)
+    hall_obj = Hall.objects.filter(cinema=cinema_obj)
+
+
+    schedule_obj = Schedule.objects.filter(hall__cinema=cinema_obj, date=date.today())
+
+    active_pages = Page.active_pages()
+
+    print(hall_obj)
+    print(schedule_obj)
+
+    context = {
+        'cinema':cinema_obj,
+        'hall_obj':hall_obj,
+        'schedule_obj':schedule_obj,
+        'active_pages':active_pages
+    }
+    return render(request, 'main/pages/cinema_card.html', context)
+
+
 
 def schedule(request):
     cinemas = Cinema.objects.all()
@@ -208,7 +233,7 @@ def cinema_list1(request):
     context ={
         'cinema':cinema
     }
-    return render(request, 'main/cinema.html', context)
+    return render(request, 'main/cinemas.html', context)
 
 
 

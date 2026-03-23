@@ -1,6 +1,7 @@
-from django.contrib.contenttypes.models import ContentType
-from django.contrib.contenttypes.fields import GenericForeignKey
+
 from django.db import models
+from django.urls import reverse
+
 from .gallery import Gallery
 from phonenumber_field.modelfields import PhoneNumberField
 
@@ -17,14 +18,37 @@ class SeoBlock(models.Model):
 
 
 class Page(models.Model):
-    seo_block = models.OneToOneField(SeoBlock, on_delete=models.CASCADE)
-    gallery = models.ManyToManyField(Gallery)
+    PAGE_TYPES = (
+        ('home', 'Главная страница'),
+        ('about_cinema', 'О кинотеатре'),
+        ('cafe_bar', 'Кафе - Бар'),
+        ('vip', 'Vip-зал'),
+        ('ads', 'Реклама'),
+        ('kids_room', 'Детская комната'),
+        ('contacts', 'Контакты'),
+    )
 
-    tittle = models.CharField(max_length=200)
-    description = models.TextField()
-    main_image = models.ImageField()
+    page_type = models.CharField(max_length=50, choices=PAGE_TYPES, unique=True)
+    seo_block = models.OneToOneField(SeoBlock, on_delete=models.CASCADE, null=True, blank=True)
+    gallery = models.ManyToManyField(Gallery, blank=True)
+
+    title = models.CharField(max_length=200)
+    description = models.TextField(blank=True)
+    main_image = models.ImageField(null=True, blank=True)
     is_active = models.BooleanField(default=False)
-    creation_data = models.DateTimeField()
+    creation_data = models.DateTimeField(auto_now_add=True)
+
+    def get_edit_url(self):
+        if self.page_type == 'home':
+            return reverse('home_edit')
+        elif self.page_type == 'contacts':
+            return reverse('contacts_edit')
+
+        return f"{reverse('page_create')}?type={self.page_type}"
+
+    @classmethod
+    def active_pages(cls):
+        return cls.objects.filter(is_active=True)
 
 
 class HomePage:
@@ -34,12 +58,11 @@ class HomePage:
 
 
 class Contact(models.Model):
-    seo_block = models.OneToOneField(SeoBlock, on_delete=models.CASCADE)
-    tittle = models.CharField(max_length=200)
+    title = models.CharField(max_length=200)
     address = models.CharField(max_length=200)
     coordinates = models.CharField(max_length=255)
     main_image = models.ImageField()
-
+    is_active = models.BooleanField(default=True)
 
 
 class Updates(models.Model):

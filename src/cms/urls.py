@@ -13,7 +13,6 @@ urlpatterns = [
 
     path("", views.admin, name="statistics"),
 
-
     path('users/', views.user_list, name='users'),
     path('users/<int:pk>/edit/', views.edit_user, name='edit_user'),
     path('users/delete-user/<int:user_id>/', api_views.api_delete_user, name='delete_user'),
@@ -28,6 +27,10 @@ urlpatterns = [
     path('content/create/<str:slug>/', views.create_news_or_action, name='content_create'),
     path('content/update/<str:slug>/<int:pk>', views.update_news_or_action, name='content_update'),
     path('content/delete/<int:pk>', views.delete_news_or_action, name='delete_update'),
+    path('pages', views.pages, name='pages'),
+    path('page/about/', views.page_create, name='page_create'),
+    path('page/home_edit/', views.home_edit, name='home_edit'),
+    path('page/contacts_edit/', views.contacts_edit, name='contacts_edit'),
 
 
 
@@ -48,6 +51,7 @@ urlpatterns = [
     path('cinemas/add', views.cinema_create, name='cinema_create'),
     path('cinemas/<int:pk>/update/', views.cinema_update, name='cinema_update'),
     path('cinema/<int:pk>/delete/', views.cinema_delete, name='cinema_delete'),
+    path('cinema/add_contact/', views.add_contact, name='add_contact'),
 
     path('cinemas/<int:pk>/hall_create/', views.hall_create, name='hall_create'),
     path('cinemas/<int:cinema_pk>/hall/<int:hall_pk>/update/', views.hall_update, name='hall_update'),
@@ -61,6 +65,12 @@ urlpatterns = [
     path('api/delete-mailing/<int:mailing_id>/', api_views.delete_mailing_api, name='delete_mailing_api'),
     path("api/start-mailing/", start_mailing, name="start-mailing"),
     path("api/set_users/", api_views.api_user_modal , name="user_modal"),
+
+
+
+
+
+
 
 
 

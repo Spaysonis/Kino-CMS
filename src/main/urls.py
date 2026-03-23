@@ -14,6 +14,7 @@ urlpatterns = [
 
 
     path("cinemas", views.cinema, name="cinemas"),
+    path("cinema/card/", views.cinema_card, name="cinema_card"),
 
 
 

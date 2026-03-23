@@ -1,6 +1,6 @@
 from modeltranslation.translator import register, TranslationOptions
 
-from src.cms.models import Updates
+from src.cms.models import Updates, Page
 from src.cms.models.cinema import Cinema, Hall, Movie
 
 
@@ -22,5 +22,10 @@ class UpdateTranslation(TranslationOptions):
 
 @register(Movie)
 class MovieTranslation(TranslationOptions):
+    fields = ('title', 'description')
+
+
+@register(Page)
+class PageTranslation(TranslationOptions):
     fields = ('title', 'description')
 

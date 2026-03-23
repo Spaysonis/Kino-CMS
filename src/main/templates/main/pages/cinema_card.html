@@ -1,0 +1,89 @@
+{% extends "main/base_page.html" %}
+{% block content %}
+<div class="container mt-2   p-4" style="background-color: #313549; max-width: 1200px; ">
+
+    <div class="card bg-dark text-white">
+        <img src="{{ cinema.image_top_banner.url }}" class="card-img" alt="..." style="height: 500px; width: 100%; object-fit: cover;">
+    </div>
+
+    <h1>Cinema card </h1>
+
+    <div class="container mt-4">
+  <div class="row">
+
+    <!-- ЛЕВАЯ КОЛОНКА -->
+    <div class="col-md-3">
+
+      <!-- Залы -->
+      <h6>Количество залов: {{ halls_count }}</h6>
+      <div class="list-group mb-4 w-50">
+        {% for hall in hall_obj %}
+          <a href="#" class="list-group-item list-group-item-action small" >
+            Зал {{ hall.number }}
+          </a>
+        {% endfor %}
+      </div>
+
+      <!-- Сеансы -->
+      <h6>Смотрите сегодня:</h6>
+      <div class="list-group mb-3">
+        {% for session in schedule_obj %}
+          <a href="#" class="list-group-item list-group-item-action">
+            Сеанс - {{ forloop.counter }} Время {{ session.time }}
+          </a>
+        {% endfor %}
+      </div>
+
+      <a href="#" class="btn btn-success w-100">Расписание всех сеансов</a>
+    </div>
+
+    <!-- ПРАВАЯ КОЛОНКА -->
+    <div class="col-md-9">
+      <div class="media">
+        <img src="{{cinema.main_image.url}}" class="mr-3 img-fluid" alt="Cinema Image" style="max-width: 200px;">
+        <div class="media-body">
+
+        </div>
+      </div>
+
+      <!-- Описание -->
+      <p>
+        {{ cinema.description }}
+      </p>
+
+      <!-- Условия -->
+      <h4 class="text-center my-4">Условия</h4>
+      {{cinema.conditions}}
+
+      <div class="container py-5">
+        <div class="row">
+        {%for active_page in active_pages %}
+      <!-- Здесь будут ваши страницы -->
+          <div class="col-md-6 mb-4">
+            <div class="card h-100">
+              <div class="card-body">
+                <h5 class="card-title">
+                  <a href="#">
+                    {{active_page.title}}
+                  </a>
+                </h5>
+                <p class="card-text">
+                  {{active_page.description}}
+                </p>
+              </div>
+            </div>
+          </div>
+        {%endfor%}
+
+
+          <!-- Добавляй новые карточки так же через col-md-6 -->
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</div>
+
+
+{%endblock%}

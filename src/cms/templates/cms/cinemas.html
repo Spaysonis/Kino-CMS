@@ -19,6 +19,8 @@
                 <div class="mt-auto d-flex justify-content-between ml-3 mb-2">
                     <a href="{% url 'cinema_update' cinema.id %}" class="btn btn-warning btn-sm">Редактировать</a>
 
+                        <a href="{% url 'add_contact' %}" class="btn btn-primary btn-sm">Добавить контакты</a>
+
                     <form action="{% url 'cinema_delete' cinema.id %}" method="post" style="display:inline;">
                         {% csrf_token %}
                         <button type="submit" class="btn btn-danger btn-sm mr-3">Удалить</button>

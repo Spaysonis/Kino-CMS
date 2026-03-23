@@ -6,9 +6,44 @@ from django import forms
 from .models import Movie, SeoBlock, Updates, Gallery
 
 from src.cms.models.cinema import Cinema, Hall
-from src.cms.models.page import Updates, Product
+from src.cms.models.page import Updates, Product, Contact, Page
 from src.cms.models.banners import HomePageBanner, Slider, BackgroundBanner
 from ..user.models import BaseUser
+
+
+class ContactForm(forms.ModelForm):
+    class Meta:
+        model = Contact
+        fields = "__all__"
+        widgets = {
+            'title': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Название кинотеатра'}),
+            'address': forms.Textarea(attrs={'class': 'form-control', 'rows': 4, 'placeholder': 'Адрес'}),
+            'coordinates': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Координаты'}),
+            'main_image': forms.FileInput(attrs={'class': 'custom-file-input', 'type':'file',}),
+            'is_active':forms.CheckboxInput(attrs={
+                'class': 'status-toggle'})
+        }
+
+ContactFormSet = modelformset_factory(
+    Contact,
+    form=ContactForm,
+    can_delete=True,
+    extra=0
+)
+
+#
+# class ContactForm(forms.ModelForm):
+#     class Meta:
+#         model = Contact
+#         fields = '__all__'
+#         widgets = {
+#             'cinema': forms.Select(attrs={
+#                 'class': 'form-select',
+#                 'id': 'cinema'
+#             }),
+#         }
+
+
 
 
 class CategoryForm(forms.ModelForm):
@@ -46,6 +81,58 @@ class CategoryForm(forms.ModelForm):
                 'class': 'form-control'
             }),
         }
+
+
+
+
+
+class PageForm(forms.ModelForm):
+    class Meta:
+        model = Page
+        fields = ("title_ru", "title_en","description_ru","description_en" , "main_image", 'is_active')
+        widgets = {
+            'title_ru': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'название кинотеатра'
+            }),
+            'title_en': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Cinema title'
+            }),
+
+            'description_ru': forms.Textarea(attrs={
+                'class': 'form-control',
+                'aria-label': 'With textarea',
+                'placeholder': 'Текст',
+                'rows': 4,
+            }),
+
+            'description_en': forms.Textarea(attrs={
+                'class': 'form-control',
+                'aria-label': 'With textarea',
+                'placeholder': 'Text',
+                'rows': 4,
+            }),
+            'main_image': forms.FileInput(attrs={
+                'class': 'd-none',
+
+            }),
+            'is_active': forms.CheckboxInput(attrs={
+                'id': 'newsStatusToggle'
+            }),
+
+        }
+
+    def __init__(self, *args, **kwargs):
+        placeholder = kwargs.pop('placeholder', None)
+        super().__init__(*args, **kwargs)
+
+        if placeholder:
+             self.fields['title_ru'].widget.attrs['placeholder'] = placeholder
+             self.fields['title_en'].widget.attrs['placeholder'] = placeholder
+
+
+
 
 
 
@@ -268,6 +355,7 @@ SliderFormSet = modelformset_factory(
 
 
 class GalleryFrom(forms.ModelForm):
+
     class Meta:
         model = Gallery
         fields = ('image',)

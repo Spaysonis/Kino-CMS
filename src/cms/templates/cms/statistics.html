@@ -25,8 +25,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>AdminCMS | {{ page_title }}</title>
 
-    <!-- Google Font: Source Sans Pro -->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+
 
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -199,12 +198,25 @@
                             <p>Новости</p>
                         </a>
                     </li>
+
+
                     <li class="nav-item">
                         <a href="{% url 'content_list' %}?type=action" class="nav-link {% if active_page == 'action' %}active{% endif %}">
                             <i class="nav-icon fas fa-newspaper"></i>
                             <p>Акции</p>
                         </a>
                     </li>
+
+                    <li class="nav-item">
+                        <a href="{% url 'pages' %}" class="nav-link {% if active_page == 'pages' %}active{% endif %}">
+                            <i class="nav-icon fas fa-newspaper"></i>
+                            <p>Страници</p>
+                        </a>
+                    </li>
+
+
+
+
                     <li class="nav-item">
                         <a href="{% url 'mailing' %}?type=mailing" class="nav-link {% if active_page == 'mailing' %}active{% endif %}">
                             <i class="nav-icon fas fa-newspaper"></i>
@@ -235,7 +247,7 @@
 
         <!-- Main content -->
         <section class="content">
-            <div class="container-fluid">
+            <div class="container-fluid" id="container-fluid">
                 {% block content %}
 
                 {% endblock %}

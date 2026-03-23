@@ -79,7 +79,8 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'django.template.context_processors.request',
-                'src.main.context_processors.common_context'
+                'src.main.context_processors.common_context',
+                'src.cms.context_processors.pages_processor'
             ],
         },
     },
@@ -209,7 +210,6 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-
 
 
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
