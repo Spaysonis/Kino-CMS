@@ -11,8 +11,16 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 import os
+import dotenv
+dotenv.read_dotenv()
+DEBUG = os.getenv("DEBUG") == "True"
+
 
 from pathlib import Path
+
+
+
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -24,10 +32,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-f3ujl9b3(z9+nd(+4j9dc@v_cv9lx*i$!&z1@)as^is0t%5yui'
+SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+
 
 ALLOWED_HOSTS = [
     '127.0.0.1',
@@ -95,9 +103,9 @@ WSGI_APPLICATION = 'config.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'kino_cms',
-        'USER': 'kino_admin',
-        'PASSWORD': '111111',
+        'NAME': os.getenv('NAME_DB'),
+        'USER': os.getenv('USER_DB'),
+        'PASSWORD': os.getenv('PASSWORD_DB'),
         'HOST': '127.0.0.1',
         'PORT': '5432',
     }
@@ -211,5 +219,6 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
-
+EMAIL_HOST_USER = os.getenv('EMAIL_LOGIN')
+EMAIL_HOST_PASSWORD =  os.getenv('EMAIL_PASSWORD')
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
