@@ -15,7 +15,7 @@ import dotenv
 
 
 dotenv.read_dotenv()
-DEBUG = os.getenv("DEBUG") == "True"
+DEBUG = os.getenv("DEBUG") == "False"
 
 
 from pathlib import Path
@@ -42,9 +42,9 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 ALLOWED_HOSTS = [
     '127.0.0.1',
     'localhost',
-    '192.168.0.105',
+    '35.184.44.159',  # ВАШ НОВЫЙ IP
+    'web',            # Имя сервиса в docker-compose (важно для внутренней сети Docker)
 ]
-
 
 # Application definition
 
@@ -225,9 +225,15 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = os.getenv('EMAIL_LOGIN')
 EMAIL_HOST_PASSWORD =  os.getenv('EMAIL_PASSWORD')
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+CSRF_TRUSTED_ORIGINS = [
+    'http://35.184.44.159:8080',
+    'http://localhost:8080',
+]
 
-
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-SECURE_SSL_REDIRECT = True
-SESSION_COOKIE_SECURE = True
-CSRF_COOKIE_SECURE = True
+#SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+SECURE_SSL_REDIRECT = False
+SESSION_COOKIE_SECURE = False
+CSRF_COOKIE_SECURE = False
+SECURE_HSTS_SECONDS = 0
+SECURE_HSTS_INCLUDE_SUBDOMAINS = False
+SECURE_HSTS_PRELOAD = False
