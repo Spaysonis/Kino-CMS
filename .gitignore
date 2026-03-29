@@ -1,3 +1,5 @@
 /venv
 /media
 /config/.env
+/staticfiles
+/.env
