@@ -10,11 +10,19 @@
         <a href="" class="btn btn-outline-warning">{% trans 'Акции' %}</a>
 
         <div class="btn-group" role="group">
-            <button type="button" class="btn btn-outline-warning dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+    <!-- Основная часть кнопки (теперь это ссылка) -->
+            <a href="" class="btn btn-outline-warning">
                 {% trans 'О кинотеатре' %}
+            </a>
+
+            <!-- Кнопка со стрелкой для выпадающего меню -->
+            <button type="button" class="btn btn-outline-warning dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-expanded="false">
+                <span class="sr-only">Toggle Dropdown</span>
             </button>
+
+    <!-- Выпадающее меню (остается таким же) -->
             <div class="dropdown-menu" style="background-color: #313549; border: 1px solid #ffc107;">
-                <a class="dropdown-item text-warning" href="" style="background-color: transparent;">{% translate 'Новости' %}</a>
+                <a class="dropdown-item text-warning" href="#" style="background-color: transparent;">{% translate 'Новости' %}</a>
                 <a class="dropdown-item text-warning" href="#" style="background-color: transparent;">{% translate 'Реклама' %}</a>
                 <a class="dropdown-item text-warning" href="#" style="background-color: transparent;">{% translate 'Кафе' %}</a>
                 <a class="dropdown-item text-warning" href="#" style="background-color: transparent;">{% translate 'Мобильное приложение' %}</a>
@@ -60,5 +68,3 @@
     </div>
 </div>
 
-<!-- Не забудьте добавить этот URL в urls.py для работы переключения языка -->
-<!-- path('i18n/', include('django.conf.urls.i18n')), -->

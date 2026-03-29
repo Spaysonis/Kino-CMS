@@ -10,9 +10,17 @@
 
 
 
-    <div class="d-flex justify-content-end">
+
+
+
+    <div class="d-flex justify-content-end align-items-center">
        {% if request.user.is_authenticated %}
         <p>{% translate ' Добро пожаловать,' %} {{ request.user.username }}!</p>
+      {% if request.user.is_staff %}
+            <a href="{%url 'statistics'%}" class="btn btn-warning btn-sm mr-2" target="_blank">
+                {% translate 'Админка' %}
+            </a>
+        {% endif %}
 
       <form action="{% url 'logout' %}" method="post">
             {% csrf_token %}
