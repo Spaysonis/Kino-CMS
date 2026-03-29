@@ -11,14 +11,16 @@
 
 
 
-let clientId = localStorage.getItem('client_id');
-if (!clientId){
-    clientId = crypto.randomUUID();
-    localStorage.setItem('client_id', clientId)
+function generateSimpleId() {
+    return 'client-' + Math.random().toString(36).substring(2, 11) + '-' + Date.now();
 }
 
-const sessionID = document.getElementById('hall').dataset.session
-
+// 2. Получаем или создаем clientId
+let clientId = localStorage.getItem('client_id');
+if (!clientId) {
+    clientId = generateSimpleId(); // Используем нашу функцию вместо crypto.randomUUID()
+    localStorage.setItem('client_id', clientId);
+}
 
 
 const socket = new WebSocket(
