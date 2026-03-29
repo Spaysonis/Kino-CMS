@@ -204,8 +204,7 @@ from django.db.models import Count
 import json
 
 def admin(request):
-    if not request.user.is_authenticated or not request.user.is_staff:
-        return HttpResponseForbidden("Нет доступа")
+
 
     today = now().date()
     past_days = 30

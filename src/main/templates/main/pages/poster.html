@@ -33,7 +33,13 @@
     overflow: hidden;
 }
 </style>
+
 <div class="container mt-2   p-4" style="background-color: #313549; max-width: 1200px; ">
+
+
+
+
+
     {% if current_movies %}
     <div class="WatchTodayWrapper">
 
@@ -46,8 +52,10 @@
             <div class="MiniPostName">
                 <a href="{% url 'movie_detail' movie.id %}">{{movie.title}}</a>
             </div>
+
             <div class="MiniPostName">
-                <a href="" class="btn btn-warning btn-sm w-100 py-0" style="font-size: 12px;">{% trans 'Купить билет' %}</a>
+
+                <a href="{% url 'schedule' %}?movie={{ movie.id }}" class="btn btn-warning btn-sm w-100 py-0" style="font-size: 12px;">{% trans 'Купить билет' %}</a>
             </div>
         </div>
 

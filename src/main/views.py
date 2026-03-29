@@ -238,9 +238,11 @@ def cinema_list1(request):
 
 
 def user_login(request):
+
+    print('вызвавла вью')
     if request.method == 'POST':
-        username = request.POST['username']
-        password = request.POST['password']
+        username = request.POST['login_name']
+        password = request.POST['login_password']
         user = authenticate(request, username=username, password=password)
 
         if user is not None:
