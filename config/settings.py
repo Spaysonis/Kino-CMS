@@ -39,12 +39,7 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 
 
-ALLOWED_HOSTS = [
-    '127.0.0.1',
-    'localhost',
-    '35.184.44.159',  # ВАШ НОВЫЙ IP
-    'web',            # Имя сервиса в docker-compose (важно для внутренней сети Docker)
-]
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 
@@ -197,7 +192,7 @@ CHANNEL_LAYERS = {
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://127.0.0.1:6379/1",
+        "LOCATION": "redis://redis:6379/1",
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
         }
