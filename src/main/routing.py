@@ -1,9 +1,9 @@
 from django.urls import re_path
 from src.main import consumers
-
+from django.urls import path
 
 
 websocket_urlpatterns = [
-    re_path(r'ws/booking/session/(?P<session_id>\d+)/?$', consumers.BookingConsumer.as_asgi()),
+path("ws/booking/session/<int:session_id>/", consumers.BookingConsumer.as_asgi()),
 
 ]
