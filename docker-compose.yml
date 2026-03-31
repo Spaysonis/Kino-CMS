@@ -10,8 +10,8 @@ services:
       - .env
     volumes:
       - .:/app
-      - ./staticfiles:/app/staticfiles
-      - ./media:/app/media
+      - config_django_static:/app/staticfiles
+      - ./config/media:/app/media
     depends_on:
       - db
 
@@ -78,9 +78,13 @@ services:
       - "443:443"
     volumes:
       - ./config/nginx.conf:/etc/nginx/conf.d/default.conf
-      - ./staticfiles:/app/staticfiles
-      - ./media:/app/media
+      - config_django_static:/app/staticfiles
+      - ./config/media:/app/media
     depends_on:
       - web
 volumes:
+ config_django_static:
+  external: true
  postgres_data:
+  external: true
+  name: config_postgres_data
