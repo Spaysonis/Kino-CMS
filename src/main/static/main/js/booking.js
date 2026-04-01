@@ -1,9 +1,11 @@
+
+const hallEl = document.getElementById('hall');
+
+const sessionID = hallEl ? hallEl.dataset.session : null;
+
 function generateSimpleId() {
     return 'client-' + Math.random().toString(36).substring(2, 11) + '-' + Date.now();
 }
-
-const hallEl = document.getElementById('hall');
-const sessionID = hallEl ? hallEl.dataset.session : null;
 
 let clientId = localStorage.getItem('client_id');
 if (!clientId) {
@@ -11,18 +13,17 @@ if (!clientId) {
     localStorage.setItem('client_id', clientId);
 }
 
+
 if (sessionID) {
     const socket = new WebSocket(
-        'ws://' + window.location.host + "/ws/booking/session/" + sessionID + '/'
+        (window.location.protocol === 'https:' ? 'wss://' : 'ws://') +
+        window.location.host + "/ws/booking/session/" + sessionID + '/'
     );
 
     socket.onmessage = function (e) {
         const response = JSON.parse(e.data);
         let data = response.data;
-
-        if (!Array.isArray(data)) {
-            data = [data];
-        }
+        if (!Array.isArray(data)) data = [data];
 
         data.forEach(function (seatInfo) {
             const seatBtn = document.querySelector(
@@ -35,25 +36,17 @@ if (sessionID) {
                 seatBtn.classList.add("btn-danger");
                 seatBtn.dataset.bookedByMe = 'false';
                 seatBtn.disabled = true;
-                return;
-            }
-
-            if (seatInfo.action === "ready_to_buy") {
+            } else if (seatInfo.action === "ready_to_buy") {
                 seatBtn.dataset.bookedByMe = 'true';
                 seatBtn.classList.remove('btn-outline-light', 'btn-info');
                 seatBtn.classList.add("btn-warning");
                 seatBtn.disabled = true;
-            }
-
-            if (seatInfo.action === 'cancel') {
+            } else if (seatInfo.action === 'cancel') {
                 seatBtn.disabled = false;
                 seatBtn.classList.remove('btn-info', 'btn-warning', 'btn-danger');
                 seatBtn.classList.add('btn-outline-light');
                 seatBtn.dataset.bookedByMe = 'false';
-                return;
-            }
-
-            if (seatInfo.client_id === clientId) {
+            } else if (seatInfo.client_id === clientId) {
                 seatBtn.disabled = false;
                 seatBtn.classList.remove('btn-outline-light', 'btn-warning');
                 seatBtn.classList.add('btn-info');
@@ -62,10 +55,10 @@ if (sessionID) {
         });
     };
 
+
     document.querySelectorAll('.btn[data-row][data-seat]').forEach(function(button) {
         button.addEventListener('click', function() {
             let action = (this.dataset.bookedByMe === 'true') ? 'cancel' : 'ready_to_buy';
-            
             socket.send(JSON.stringify({
                 action: action,
                 row: this.dataset.row,
@@ -76,6 +69,7 @@ if (sessionID) {
         });
     });
 }
+
 
 function getSelectedSeats() {
     const seats = [];
@@ -89,8 +83,9 @@ function getSelectedSeats() {
 
 function confirmBookingOrPurchase(action) {
     const seats = getSelectedSeats();
+    // Здесь мы проверяем sessionID, который объявлен в начале файла
     if (seats.length === 0 || !sessionID) {
-        if (seats.length === 0) alert('Выберите места для действия');
+        if (seats.length === 0) alert('Выберите места');
         return;
     }
 
@@ -102,22 +97,14 @@ function confirmBookingOrPurchase(action) {
             'Content-Type': 'application/json',
             'X-CSRFToken': csrfToken
         },
-        body: JSON.stringify({
-            action: action,
-            seats: seats
-        })
+        body: JSON.stringify({ action: action, seats: seats })
     })
     .then(res => res.json())
-    .then(data => {
-        if (data.success) {
-            console.log(data);
-        }
-    });
+    .then(data => { if (data.success) console.log("Успешно:", action); });
 }
+
 
 const bookingBtn = document.querySelector('button[value="booking"]');
 if (bookingBtn) {
-    bookingBtn.addEventListener('click', () => {
-        confirmBookingOrPurchase('booking');
-    });
+    bookingBtn.addEventListener('click', () => confirmBookingOrPurchase('booking'));
 }
